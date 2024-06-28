@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .hyr-stroke {
+    -webkit-text-stroke: 1px #ff5f09;
+  }
+}
+
+body {
+  background-color: #000;
+}
+
+.orange-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: color 0.3s ease-in-out;
+  cursor: pointer;
+  border-style: solid;
+}
+
+.orange-button .button-text {
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease-in-out;
+}
+
+.orange-button::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  background-color: #ff5f09; /* Match the border color */
+  transition: top 0.3s ease-in-out, bottom 0.3s ease-in-out;
+  z-index: 0;
+}
+
+.orange-button:hover::before {
+  top: 0;
+  bottom: 0;
+}
+
+.orange-button:hover .button-text {
+  color: white;
+}
+
+.white-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: color 0.3s ease-in-out;
+  cursor: pointer;
+  border-style: solid;
+}
+
+.white-button .button-text {
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease-in-out;
+}
+
+.white-button::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  background-color: white;
+  transition: top 0.3s ease-in-out, bottom 0.3s ease-in-out;
+  z-index: 0;
+}
+
+.white-button:hover::before {
+  top: 0;
+  bottom: 0;
+}
+
+.white-button:hover .button-text {
+  color: var(--hover-font-color, black);
+}
