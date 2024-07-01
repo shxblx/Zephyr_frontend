@@ -3,7 +3,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ff5f09: "#FF5F09", 
+        ff5f09: "#FF5F09",
       },
       fontFamily: {
         orbitron: ["Orbitron", "sans-serif"], 

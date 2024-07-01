@@ -1,9 +1,37 @@
-// Navbar.jsx
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  const renderButton = () => {
+    if (location.pathname === "/signup") {
+      return (
+        <Link to="/login">
+            <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
+              <span className="relative z-10">Login</span>
+            </button> 
+        </Link>
+      );
+    } else if (location.pathname === "/login") {
+      return (
+        <Link to="/signup">
+          <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
+            <span className="relative z-10">Sign Up</span>
+          </button>
+        </Link>
+      );
+    } else {
+      return (
+        <Link to="/signup">
+          <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
+            <span className="relative z-10">Sign Up</span>
+          </button>
+        </Link>
+      );
+    }
+  };
 
   return (
     <nav className="bg-black text-white p-4">
@@ -46,7 +74,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        <div className="hidden text-xs md:flex items-center  justify-center space-x-6 lg:space-x-12 flex-grow">
+        <div className="hidden text-xs md:flex items-center justify-center space-x-6 lg:space-x-12 flex-grow">
           <Link
             to="/"
             className="text-white transition duration-300 ease-in-out hover:text-[#FF5F09] font-bold font-orbitron"
@@ -54,7 +82,7 @@ const Navbar = () => {
             Home
           </Link>
           <Link
-            to="/"
+            to="/zephyr"
             className="text-white transition duration-300 ease-in-out hover:text-[#FF5F09] font-bold font-orbitron"
           >
             Zephyr!
@@ -73,20 +101,12 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <div className="hidden md:block">
-          <Link to="/signup">
-            <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
-              <span className="relative z-10">SignUp</span>
-            </button>
-          </Link>
-        </div>
+        <div className="hidden md:block">{renderButton()}</div>
       </div>
 
       {isOpen && (
         <div className="bg-ff5f09 md:hidden mt-4 flex flex-col items-center">
-          <button className="text-white hover:text-[#FF5F09] font-bold font-orbitron py-2 mb-2">
-            SignUp
-          </button>
+          {renderButton()}
           <Link
             to="/"
             className="py-2 text-white hover:text-[#FF5F09] font-bold font-orbitron"
@@ -94,7 +114,7 @@ const Navbar = () => {
             Home
           </Link>
           <Link
-            to="/"
+            to="/zephyr"
             className="py-2 text-white hover:text-[#FF5F09] font-bold font-orbitron"
           >
             Zephyr!

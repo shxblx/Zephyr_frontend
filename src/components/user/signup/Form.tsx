@@ -1,17 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import OrangeButton from "../../common/OrangeButton";
+import { Link } from "react-router-dom";
+import { signUp } from "../../../api/user";
 
 const Form: React.FC = () => {
+  const [FormData, setFormData] = useState({
+    userName: "",
+    displayName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const res = await signUp(FormData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let processedValue = value;
+
+    setFormData({
+      ...FormData,
+      [name]: processedValue,
+    });
+  };
   return (
     <div className="flex flex-col md:flex-row items-center min-h-screen px-4 md:px-0">
-      <div className="md:ml-36 font-extrabold text-3xl md:text-5xl font-orbitron text-orange-600 my-4 md:my-auto leading-relaxed text-center md:text-left">
-        Unlock Your Account,<br />Begin the Quest!
+      <div className="md:ml-36 font-extrabold text-3xl md:text-5xl font-orbitron text-ff5f09 my-4 md:my-auto leading-relaxed text-center md:text-left">
+        Create Your Account,
+        <br />
+        Begin the Quest!
       </div>
       <div className="bg-white md:ml-36 p-8 shadow-md w-full max-w-lg md:max-w-xl">
         <h2 className="text-4xl md:text-5xl text-center font-orbitron font-bold mb-12">
           Sign Up
         </h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-black-700 mb-2" htmlFor="username">
               Username
@@ -20,7 +47,9 @@ const Form: React.FC = () => {
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="text"
               id="username"
-              name="username"
+              value={FormData.userName}
+              name="userName"
+              onChange={handleChange}
             />
           </div>
           <div className="mb-4">
@@ -31,7 +60,9 @@ const Form: React.FC = () => {
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="text"
               id="displayname"
-              name="displayname"
+              name="displayName"
+              value={FormData.displayName}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-4">
@@ -43,6 +74,8 @@ const Form: React.FC = () => {
               type="email"
               id="email"
               name="email"
+              value={FormData.email}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-4">
@@ -53,7 +86,9 @@ const Form: React.FC = () => {
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="password"
               id="password"
+              value={FormData.password}
               name="password"
+              onChange={handleChange}
             />
           </div>
           <div className="mb-4">
@@ -67,11 +102,27 @@ const Form: React.FC = () => {
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="password"
               id="confirm-password"
+              value={FormData.confirmPassword}
               name="confirm-password"
+              onChange={handleChange}
             />
           </div>
-          <div className="mt-8 md:mt-14 flex font-extrabold justify-center font-orbitron">
-            <OrangeButton px={40} py={10} color="#ff5f09" value="Submit" />
+          <div className="flex mt-12 justify-center">
+            <p>Already have an Account?</p>
+            <Link to="/login">
+              <p className=" text-ff5f09 hover:underline hover:cursor-pointer">
+                Login
+              </p>
+            </Link>
+          </div>
+          <div className="mt-4 flex font-extrabold justify-center font-orbitron">
+            <OrangeButton
+              type="submit"
+              px={40}
+              py={10}
+              color="#ff5f09"
+              value="Signup"
+            />
           </div>
         </form>
       </div>

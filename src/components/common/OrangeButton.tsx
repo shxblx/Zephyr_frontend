@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 type Props = {
   px: number;
@@ -8,15 +8,17 @@ type Props = {
   borderColor?: string;
   bgColor?: string;
   hoverFontColor?: string;
+  type?: "button" | "submit" | "reset";
 };
 
 const OrangeButton = ({
   px,
   py,
   value,
-  color = "#fff", 
+  color = "#fff",
   borderColor = "#ff5f09",
   bgColor = "transparent",
+  type,
 }: Props) => {
   const buttonStyle = {
     padding: `${py}px ${px}px`,
@@ -27,7 +29,7 @@ const OrangeButton = ({
   } as React.CSSProperties;
 
   return (
-    <button className="orange-button" style={buttonStyle}>
+    <button type={type} className="orange-button" style={buttonStyle}>
       <span className="button-text">{value}</span>
     </button>
   );
