@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import OrangeButton from "../../common/OrangeButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../../../api/user";
+import { toast } from "react-toastify";
 
 const Form: React.FC = () => {
   const [FormData, setFormData] = useState({
@@ -12,10 +13,30 @@ const Form: React.FC = () => {
     confirmPassword: "",
   });
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const res = await signUp(FormData);
+    try {
+      const response = await signUp(FormData);
+
+      if (response) {
+        toast.success(response.data.message);
+        console.log(response.data.message);
+        navigate("/otp", {
+          state: {
+            userName: FormData.userName,
+            email: FormData.email,
+            displayName: FormData.displayName,
+            password: FormData.password,
+          },
+        });
+      }
+    } catch (error) {
+      toast.error("Failed to sign up. Please try again.");
+      console.error(error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
