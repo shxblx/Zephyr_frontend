@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import OrangeButton from "../../common/OrangeButton";
+import { useSelector } from "react-redux";
 
 export const Form: React.FC = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -10,12 +11,14 @@ export const Form: React.FC = () => {
     useRef<HTMLInputElement>(null),
   ];
 
+  const { userInfo } = useSelector((state: any) => state.userInfo);
+
+
   const handleChange = (index: number, value: string) => {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Move focus to next input
     if (value !== "" && index < 3) {
       inputRefs[index + 1].current?.focus();
     }
@@ -23,7 +26,6 @@ export const Form: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle OTP submission
     console.log("Submitted OTP:", otp.join(""));
   };
 

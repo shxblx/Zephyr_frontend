@@ -2,10 +2,20 @@ import React, { useState } from "react";
 import OrangeButton from "../../common/OrangeButton";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../../../api/user";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "../../../redux/slices/userSlice/userSlice";
 import { toast } from "react-toastify";
 
 const Form: React.FC = () => {
-  const [FormData, setFormData] = useState({
+  const [formData, setFormData] = useState({
+    userName: "",
+    displayName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState({
     userName: "",
     displayName: "",
     email: "",
@@ -14,40 +24,79 @@ const Form: React.FC = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[A-Z]).{8,}$/;
+    return passwordRegex.test(password);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const newErrors = {
+      userName: "",
+      displayName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
+
+    if (!formData.userName) newErrors.userName = "Username is required";
+    if (!formData.displayName)
+      newErrors.displayName = "Display name is required";
+    if (!formData.email) newErrors.email = "Email is required";
+    else if (!validateEmail(formData.email))
+      newErrors.email = "Invalid email address";
+
+    if (!formData.password) newErrors.password = "Password is required";
+    else if (!validatePassword(formData.password)) {
+      newErrors.password =
+        "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
+    }
+
+    if (formData.confirmPassword !== formData.password) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some((error) => error)) return;
+
     try {
-      const response = await signUp(FormData);
+      const response = await signUp(formData);
 
       if (response) {
         toast.success(response.data.message);
-        console.log(response.data.message);
-        navigate("/otp", {
-          state: {
-            userName: FormData.userName,
-            email: FormData.email,
-            displayName: FormData.displayName,
-            password: FormData.password,
-          },
-        });
+        dispatch(setUserInfo({ ...formData }));
+        navigate("/otp");
       }
     } catch (error) {
-      toast.error("Failed to sign up. Please try again.");
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "Failed to sign up. Please try again.",
+      }));
       console.error(error);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    let processedValue = value;
-
     setFormData({
-      ...FormData,
-      [name]: processedValue,
+      ...formData,
+      [name]: value,
+    });
+    setErrors({
+      ...errors,
+      [name]: "",
     });
   };
+
   return (
     <div className="flex flex-col md:flex-row items-center min-h-screen px-4 md:px-0">
       <div className="md:ml-36 font-extrabold text-3xl md:text-5xl font-orbitron text-ff5f09 my-4 md:my-auto leading-relaxed text-center md:text-left">
@@ -61,30 +110,36 @@ const Form: React.FC = () => {
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-black-700 mb-2" htmlFor="username">
+            <label className="block text-black-700 mb-2" htmlFor="userName">
               Username
             </label>
             <input
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="text"
-              id="username"
-              value={FormData.userName}
+              id="userName"
+              value={formData.userName}
               name="userName"
               onChange={handleChange}
             />
+            {errors.userName && (
+              <p className="text-red-500">{errors.userName}</p>
+            )}
           </div>
           <div className="mb-4">
-            <label className="block text-black-700 mb-2" htmlFor="displayname">
+            <label className="block text-black-700 mb-2" htmlFor="displayName">
               Display Name
             </label>
             <input
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="text"
-              id="displayname"
+              id="displayName"
               name="displayName"
-              value={FormData.displayName}
+              value={formData.displayName}
               onChange={handleChange}
             />
+            {errors.displayName && (
+              <p className="text-red-500">{errors.displayName}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-black-700 mb-2" htmlFor="email">
@@ -95,9 +150,10 @@ const Form: React.FC = () => {
               type="email"
               id="email"
               name="email"
-              value={FormData.email}
+              value={formData.email}
               onChange={handleChange}
             />
+            {errors.email && <p className="text-red-500">{errors.email}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black-700 mb-2" htmlFor="password">
@@ -107,31 +163,37 @@ const Form: React.FC = () => {
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="password"
               id="password"
-              value={FormData.password}
+              value={formData.password}
               name="password"
               onChange={handleChange}
             />
+            {errors.password && (
+              <p className="text-red-500">{errors.password}</p>
+            )}
           </div>
           <div className="mb-4">
             <label
               className="block text-black-700 mb-2"
-              htmlFor="confirm-password"
+              htmlFor="confirmPassword"
             >
               Confirm Password
             </label>
             <input
               className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
               type="password"
-              id="confirm-password"
-              value={FormData.confirmPassword}
-              name="confirm-password"
+              id="confirmPassword"
+              value={formData.confirmPassword}
+              name="confirmPassword"
               onChange={handleChange}
             />
+            {errors.confirmPassword && (
+              <p className="text-red-500">{errors.confirmPassword}</p>
+            )}
           </div>
           <div className="flex mt-12 justify-center">
             <p>Already have an Account?</p>
             <Link to="/login">
-              <p className=" text-ff5f09 hover:underline hover:cursor-pointer">
+              <p className="text-ff5f09 hover:underline hover:cursor-pointer">
                 Login
               </p>
             </Link>
