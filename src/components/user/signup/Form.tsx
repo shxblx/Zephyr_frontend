@@ -75,8 +75,13 @@ const Form: React.FC = () => {
 
       if (response?.status === 200) {
         toast.success(response.data.message);
-        dispatch(setUserInfo({ ...formData }));
-        navigate("/otp");
+        navigate("/otp", {
+          state: {
+            email: formData.email,
+            userName: formData.userName,
+            displayName: formData.displayName,
+          },
+        });
       } else if (response?.status === false) {
         toast.error(response.message);
       } else {

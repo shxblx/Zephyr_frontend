@@ -5,15 +5,26 @@ import { Signup } from "../pages/user/Signup";
 import { Login } from "../pages/user/Login";
 import { Otp } from "../pages/user/Otp";
 import { MainHome } from "../pages/user/MainHome";
+import ProtectedRoute from "../components/protectedRoute/protectedRoute";
+import PublicRoute from "../components/protectedRoute/PublicRoute";
 
 export const UserRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/Login" element={<Login />} />
-      <Route path="/otp" element={<Otp />} />
-      <Route path="/home" element={<MainHome />} />
+      <Route
+        path="/signup"
+        element={<PublicRoute element={<Signup />} redirectTo="/home" />}
+      />
+      <Route
+        path="/login"
+        element={<PublicRoute element={<Login />} redirectTo="/home" />}
+      />
+      <Route
+        path="/otp"
+        element={<PublicRoute element={<Otp />} redirectTo="/home" />}
+      />
+      <Route path="/home" element={<ProtectedRoute element={<MainHome />} />} />
     </Routes>
   );
 };

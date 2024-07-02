@@ -25,7 +25,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, active }) => (
 
 const Sidebar: React.FC = () => {
   return (
-    <div className="text-white font-semibold w-64 flex-shrink-0 h-screen overflow-y-auto transition-all duration-300 ease-in-out transform md:translate-x-0 -translate-x-full fixed md:relative z-30 left-0 top-0 pt-16 md:pt-0">
+    <div className="text-white font-semibold w-64 flex-shrink-0 h-screen overflow-y-auto transition-all duration-300 ease-in-out fixed left-0 top-0 pt-16 z-20 bg-black">
       <nav className="mt-8">
         <ul className="space-y-2 px-4">
           <SidebarItem icon={<HomeIcon />} text="Discover" active />

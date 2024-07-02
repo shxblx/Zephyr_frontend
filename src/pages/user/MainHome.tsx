@@ -5,11 +5,14 @@ import Discover from "../../components/user/mainhome/Discover";
 
 export const MainHome = () => {
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-black">
       <MainNavbar />
-      <Discover/>
-      <Sidebar/>
-      
-    </>
+      <div className="flex flex-1">
+        <Sidebar />
+        <div className="flex-1 ml-64">
+          <Discover />
+        </div>
+      </div>
+    </div>
   );
 };

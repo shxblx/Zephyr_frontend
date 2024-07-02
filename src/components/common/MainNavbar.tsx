@@ -1,11 +1,11 @@
-import { useState, useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React from "react";
 import OrangeButton from "./OrangeButton";
+import { useSelector } from "react-redux";
 
 const MainNavbar = () => {
-
+  const { userInfo } = useSelector((state: any) => state.userInfo);
   return (
-    <nav className="bg-black flex text-white p-4">
+    <nav className="bg-black text-white p-4 fixed top-0 left-0 right-0 z-30">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <span
@@ -18,9 +18,15 @@ const MainNavbar = () => {
             <span className="text-transparent hyr-stroke">HYR</span>
           </span>
         </div>
-      </div>
-      <div className="font-orbitron font-bold">
-        <OrangeButton type="button" px={12} py={8} value="Username"/>
+
+        <div className="font-orbitron font-bold">
+          <OrangeButton
+            type="button"
+            px={32}
+            py={8}
+            value={userInfo.displayName}
+          />
+        </div>
       </div>
     </nav>
   );

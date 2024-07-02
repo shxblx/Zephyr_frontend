@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { verifyOTP } from "../../../api/user";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../../redux/slices/userSlice/userSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const Form: React.FC = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -31,6 +31,9 @@ export const Form: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const data = location.state;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const joinedOtp = otp.join("");
@@ -43,7 +46,7 @@ export const Form: React.FC = () => {
     try {
       const response = await verifyOTP({
         otp: parseInt(joinedOtp),
-        email: userInfo.email,
+        email: data.email,
       });
 
       if (response?.status === 200) {
@@ -51,13 +54,13 @@ export const Form: React.FC = () => {
 
         dispatch(
           setUserInfo({
-            userName: userInfo.userName,
-            email: userInfo.email,
-            displayName: userInfo.displayName,
+            userName: data.userName,
+            email: data.email,
+            displayName: data.displayName,
           })
         );
 
-        navigate("/");
+        navigate("/home");
       } else {
         toast.error(response?.data.message || "Failed to verify OTP.");
       }

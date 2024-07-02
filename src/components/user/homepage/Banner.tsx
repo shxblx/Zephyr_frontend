@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import OrangeButton from "../../common/OrangeButton";
 
 export const Banner = () => {
@@ -12,7 +13,9 @@ export const Banner = () => {
         </p>
       </div>
       <div className="mt-20 text-3xl font-orbitron font-bold">
-        <OrangeButton px={80} py={20} value="Enter Now" />
+        <Link to="/home">
+          <OrangeButton px={80} py={20} value="Enter Now" />
+        </Link>
       </div>
     </section>
   );

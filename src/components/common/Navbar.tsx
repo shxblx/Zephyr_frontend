@@ -3,21 +3,34 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { removeUserInfo } from "../../redux/slices/userSlice/userSlice";
+import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/solid";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { userInfo } = useSelector((state: any) => state.userInfo);
+  const dispatch = useDispatch();
 
+  const handleLogout = () => {
+    dispatch(removeUserInfo());
+  };
 
   const renderButton = () => {
     if (userInfo && userInfo.displayName) {
       return (
-        <Link to="/profile">
-          <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
-            <span className="relative z-10">{userInfo.displayName}</span>
+        <div className="flex items-center">
+          <button
+            onClick={handleLogout}
+            className="text-white mr-4 hover:text-[#FF5F09] transition duration-300 ease-in-out"
+          >
+            <ArrowLeftEndOnRectangleIcon className="h-6 w-6" />
           </button>
-        </Link>
+          <Link to="/profile">
+            <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron mr-4">
+              <span className="relative z-10">{userInfo.displayName}</span>
+            </button>
+          </Link>
+        </div>
       );
     } else if (location.pathname === "/signup") {
       return (

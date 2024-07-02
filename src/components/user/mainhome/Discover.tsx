@@ -35,7 +35,7 @@ const Discover: React.FC = () => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map(item => (
-          <div key={item.id} className=" rounded-lg shadow-md overflow-hidden">
+          <div key={item.id} className="rounded-lg shadow-md overflow-hidden">
             <img src={item.imageUrl} alt={item.name} className="w-full h-32 object-cover" />
             <div className="p-4">
               <h3 className="font-bold">{item.name}</h3>
@@ -48,8 +48,8 @@ const Discover: React.FC = () => {
   );
 
   return (
-    <div className="">
-      <div className="container ml-40 px-4 md:pl-24 lg:pl-32"> 
+    <div className="flex-1 overflow-y-auto">
+      <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8 text-ff5f09">Discover</h1>
         {renderSection('Communities', communities, <UserGroupIcon className="w-8 h-8 text-ff5f09" />)}
         {renderSection('Friend Suggestions', friendSuggestions, <UserPlusIcon className="w-8 h-8 text-ff5f09" />)}
