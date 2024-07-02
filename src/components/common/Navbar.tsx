@@ -1,17 +1,30 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import { removeUserInfo } from "../../redux/slices/userSlice/userSlice";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { userInfo } = useSelector((state: any) => state.userInfo);
+
 
   const renderButton = () => {
-    if (location.pathname === "/signup") {
+    if (userInfo && userInfo.displayName) {
+      return (
+        <Link to="/profile">
+          <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
+            <span className="relative z-10">{userInfo.displayName}</span>
+          </button>
+        </Link>
+      );
+    } else if (location.pathname === "/signup") {
       return (
         <Link to="/login">
-            <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
-              <span className="relative z-10">Login</span>
-            </button> 
+          <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron">
+            <span className="relative z-10">Login</span>
+          </button>
         </Link>
       );
     } else if (location.pathname === "/login") {

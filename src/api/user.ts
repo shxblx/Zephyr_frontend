@@ -5,8 +5,15 @@ export const signUp = async (email: { email: string }) => {
   try {
     const response = await Api.post(userRoutes.signUp, email);
     return response;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    if (error.response) {
+      return error.response.data;
+    } else if (error.request) {
+      console.error(error.request);
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
   }
 };
 

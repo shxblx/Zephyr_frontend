@@ -55,10 +55,10 @@ const Form: React.FC = () => {
       newErrors.email = "Invalid email address";
 
     if (!formData.password) newErrors.password = "Password is required";
-    else if (!validatePassword(formData.password)) {
-      newErrors.password =
-        "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
-    }
+    // else if (!validatePassword(formData.password)) {
+    //   newErrors.password =
+    //     "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
+    // }
 
     if (formData.confirmPassword !== formData.password) {
       newErrors.confirmPassword = "Passwords do not match";
@@ -71,16 +71,19 @@ const Form: React.FC = () => {
     try {
       const response = await signUp(formData);
 
-      if (response) {
+      console.log(response);
+
+      if (response?.status === 200) {
         toast.success(response.data.message);
         dispatch(setUserInfo({ ...formData }));
         navigate("/otp");
+      } else if (response?.status === false) {
+        toast.error(response.message);
+      } else {
+        toast.error("Failed to sign up. Please try again.");
       }
     } catch (error) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        email: "Failed to sign up. Please try again.",
-      }));
+      toast.error("Failed to sign up. Please try again.");
       console.error(error);
     }
   };

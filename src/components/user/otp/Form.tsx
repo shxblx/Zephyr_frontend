@@ -1,6 +1,11 @@
 import React, { useState, useRef } from "react";
 import OrangeButton from "../../common/OrangeButton";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { verifyOTP } from "../../../api/user";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "../../../redux/slices/userSlice/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Form: React.FC = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -12,7 +17,7 @@ export const Form: React.FC = () => {
   ];
 
   const { userInfo } = useSelector((state: any) => state.userInfo);
-
+  const dispatch = useDispatch();
 
   const handleChange = (index: number, value: string) => {
     const newOtp = [...otp];
@@ -24,9 +29,42 @@ export const Form: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Submitted OTP:", otp.join(""));
+    const joinedOtp = otp.join("");
+
+    if (otp.some((digit) => digit === "")) {
+      toast.error("All OTP fields must be filled.");
+      return;
+    }
+
+    try {
+      const response = await verifyOTP({
+        otp: parseInt(joinedOtp),
+        email: userInfo.email,
+      });
+
+      if (response?.status === 200) {
+        toast.success(response.data.message);
+
+        dispatch(
+          setUserInfo({
+            userName: userInfo.userName,
+            email: userInfo.email,
+            displayName: userInfo.displayName,
+          })
+        );
+
+        navigate("/");
+      } else {
+        toast.error(response?.data.message || "Failed to verify OTP.");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      toast.error("Failed to verify OTP. Please try again.");
+    }
   };
 
   return (
