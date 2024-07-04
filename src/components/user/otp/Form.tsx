@@ -16,7 +16,6 @@ export const Form: React.FC = () => {
     useRef<HTMLInputElement>(null),
   ];
 
-  const { userInfo } = useSelector((state: any) => state.userInfo);
   const dispatch = useDispatch();
 
   const handleChange = (index: number, value: string) => {
@@ -60,12 +59,11 @@ export const Form: React.FC = () => {
           })
         );
 
-        navigate("/home");
+        navigate("/");
       } else {
-        toast.error(response?.data.message || "Failed to verify OTP.");
+        toast.error(response);
       }
     } catch (error) {
-      console.error("Error verifying OTP:", error);
       toast.error("Failed to verify OTP. Please try again.");
     }
   };

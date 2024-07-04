@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { removeUserInfo } from "../../redux/slices/userSlice/userSlice";
 import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/solid";
+import Swal from "sweetalert2";
+import { logout } from "../../api/user";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +14,34 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    dispatch(removeUserInfo());
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out!",
+      icon: "warning",
+      iconColor: "#FF5F09",
+      showCancelButton: true,
+      confirmButtonColor: "#FF5F09",
+      cancelButtonColor: "black",
+      confirmButtonText: "Yes, logout!",
+      cancelButtonText: "Cancel",
+      customClass: {
+        confirmButton: "swal-confirm-button",
+        cancelButton: "swal-cancel-button",
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await logout();
+
+        dispatch(removeUserInfo());
+        Swal.fire({
+          title: "Logged Out!",
+          text: "You have been successfully logged out.",
+          icon: "success",
+          iconColor: "#FF5F09",
+          confirmButtonColor: "#FF5F09",
+        });
+      }
+    });
   };
 
   const renderButton = () => {
@@ -108,7 +137,7 @@ const Navbar = () => {
             Home
           </Link>
           <Link
-            to="/zephyr"
+            to="/home"
             className="text-white transition duration-300 ease-in-out hover:text-[#FF5F09] font-bold font-orbitron"
           >
             Zephyr!
