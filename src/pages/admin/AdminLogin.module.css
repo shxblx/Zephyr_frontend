@@ -1,0 +1,160 @@
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: white;
+}
+
+.left {
+  display: flex;
+  animation-name: left;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+  animation-delay: 1s;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.right {
+  flex: 1;
+  transition: 1s;
+  background-color: #ff5f09;
+  background-image: url("https://images.unsplash.com/photo-1548504769-900b70ed122e?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.loginSection header h2 {
+  margin: 0;
+}
+
+.loginSection header h4 {
+  color: #000;
+  opacity: 0.4;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.loginSection form {
+  display: flex;
+  flex-direction: column;
+}
+
+.loginSection form p {
+  text-align: right;
+}
+
+.loginSection form p a {
+  color: white;
+  font-size: 0.875rem;
+}
+
+.inputContainer {
+  position: relative;
+  margin-top: 1.25rem;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: gray;
+}
+
+.inputField {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  height: 46px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  transition: 0.2s;
+  font-family: "Rubik", sans-serif;
+}
+
+.inputField:focus {
+  border-color: #ff5f09;
+}
+
+.loginSection form button {
+  padding: 0.75rem 0.625rem;
+  border: 0;
+  background: linear-gradient(to right, #ff5f09 0%, #ffbf47 100%);
+  border-radius: 0.25rem;
+  margin-top: 0.625rem;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-family: "Rubik", sans-serif;
+}
+
+.errorMessage {
+  color: #ff5f09;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.animation {
+  animation-name: move;
+  animation-duration: 0.4s;
+  animation-fill-mode: both;
+  animation-delay: 2s;
+}
+
+.a1 {
+  animation-delay: 2s;
+  color: black;
+  font-weight: bold;
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+.a2 {
+  animation-delay: 2.2s;
+}
+
+.a3 {
+  animation-delay: 2.4s;
+}
+
+.a4 {
+  animation-delay: 2.6s;
+}
+
+.a5 {
+  animation-delay: 2.8s;
+}
+
+.a6 {
+  animation-delay: 3s;
+}
+
+@keyframes move {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-40px);
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+@keyframes left {
+  0% {
+    opacity: 0;
+    width: 0%;
+  }
+  100% {
+    opacity: 1;
+    width: 440px;
+    padding: 3rem;
+  }
+}

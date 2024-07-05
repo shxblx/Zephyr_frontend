@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { removeUserInfo } from "../../redux/slices/userSlice/userSlice";
+import { removeUserInfo } from "../../../redux/slices/userSlice/userSlice";
 import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
-import { logout } from "../../api/user";
+import { logout } from "../../../api/user";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

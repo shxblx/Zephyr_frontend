@@ -6,7 +6,10 @@ module.exports = {
         ff5f09: "#FF5F09",
       },
       fontFamily: {
-        orbitron: ["Orbitron", "sans-serif"], 
+        orbitron: ["Orbitron", "sans-serif"],
+      },
+      animation: {
+        "spin-slow": "spin 3s linear infinite",
       },
     },
   },

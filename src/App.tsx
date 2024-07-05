@@ -8,17 +8,23 @@ function App() {
   return (
     <BrowserRouter>
       <ToastContainer
-        position="top-right"
-        autoClose={1000}
-        hideProgressBar={false}
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
         newestOnTop={false}
         closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"
+        theme="light"
         transition={Bounce}
+        toastStyle={{
+          background: "white",
+          backdropFilter: "blur(10px)",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          color: "black",
+        }}
       />
       <AppRouter />
     </BrowserRouter>

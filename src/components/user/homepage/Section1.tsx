@@ -1,5 +1,5 @@
-import OrangeButton from "../../common/OrangeButton";
-import WhiteButton from "../../common/WhiteButton";
+import OrangeButton from "../../common/user/OrangeButton";
+import WhiteButton from "../../common/user/WhiteButton";
 
 const Section1 = () => {
   return (

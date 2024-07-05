@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import OrangeButton from "../../common/OrangeButton";
+import OrangeButton from "../../common/user/OrangeButton";
 
 export const Banner = () => {
   return (

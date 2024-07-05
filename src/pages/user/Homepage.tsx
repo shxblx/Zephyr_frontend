@@ -1,5 +1,5 @@
-import Footer from "../../components/common/Footer";
-import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/user/Footer";
+import Navbar from "../../components/common/user/Navbar";
 import { Banner } from "../../components/user/homepage/Banner";
 import Section1 from "../../components/user/homepage/Section1";
 import Section2 from "../../components/user/homepage/Section2";

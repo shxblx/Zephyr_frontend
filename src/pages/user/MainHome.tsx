@@ -1,6 +1,6 @@
 import React from "react";
-import MainNavbar from "../../components/common/MainNavbar";
-import Sidebar from "../../components/common/Sidebar";
+import MainNavbar from "../../components/common/user/MainNavbar";
+import Sidebar from "../../components/common/user/Sidebar";
 import Discover from "../../components/user/mainhome/Discover";
 
 export const MainHome = () => {
