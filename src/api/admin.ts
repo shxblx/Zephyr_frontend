@@ -4,11 +4,11 @@ import adminRoutes from "../endpoints/adminEndPoints";
 export const adminLogin = async (data: { email: string; password: string }) => {
   try {
     const response = await Api.post(adminRoutes.login, data);
-    console.log(response);
+
     return response;
   } catch (error: any) {
     if (error.response) {
-      return error.response.data;
+      return error.response;
     } else if (error.request) {
       console.error(error.request);
     } else {
@@ -16,4 +16,12 @@ export const adminLogin = async (data: { email: string; password: string }) => {
     }
     throw error;
   }
+};
+export const getUsers = async () => {
+  try {
+    const data = await Api.get(adminRoutes.getUsers);
+    console.log(data);
+
+    return data;
+  } catch (error) {}
 };

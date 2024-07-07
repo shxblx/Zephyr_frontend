@@ -4,6 +4,7 @@ import userRoutes from "../endpoints/userEndPoints";
 export const signUp = async (email: { email: string }) => {
   try {
     const response = await Api.post(userRoutes.signUp, email);
+    
     return response;
   } catch (error: any) {
     if (error.response) {
@@ -20,6 +21,8 @@ export const signUp = async (email: { email: string }) => {
 export const verifyOTP = async (data: { otp: Number; email: string }) => {
   try {
     const response = await Api.post(userRoutes.verifyOTP, data);
+    console.log(response.data);
+
     return response;
   } catch (error: any) {
     if (error.response) {

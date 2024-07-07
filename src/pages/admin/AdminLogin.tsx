@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import styles from "./AdminLogin.module.css";
 import { adminLogin } from "../../api/admin";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AnimatedLoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,8 @@ const AnimatedLoginPage: React.FC = () => {
 
   const [errorEmail, setErrorEmail] = useState<string | null>(null);
   const [errorPassword, setErrorPassword] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,9 +34,14 @@ const AnimatedLoginPage: React.FC = () => {
 
     if (valid) {
       const response = await adminLogin({ email, password });
+      console.log(response);
 
       if (response.data === true) {
         toast.success("Admin login successful");
+
+        navigate("/admin/dashboard");
+      } else {
+        toast.error(response.data.message);
       }
     }
   };

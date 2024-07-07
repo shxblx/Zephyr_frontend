@@ -7,6 +7,8 @@ import { Otp } from "../pages/user/Otp";
 import { MainHome } from "../pages/user/MainHome";
 import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 import PublicRoute from "../components/protectedRoute/PublicRoute";
+import UserLayout from "../components/common/user/UserLayout";
+import Discover from "../components/user/mainhome/Discover";
 
 export const UserRouter = () => {
   return (
@@ -24,7 +26,16 @@ export const UserRouter = () => {
         path="/otp"
         element={<PublicRoute element={<Otp />} redirectTo="/" />}
       />
-      <Route path="/home" element={<ProtectedRoute element={<MainHome />} />} />
+
+      {/* Routes that should have the sidebar layout */}
+      <Route element={<ProtectedRoute element={<UserLayout />} />}>
+        <Route path="/home" element={<MainHome />} />
+        <Route path="/discover" element={<Discover />} />
+        {/* <Route path="/friends" element={<Friends />} />
+        <Route path="/communities" element={<Communities />} />
+        <Route path="/zepchats" element={<ZepChats />} />
+        <Route path="/support" element={<Support />} /> */}
+      </Route>
     </Routes>
   );
 };

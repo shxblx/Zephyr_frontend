@@ -52,7 +52,7 @@ export const Form: React.FC = () => {
       });
 
       if (response?.status === 200) {
-        toast.success(response.data.message);
+        toast.success(response);
 
         dispatch(
           setUserInfo({

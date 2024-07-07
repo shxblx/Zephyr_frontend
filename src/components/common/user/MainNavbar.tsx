@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 const MainNavbar = () => {
   const { userInfo } = useSelector((state: any) => state.userInfo);
   return (
-    <nav className="bg-black text-white p-4 fixed top-0 left-0 right-0 z-30">
+    <nav className="text-white p-4 fixed top-0 left-0 right-0 z-30">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <span
