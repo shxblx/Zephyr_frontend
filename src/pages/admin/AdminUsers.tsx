@@ -50,84 +50,103 @@ const AdminUsers: React.FC = () => {
     console.log(`Viewing user ${userId}`);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8 ">
-      <h1 className="text-3xl font-bold mb-6 text-white">User Management</h1>
-      <div className="bg-gray-800 shadow-md rounded-lg overflow-hidden">
-        <table className="w-full text-white">
-          <thead className="bg-gray-700">
-            <tr>
-              <th className="px-6 py-3 text-left">Username</th>
-              <th className="px-6 py-3 text-left">Display Name</th>
-              <th className="px-6 py-3 text-left">Email</th>
-              <th className="px-6 py-3 text-left">Status</th>
-              <th className="px-6 py-3 text-left">Premium</th>
-              <th className="px-6 py-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border-b border-gray-700">
-                <td className="px-6 py-4 flex items-center">
-                  <UserIcon className="h-5 w-5 mr-2" />
-                  {user.userName}
-                </td>
-                <td className="px-6 py-4">{user.displayName}</td>
-                <td className="px-6 py-4">{user.email}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      user.isBlocked ? "bg-red-500" : "bg-green-500"
-                    }`}
-                  >
-                    {user.isBlocked ? "Blocked" : "Active"}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      user.isPremium ? "bg-yellow-500" : "bg-gray-500"
-                    }`}
-                  >
-                    {user.isPremium ? "Yes" : "No"}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex space-x-2">
-                    {user.isBlocked ? (
-                      <button
-                        onClick={() => handleUnblockUser(user.id)}
-                        className="text-red-500 hover:text-green-600"
-                        title="Unblock User"
-                      >
-                        <NoSymbolIcon className="h-8 w-8" />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleBlockUser(user.id)}
-                        className="text-green-500 hover:text-red-600"
-                        title="Block User"
-                      >
-                        <CheckCircleIcon className="h-8 w-8" />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleViewUser(user.id)}
-                      className="text-blue-500 hover:text-blue-600"
-                      title="View User"
-                    >
-                      <EyeIcon className="h-5 w-5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="min-h-screen bg-white text-black">
+      <div className="container mx-auto px-4 py-8">
+        {loading ? (
+          <div className="flex justify-center items-center h-screen">
+            <div className="text-xl">Loading...</div>
+          </div>
+        ) : (
+          <div className="bg-gray-800 shadow-md overflow-hidden p-5 rounded-lg">
+            <h1 className="text-2xl md:text-3xl font-bold mb-6 p-4 text-white">
+              User Management
+            </h1>
+            <div className="overflow-x-auto">
+              <table className="w-full text-white">
+                <thead className="bg-gray-700">
+                  <tr>
+                    <th className="px-4 py-2 text-left">User</th>
+                    <th className="px-4 py-2 text-left hidden md:table-cell">
+                      Email
+                    </th>
+                    <th className="px-4 py-2 text-left">Status</th>
+                    <th className="px-4 py-2 text-left hidden md:table-cell">
+                      Premium
+                    </th>
+                    <th className="px-4 py-2 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id} className="border-b border-gray-700">
+                      <td className="px-4 py-2">
+                        <div className="flex items-center">
+                          <UserIcon className="h-5 w-5 mr-2" />
+                          <div>
+                            <div>{user.userName}</div>
+                            <div className="text-sm text-gray-400 md:hidden">
+                              {user.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 hidden md:table-cell">
+                        {user.email}
+                      </td>
+                      <td className="px-4 py-2">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            user.isBlocked ? "bg-red-500" : "bg-green-500"
+                          }`}
+                        >
+                          {user.isBlocked ? "Blocked" : "Active"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 hidden md:table-cell">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            user.isPremium ? "bg-yellow-500" : "bg-gray-500"
+                          }`}
+                        >
+                          {user.isPremium ? "Yes" : "No"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2">
+                        <div className="flex space-x-2">
+                          {user.isBlocked ? (
+                            <button
+                              onClick={() => handleUnblockUser(user.id)}
+                              className="text-red-500 hover:text-green-600"
+                              title="Unblock User"
+                            >
+                              <NoSymbolIcon className="h-6 w-6 md:h-8 md:w-8" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleBlockUser(user.id)}
+                              className="text-green-500 hover:text-red-600"
+                              title="Block User"
+                            >
+                              <CheckCircleIcon className="h-6 w-6 md:h-8 md:w-8" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleViewUser(user.id)}
+                            className="text-blue-500 hover:text-blue-600"
+                            title="View User"
+                          >
+                            <EyeIcon className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

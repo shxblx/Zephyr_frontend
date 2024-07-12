@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import OrangeButton from "../../common/user/OrangeButton";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../../../api/user";
-import { useDispatch } from "react-redux";
-import { setUserInfo } from "../../../redux/slices/userSlice/userSlice";
 import { toast } from "react-toastify";
 import Loader from "../../common/user/Loader";
 
@@ -26,7 +24,6 @@ const Form: React.FC = () => {
   });
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -73,10 +70,7 @@ const Form: React.FC = () => {
     try {
       setLoading(true);
       const response = await signUp(formData);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      console.log(response);
-
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       if (response?.status === 200) {
         toast.success(response.data.message);
         navigate("/otp", {

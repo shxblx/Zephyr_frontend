@@ -101,7 +101,7 @@ const Form: React.FC = () => {
 
   return (
     <div>
-    {Loading && <Loader />}
+      {Loading && <Loader />}
       <div className="flex flex-col md:flex-row items-center min-h-screen px-4 md:px-0">
         <div className="md:ml-36 font-extrabold text-3xl md:text-5xl font-orbitron text-orange-600 my-4 md:my-auto leading-relaxed text-center md:text-left">
           Unlock Your Account,
@@ -142,9 +142,11 @@ const Form: React.FC = () => {
               {errors.password && (
                 <p className="text-red-500">{errors.password}</p>
               )}
-              <p className="flex justify-end text-ff5f09 hover:underline hover:cursor-pointer">
-                Forgot Password?
-              </p>
+              <Link to="/forgot">
+                <p className="flex justify-end text-ff5f09 hover:underline hover:cursor-pointer">
+                  Forgot Password?
+                </p>
+              </Link>
             </div>
             <div className="flex justify-center mt-12">
               <p>Don't have an Account?</p>

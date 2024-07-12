@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import OrangeButton from "../../common/user/OrangeButton";
 import { toast } from "react-toastify";
-import { verifyOTP } from "../../../api/user";
+import { forgotVerify, resendOtp, verifyOTP } from "../../../api/user";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../../redux/slices/userSlice/userSlice";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -9,6 +9,8 @@ import Loader from "../../common/user/Loader";
 
 export const Form: React.FC = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [countdown, setCountdown] = useState(10);
+  const [isResendDisabled, setIsResendDisabled] = useState(true);
   const inputRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -17,7 +19,17 @@ export const Form: React.FC = () => {
   ];
 
   const dispatch = useDispatch();
-  const [Loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else {
+      setIsResendDisabled(false);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   const handleChange = (index: number, value: string) => {
     const newOtp = [...otp];
@@ -37,23 +49,34 @@ export const Form: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const joinedOtp = otp.join("");
-
+  
     if (otp.some((digit) => digit === "")) {
       toast.error("All OTP fields must be filled.");
       return;
     }
-
+    
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      const response = await verifyOTP({
-        otp: parseInt(joinedOtp),
-        email: data.email,
-      });
-
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+  
+      let response;
+      if (data.isForgot) {
+        response = await forgotVerify({
+          email: data.email,
+          otp: parseInt(joinedOtp),
+        });
+      } else {
+        response = await verifyOTP({
+          otp: parseInt(joinedOtp),
+          email: data.email,
+        });
+      }
+  
+      console.log(response);
+  
       if (response?.status === 200) {
-        toast.success(response);
-
+        toast.success(response.data.message);
+  
         dispatch(
           setUserInfo({
             userName: data.userName,
@@ -61,13 +84,34 @@ export const Form: React.FC = () => {
             displayName: data.displayName,
           })
         );
-
+  
         navigate("/");
       } else {
-        toast.error(response);
+        toast.error(response.message);
       }
     } catch (error) {
+      console.error(error);
       toast.error("Failed to verify OTP. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  const handleResend = async () => {
+    try {
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const response = await resendOtp({ email: data.email });
+      if (response?.status === 200) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.message);
+      }
+      setIsResendDisabled(true);
+      setCountdown(10);
+    } catch (error) {
+      console.error("Failed to resend OTP", error);
     } finally {
       setLoading(false);
     }
@@ -75,7 +119,7 @@ export const Form: React.FC = () => {
 
   return (
     <div>
-      {Loading && <Loader />}
+      {loading && <Loader />}
       <div className="flex flex-col md:flex-row items-center min-h-screen px-4 md:px-0">
         <div className="md:ml-36 font-extrabold text-3xl md:text-5xl font-orbitron text-ff5f09 my-4 md:my-auto leading-relaxed text-center md:text-left">
           Verify Your Account,
@@ -100,7 +144,22 @@ export const Form: React.FC = () => {
                 />
               ))}
             </div>
-            <div className="mt-4 flex font-extrabold justify-center font-orbitron">
+            <div className="flex justify-between items-center mt-4">
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={isResendDisabled}
+                className={`font-orbitron font-bold px-4 py-3 ${
+                  isResendDisabled
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-ff5f09 text-white hover:bg-opacity-80"
+                }`}
+              >
+                Resend OTP
+              </button>
+              {isResendDisabled && (
+                <span className="font-orbitron mx-4">{countdown}s</span>
+              )}
               <OrangeButton
                 type="submit"
                 px={40}

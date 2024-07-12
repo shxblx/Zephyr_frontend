@@ -9,6 +9,7 @@ import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 import PublicRoute from "../components/protectedRoute/PublicRoute";
 import UserLayout from "../components/common/user/UserLayout";
 import Discover from "../components/user/mainhome/Discover";
+import { ForgotPassWord } from "../pages/user/ForgotPassWord";
 
 export const UserRouter = () => {
   return (
@@ -25,6 +26,10 @@ export const UserRouter = () => {
       <Route
         path="/otp"
         element={<PublicRoute element={<Otp />} redirectTo="/" />}
+      />
+      <Route
+        path="/forgot"
+        element={<PublicRoute element={<ForgotPassWord />} redirectTo="/" />}
       />
 
       {/* Routes that should have the sidebar layout */}
