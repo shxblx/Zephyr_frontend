@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import Loader from "../../common/user/Loader";
 
 const Form: React.FC = () => {
-  const [Loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     userName: "",
     displayName: "",
@@ -35,6 +35,23 @@ const Form: React.FC = () => {
     return passwordRegex.test(password);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let trimmedValue = value.trim();
+    let formattedValue = trimmedValue.toLowerCase();
+    if (name === "userName") {
+      formattedValue = formattedValue.replace(/\s/g, "");
+    }
+    setFormData({
+      ...formData,
+      [name]: formattedValue,
+    });
+    setErrors({
+      ...errors,
+      [name]: "",
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -46,15 +63,25 @@ const Form: React.FC = () => {
       confirmPassword: "",
     };
 
-    if (!formData.userName) newErrors.userName = "Username is required";
-    if (!formData.displayName)
-      newErrors.displayName = "Display name is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    else if (!validateEmail(formData.email))
-      newErrors.email = "Invalid email address";
+    if (!formData.userName) {
+      newErrors.userName = "Username is required";
+    } else if (/\s/.test(formData.userName)) {
+      newErrors.userName = "Username cannot contain spaces";
+    }
 
-    if (!formData.password) newErrors.password = "Password is required";
-    // else if (!validatePassword(formData.password)) {
+    if (!formData.displayName) {
+      newErrors.displayName = "Display name is required";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+
+    // if (!formData.password) {
+    //   newErrors.password = "Password is required";
+    // } else if (!validatePassword(formData.password)) {
     //   newErrors.password =
     //     "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
     // }
@@ -71,19 +98,19 @@ const Form: React.FC = () => {
       setLoading(true);
       const response = await signUp(formData);
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      if (response?.status === 200) {
-        toast.success(response.data.message);
+      if (response.status === 200) {
+        toast.success(response.data);
         navigate("/otp", {
           state: {
             email: formData.email,
             userName: formData.userName,
             displayName: formData.displayName,
+            profile:
+              "https://res.cloudinary.com/dsm0j8tzn/image/upload/v1720163434/_399e0eec-d6af-4840-8de3-0f8e60d8f9f1_wbqa0y.jpg",
           },
         });
-      } else if (response?.status === false) {
-        toast.error(response.message);
       } else {
-        toast.error("Failed to sign up. Please try again.");
+        toast.error(response.data);
       }
     } catch (error) {
       toast.error("Failed to sign up. Please try again.");
@@ -93,21 +120,9 @@ const Form: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    setErrors({
-      ...errors,
-      [name]: "",
-    });
-  };
-
   return (
     <div>
-      {Loading && <Loader />}
+      {loading && <Loader />}
       <div className="flex flex-col md:flex-row items-center min-h-screen px-4 md:px-0">
         <div className="md:ml-36 font-extrabold text-3xl md:text-5xl font-orbitron text-ff5f09 my-4 md:my-auto leading-relaxed text-center md:text-left">
           Create Your Account,

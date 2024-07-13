@@ -26,6 +26,9 @@ const Form: React.FC = () => {
     setLoading(true);
     try {
       const response = await forgotPassword({ email });
+      console.log(response);
+
+      const data = response.data.userData;
 
       if (response.status === 200) {
         toast.success(response.data.message);
@@ -33,10 +36,13 @@ const Form: React.FC = () => {
           state: {
             email,
             isForgot: true,
+            userName: data.userName,
+            displayName: data.displayName,
+            profile: data.profile,
           },
         });
       } else {
-        toast.error(response.data.message || "Password reset failed");
+        toast.error(response.data || "Password reset failed");
       }
     } catch (error) {
       console.error("Password reset error:", error);

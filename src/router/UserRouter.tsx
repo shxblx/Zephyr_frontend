@@ -8,8 +8,9 @@ import { MainHome } from "../pages/user/MainHome";
 import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 import PublicRoute from "../components/protectedRoute/PublicRoute";
 import UserLayout from "../components/common/user/UserLayout";
-import Discover from "../components/user/mainhome/Discover";
 import { ForgotPassWord } from "../pages/user/ForgotPassWord";
+import { UserProfile } from "../pages/user/UserProfile";
+import { ProfileSettings } from "../pages/user/ProfileSettings";
 
 export const UserRouter = () => {
   return (
@@ -32,15 +33,18 @@ export const UserRouter = () => {
         element={<PublicRoute element={<ForgotPassWord />} redirectTo="/" />}
       />
 
-      {/* Routes that should have the sidebar layout */}
       <Route element={<ProtectedRoute element={<UserLayout />} />}>
         <Route path="/home" element={<MainHome />} />
-        <Route path="/discover" element={<Discover />} />
-        {/* <Route path="/friends" element={<Friends />} />
-        <Route path="/communities" element={<Communities />} />
-        <Route path="/zepchats" element={<ZepChats />} />
-        <Route path="/support" element={<Support />} /> */}
       </Route>
+
+      <Route
+        path="/profile"
+        element={<ProtectedRoute element={<UserProfile />} />}
+      />
+      <Route
+        path="/profile/settings"
+        element={<ProtectedRoute element={<ProfileSettings />} />}
+      />
     </Routes>
   );
 };

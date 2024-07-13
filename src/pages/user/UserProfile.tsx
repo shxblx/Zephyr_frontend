@@ -1,0 +1,199 @@
+import React, { useState } from "react";
+import { Cog6ToothIcon, PencilIcon } from "@heroicons/react/24/solid";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+
+interface UserInfo {
+  displayName: string;
+  userName: string;
+  email: string;
+  profile: string;
+  status: string;
+  joined_date: string;
+}
+
+interface RootState {
+  userInfo: {
+    userInfo: UserInfo;
+  };
+}
+
+export const UserProfile: React.FC = () => {
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state: RootState) => state.userInfo);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const formattedJoinedDate = userInfo.joined_date
+    ? new Date(userInfo.joined_date).toLocaleDateString()
+    : "";
+
+  const user = {
+    displayName: userInfo.displayName,
+    username: userInfo.userName,
+    email: userInfo.email,
+    communities: ["Gaming", "Tech", "Music", "Art", "Movies"],
+    friends: ["Alice", "Bob", "Charlie", "David", "Eve"],
+    zepchats: ["Chat 1", "Chat 2", "Chat 3", "Chat 4", "Chat 5"],
+    wallet: 0,
+    joinDate: "January 2023",
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("profilePicture", selectedFile);
+
+    try {
+      // Replace with your actual API endpoint
+      const response = await fetch("/api/update-profile-picture", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        dispatch({ type: "UPDATE_PROFILE_PICTURE", payload: data.profileUrl });
+        setIsModalOpen(false);
+      } else {
+        console.error("Failed to update profile picture");
+      }
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen p-4 md:p-8 text-white">
+      <div className="mx-auto">
+        <div className="flex justify-between items-center mb-4">
+          <Link to="/profile/settings">
+            <button className="bg-transparent text-[#FF5F09] hover:text-orange-700 transition">
+              <Cog6ToothIcon className="h-6 w-6" />
+            </button>
+          </Link>
+          <p className="text-sm md:text-base">
+            <span className="font-semibold">Joined:</span> {formattedJoinedDate}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-3">
+            <div className="text-center mb-8 relative">
+              <img
+                src={userInfo.profile}
+                alt="Profile"
+                className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white"
+              />
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="absolute top-20 right-1/2 transform translate-x-16 translate-y-4 bg-ff5f09 rounded-full p-2 hover:bg-orange-700 transition"
+              >
+                <PencilIcon className="h-4 w-4 text-white" />
+              </button>
+              <h1 className="text-2xl font-bold">{user.displayName}</h1>
+              <p className="text-[#FF5F09]">@{user.username}</p>
+              <p className="text-white mt-2">{user.email}</p>
+            </div>
+
+            <div className="flex justify-center gap-4">
+              <div className="bg-gray-800 p-3 rounded-lg flex items-center space-x-2">
+                <label htmlFor="status" className="block text-sm font-medium">
+                  Status:
+                </label>
+                <select
+                  id="status"
+                  value={userInfo.status}
+                  className="bg-gray-700 text-white p-1 rounded"
+                >
+                  <option value="Online">Online</option>
+                  <option value="Idle">Idle</option>
+                  <option value="Do Not Disturb">Do Not Disturb</option>
+                </select>
+              </div>
+              <div className="bg-gray-800 p-3 rounded-lg flex items-center space-x-2">
+                <h2 className="text-sm font-medium">Wallet:</h2>
+                <p className="text-sm font-semibold">{user.wallet}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold mb-4">Communities</h2>
+            <ul className="list-disc pl-5 mb-4">
+              {user.communities.slice(0, 5).map((community, index) => (
+                <li key={index}>{community}</li>
+              ))}
+            </ul>
+            <button className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-orange-700 transition">
+              View all
+            </button>
+          </div>
+
+          <div className="bg-gray-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold mb-4">Friends</h2>
+            <ul className="list-disc pl-5 mb-4">
+              {user.friends.slice(0, 5).map((friend, index) => (
+                <li key={index}>{friend}</li>
+              ))}
+            </ul>
+            <button className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-orange-700 transition">
+              View all
+            </button>
+          </div>
+
+          <div className="bg-gray-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold mb-4">Your Zepchats</h2>
+            <ul className="list-disc pl-5 mb-4">
+              {user.zepchats.slice(0, 5).map((chat, index) => (
+                <li key={index}>{chat}</li>
+              ))}
+            </ul>
+            <button className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-orange-700 transition">
+              View all
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <h2 className="text-xl font-bold mb-4">Update Profile Picture</h2>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                accept="image/*"
+                className="mb-4"
+              />
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-[#FF5F09] text-white py-2 px-4 rounded hover:bg-orange-700 transition"
+                >
+                  Upload
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

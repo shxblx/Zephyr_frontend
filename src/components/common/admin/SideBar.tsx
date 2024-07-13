@@ -73,7 +73,7 @@ const Sidebar: React.FC = () => {
           <Link
             key={item.name}
             to={item.path}
-            className={`flex items-center py-2 px-4 rounded ${
+            className={`flex items-center py-2 px-4  ${
               location.pathname === item.path
                 ? "bg-white text-black"
                 : "text-white hover:bg-black"

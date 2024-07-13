@@ -74,21 +74,27 @@ const Form: React.FC = () => {
         setLoading(true);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         const response = await login(formData);
-        if (response.data?.status === true) {
+        console.log(response);
+
+        if (response.status === 200) {
           const userData = response.data.userData;
+          console.log(userData);
 
           dispatch(
             setUserInfo({
               userName: userData.userName,
-              email: userData.email,
+              email: formData.email,
               displayName: userData.displayName,
+              profile: userData.profile,
+              status: userData.status,
+              joined_date: userData.joined_date,
             })
           );
 
           navigate("/");
           toast.success(response.data.message);
         } else {
-          toast.error(response.data.message || "Login failed");
+          toast.error(response.data || "Login failed");
         }
       } catch (error) {
         console.error("Error during login:", error);

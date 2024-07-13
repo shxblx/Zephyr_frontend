@@ -54,7 +54,14 @@ const Navbar = () => {
           >
             <ArrowLeftEndOnRectangleIcon className="h-6 w-6" />
           </button>
-          <Link to="/profile">
+          <Link to="/profile" className="flex items-center">
+            {userInfo.profile && (
+              <img
+                src={userInfo.profile}
+                alt="Profile"
+                className="w-10 h-10 rounded-full mr-4 object-cover"
+              />
+            )}
             <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron mr-4">
               <span className="relative z-10">{userInfo.displayName}</span>
             </button>
@@ -92,15 +99,17 @@ const Navbar = () => {
     <nav className="bg-black text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
-          <span
-            className="text-3xl md:text-4xl font-bold font-orbitron"
-            style={{ color: "#FF5F09" }}
-          >
-            ZEP
-          </span>
-          <span className="text-3xl md:text-4xl font-orbitron font-bold">
-            <span className="text-transparent hyr-stroke">HYR</span>
-          </span>
+          <Link to="/">
+            <span
+              className="text-3xl md:text-4xl font-bold font-orbitron"
+              style={{ color: "#FF5F09" }}
+            >
+              ZEP
+            </span>
+            <span className="text-3xl md:text-4xl font-orbitron font-bold">
+              <span className="text-transparent hyr-stroke">HYR</span>
+            </span>
+          </Link>
         </div>
 
         <div className="md:hidden">

@@ -49,16 +49,16 @@ export const Form: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const joinedOtp = otp.join("");
-  
+
     if (otp.some((digit) => digit === "")) {
       toast.error("All OTP fields must be filled.");
       return;
     }
-    
+
     try {
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-  
+      // setLoading(true);
+      // await new Promise((resolve) => setTimeout(resolve, 2000));
+
       let response;
       if (data.isForgot) {
         response = await forgotVerify({
@@ -71,23 +71,27 @@ export const Form: React.FC = () => {
           email: data.email,
         });
       }
-  
-      console.log(response);
-  
+      console.log(response.data.userData);
+
+      let userData = response.data.userData;
+
       if (response?.status === 200) {
         toast.success(response.data.message);
-  
+
         dispatch(
           setUserInfo({
             userName: data.userName,
             email: data.email,
             displayName: data.displayName,
+            profile: data.profile,
+            status: userData.status,
+            joined_date: userData.joined_date,
           })
         );
-  
+
         navigate("/");
       } else {
-        toast.error(response.message);
+        toast.error(response.data);
       }
     } catch (error) {
       console.error(error);
@@ -96,17 +100,16 @@ export const Form: React.FC = () => {
       setLoading(false);
     }
   };
-  
 
   const handleResend = async () => {
     try {
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await resendOtp({ email: data.email });
-      if (response?.status === 200) {
+      if (response.status === 200) {
         toast.success(response.data.message);
       } else {
-        toast.error(response.message);
+        toast.error(response.data);
       }
       setIsResendDisabled(true);
       setCountdown(10);
