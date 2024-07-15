@@ -19,6 +19,7 @@ export const verifyOTP = async (data: { otp: number; email: string }) => {
   try {
 
     const response = await Api.post(userRoutes.verifyOTP, data);
+
     return response
   } catch (error: any) {
     if (error.response) {
@@ -85,7 +86,9 @@ export const forgotPassword = async (data: { email: string }) => {
 
 export const forgotVerify = async (data: { email: string; otp: number }) => {
   try {
+
     const response = await Api.post(userRoutes.forgotVerify, data);
+
 
     return response;
   } catch (error: any) {
@@ -97,3 +100,23 @@ export const forgotVerify = async (data: { email: string; otp: number }) => {
     throw error;
   }
 };
+
+export const getUserInfo = async (data: { userId: string }) => {
+  try {
+    const response = await Api.get(`${userRoutes.getUserInfo}/${data.userId}`);
+    return response
+  } catch (error) {
+    console.error("Error in getUserInfo:", error);
+    throw error;
+  }
+}
+
+
+export const changeStatus = async (data: { status: string, userId: string }) => {
+  try {
+    const response = await Api.put(userRoutes.changeStatus, data)
+    return response
+  } catch (error) {
+
+  }
+}

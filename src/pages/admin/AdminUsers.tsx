@@ -8,6 +8,7 @@ import { blockUser, getUsers, unblockUser } from "../../api/admin";
 import { NoSymbolIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import Loader from "../../components/common/admin/Loader";
+import { toast } from "react-toastify";
 
 interface User {
   _id: string;
@@ -26,9 +27,13 @@ const AdminUsers: React.FC = () => {
     const fetchUsers = async () => {
       try {
         const response = await getUsers();
+        console.log(response);
+
         if (response && response.data) {
           const data = response.data.data;
           setUsers(data);
+        } else {
+          toast.error(response.message);
         }
       } catch (error) {
         console.error("Error fetching users:", error);

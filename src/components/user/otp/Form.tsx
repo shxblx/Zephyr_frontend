@@ -56,8 +56,8 @@ export const Form: React.FC = () => {
     }
 
     try {
-      // setLoading(true);
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       let response;
       if (data.isForgot) {
@@ -71,7 +71,6 @@ export const Form: React.FC = () => {
           email: data.email,
         });
       }
-      console.log(response.data.userData);
 
       let userData = response.data.userData;
 
@@ -80,12 +79,17 @@ export const Form: React.FC = () => {
 
         dispatch(
           setUserInfo({
-            userName: data.userName,
-            email: data.email,
-            displayName: data.displayName,
-            profile: data.profile,
+            userName: userData.userName,
+            email: userData.email,
+            displayName: userData.displayName,
+            profile: userData.profilePicture,
             status: userData.status,
             joined_date: userData.joined_date,
+            userId: userData._id,
+            wallet: userData.wallet,
+            isPremium: userData.isPremium,
+            isBlocked: userData.isBlocked,
+            isAdmin: userData.isAdmin,
           })
         );
 

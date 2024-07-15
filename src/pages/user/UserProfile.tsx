@@ -1,7 +1,10 @@
-import React, { useState } from "react";
-import { Cog6ToothIcon, PencilIcon } from "@heroicons/react/24/solid";
+import { Cog6ToothIcon, EyeIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { setUserInfo } from "../../redux/slices/userSlice/userSlice";
+import { useState } from "react";
+import { changeStatus } from "../../api/user";
 
 interface UserInfo {
   displayName: string;
@@ -10,6 +13,7 @@ interface UserInfo {
   profile: string;
   status: string;
   joined_date: string;
+  userId: string;
 }
 
 interface RootState {
@@ -23,6 +27,8 @@ export const UserProfile: React.FC = () => {
   const { userInfo } = useSelector((state: RootState) => state.userInfo);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+ 
 
   const formattedJoinedDate = userInfo.joined_date
     ? new Date(userInfo.joined_date).toLocaleDateString()
@@ -48,20 +54,15 @@ export const UserProfile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedFile) return;
+    console.log(selectedFile);
 
     const formData = new FormData();
     formData.append("profilePicture", selectedFile);
 
     try {
-      // Replace with your actual API endpoint
-      const response = await fetch("/api/update-profile-picture", {
-        method: "POST",
-        body: formData,
-      });
+      const response = "update function";
 
-      if (response.ok) {
-        const data = await response.json();
-        dispatch({ type: "UPDATE_PROFILE_PICTURE", payload: data.profileUrl });
+      if (response) {
         setIsModalOpen(false);
       } else {
         console.error("Failed to update profile picture");
@@ -70,6 +71,34 @@ export const UserProfile: React.FC = () => {
       console.error("Error updating profile picture:", error);
     }
   };
+
+  const handleStatusChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newStatus = e.target.value;
+    try {
+      const response = await changeStatus({
+        status: newStatus,
+        userId: userInfo.userId,
+      });
+  
+      if (response?.status === 200) {
+        dispatch(
+          setUserInfo({
+            ...userInfo,
+            status: newStatus,
+          })
+        );
+        toast.success(response.data);
+        setIsModalOpen(false); 
+      } else {
+        toast.error(response?.data);
+      }
+    } catch (error: any) {
+      toast.error("Error updating status:", error);
+    }
+  };
+  
 
   return (
     <div className="min-h-screen p-4 md:p-8 text-white">
@@ -113,6 +142,7 @@ export const UserProfile: React.FC = () => {
                   id="status"
                   value={userInfo.status}
                   className="bg-gray-700 text-white p-1 rounded"
+                  onChange={handleStatusChange}
                 >
                   <option value="Online">Online</option>
                   <option value="Idle">Idle</option>
@@ -122,6 +152,11 @@ export const UserProfile: React.FC = () => {
               <div className="bg-gray-800 p-3 rounded-lg flex items-center space-x-2">
                 <h2 className="text-sm font-medium">Wallet:</h2>
                 <p className="text-sm font-semibold">{user.wallet}</p>
+                <button>
+                  <Link to="/profile/wallet">
+                    <EyeIcon className="h-5 w-5 text-ff5f09" />
+                  </Link>
+                </button>
               </div>
             </div>
           </div>

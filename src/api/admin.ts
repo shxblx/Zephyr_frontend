@@ -20,15 +20,19 @@ export const getUsers = async () => {
     const data = await Api.get(adminRoutes.getUsers);
 
     return data;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    if (error.response) {
+      return error.response.data
+    } else {
+      console.error("Error", error.message)
+    }
+    throw error
   }
 };
 
 export const blockUser = async (data: { userId: string }) => {
   try {
     const response = await Api.post(adminRoutes.blockUser, data)
-    console.log("response in api " + response);
 
     return response
   } catch (error: any) {

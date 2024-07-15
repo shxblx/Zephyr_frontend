@@ -74,22 +74,28 @@ const Form: React.FC = () => {
         setLoading(true);
         await new Promise((resolve) => setTimeout(resolve, 3000));
         const response = await login(formData);
-        console.log(response);
 
         if (response.status === 200) {
-          const userData = response.data.userData;
+          const { userData, token } = response.data;
           console.log(userData);
 
           dispatch(
             setUserInfo({
               userName: userData.userName,
-              email: formData.email,
+              email: userData.email,
               displayName: userData.displayName,
-              profile: userData.profile,
+              profile: userData.profilePicture,
               status: userData.status,
               joined_date: userData.joined_date,
+              userId: userData._id,
+              wallet: userData.wallet,
+              isPremium: userData.isPremium,
+              isBlocked: userData.isBlocked,
+              isAdmin: userData.isAdmin,
             })
           );
+
+          localStorage.setItem("token", token);
 
           navigate("/");
           toast.success(response.data.message);

@@ -15,19 +15,16 @@ export const ProfileSettings = () => {
   const handleUsernameChange = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Username change submitted", { username });
-    // Add logic to update username
   };
 
   const handleDisplayNameChange = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Display name change submitted", { displayName });
-    // Add logic to update display name
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Password change submitted", { currentPassword, newPassword, confirmPassword });
-    // Add logic to update password
   };
 
   return (

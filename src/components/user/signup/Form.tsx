@@ -38,8 +38,13 @@ const Form: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let trimmedValue = value.trim();
-    let formattedValue = trimmedValue.toLowerCase();
-    if (name === "userName") {
+    let formattedValue;
+    if (name !== "displayName") {
+      formattedValue = trimmedValue.toLowerCase();
+    } else {
+      formattedValue = value;
+    }
+    if (name === "userName" && formattedValue) {
       formattedValue = formattedValue.replace(/\s/g, "");
     }
     setFormData({

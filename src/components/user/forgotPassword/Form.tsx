@@ -26,8 +26,6 @@ const Form: React.FC = () => {
     setLoading(true);
     try {
       const response = await forgotPassword({ email });
-      console.log(response);
-
       const data = response.data.userData;
 
       if (response.status === 200) {
