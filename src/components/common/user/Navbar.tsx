@@ -3,7 +3,10 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { removeUserInfo } from "../../../redux/slices/userSlice/userSlice";
-import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowLeftEndOnRectangleIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import { logout } from "../../../api/user";
 
@@ -46,6 +49,19 @@ const Navbar = () => {
 
   const renderButton = () => {
     if (userInfo && userInfo.displayName) {
+      const getStatusColor = () => {
+        switch (userInfo.status) {
+          case "Online":
+            return "bg-green-500";
+          case "Do Not Disturb":
+            return "bg-red-500";
+          case "Idle":
+            return "bg-yellow-500";
+          default:
+            return "bg-gray-500";
+        }
+      };
+
       return (
         <div className="flex items-center">
           <button
@@ -55,13 +71,20 @@ const Navbar = () => {
             <ArrowLeftEndOnRectangleIcon className="h-6 w-6" />
           </button>
           <Link to="/profile" className="flex items-center">
-            {userInfo.profile && (
-              <img
-                src={userInfo.profile}
-                alt="Profile"
-                className="w-10 h-10 rounded-full mr-4 object-cover"
-              />
-            )}
+            <div className="relative">
+              {userInfo.profile ? (
+                <img
+                  src={userInfo.profile}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full mr-4 object-cover"
+                />
+              ) : (
+                <UserCircleIcon className="w-12 h-12 text-[#FF5F09] mr-4" />
+              )}
+              <div
+                className={`absolute top-8 right-4 w-3 h-3 ${getStatusColor()} rounded-full border-2 border-black`}
+              ></div>
+            </div>
             <button className="orange-button text-white text-l focus:outline-none border-2 border-[#FF5F09] px-8 py-2 font-bold font-orbitron mr-4">
               <span className="relative z-10">{userInfo.displayName}</span>
             </button>

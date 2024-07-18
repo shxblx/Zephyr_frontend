@@ -11,7 +11,8 @@ const userRoutes = {
   getUserInfo: "user/getUser",
   changeUserName: "user/changeUserName",
   changeDisplayName: "user/changeDisplayName",
-  changePassword: "user/changePassword"
+  changePassword: "user/changePassword",
+  changeProfile: "user/changeProfile"
 };
 
 export default userRoutes;

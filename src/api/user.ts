@@ -115,6 +115,24 @@ export const getUserInfo = async (data: { userId: string }) => {
   }
 }
 
+export const changeProfile = async (data: FormData) => {
+  try {
+    const response = await Api.put(userRoutes.changeProfile, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
 
 export const changeStatus = async (data: { status: string, userId: string }) => {
   try {
