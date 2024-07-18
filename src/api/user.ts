@@ -105,8 +105,12 @@ export const getUserInfo = async (data: { userId: string }) => {
   try {
     const response = await Api.get(`${userRoutes.getUserInfo}/${data.userId}`);
     return response
-  } catch (error) {
-    console.error("Error in getUserInfo:", error);
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
     throw error;
   }
 }
@@ -116,7 +120,54 @@ export const changeStatus = async (data: { status: string, userId: string }) => 
   try {
     const response = await Api.put(userRoutes.changeStatus, data)
     return response
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+}
 
+export const changeUserName = async (data: { userId: string, newName: string }) => {
+  try {
+    const response = await Api.put(userRoutes.changeUserName, data)
+    return response
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+}
+
+export const changeDisplayName = async (data: { userId: string, newName: string }) => {
+  try {
+    const response = await Api.put(userRoutes.changeDisplayName, data)
+    return response
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+}
+
+export const changePassword = async (data: { userId: string, currentPassword: string, newPassword: string }) => {
+  try {
+    const response = await Api.put(userRoutes.changePassword, data)
+    return response
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
   }
 }

@@ -37,20 +37,27 @@ const Form: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    let trimmedValue = value.trim();
-    let formattedValue;
-    if (name !== "displayName") {
-      formattedValue = trimmedValue.toLowerCase();
+
+    if (
+      name === "displayName" ||
+      name === "password" ||
+      name === "confirmPassword"
+    ) {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
     } else {
-      formattedValue = value;
+      let processedValue = value.trim().toLowerCase();
+      if (name === "userName") {
+        processedValue = processedValue.replace(/\s/g, "");
+      }
+      setFormData({
+        ...formData,
+        [name]: processedValue,
+      });
     }
-    if (name === "userName" && formattedValue) {
-      formattedValue = formattedValue.replace(/\s/g, "");
-    }
-    setFormData({
-      ...formData,
-      [name]: formattedValue,
-    });
+
     setErrors({
       ...errors,
       [name]: "",
@@ -84,12 +91,12 @@ const Form: React.FC = () => {
       newErrors.email = "Invalid email address";
     }
 
-    // if (!formData.password) {
-    //   newErrors.password = "Password is required";
-    // } else if (!validatePassword(formData.password)) {
-    //   newErrors.password =
-    //     "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
-    // }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (!validatePassword(formData.password)) {
+      newErrors.password =
+        "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
+    }
 
     if (formData.confirmPassword !== formData.password) {
       newErrors.confirmPassword = "Passwords do not match";
