@@ -189,3 +189,4 @@ export const changePassword = async (data: { userId: string, currentPassword: st
     throw error;
   }
 }
+

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import OrangeButton from "../../common/user/OrangeButton";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { forgotPassword } from "../../../api/user";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../common/user/Loader";

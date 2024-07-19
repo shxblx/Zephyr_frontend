@@ -12,7 +12,8 @@ const userRoutes = {
   changeUserName: "user/changeUserName",
   changeDisplayName: "user/changeDisplayName",
   changePassword: "user/changePassword",
-  changeProfile: "user/changeProfile"
+  changeProfile: "user/changeProfile",
+  getGlobalFriends: "user/getGlobalFriends"
 };
 
 export default userRoutes;

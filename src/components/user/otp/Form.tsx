@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import OrangeButton from "../../common/user/OrangeButton";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { forgotVerify, resendOtp, verifyOTP } from "../../../api/user";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../../redux/slices/userSlice/userSlice";

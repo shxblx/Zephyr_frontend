@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import styles from "./AdminLogin.module.css";
 import { adminLogin } from "../../api/admin";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const AnimatedLoginPage: React.FC = () => {

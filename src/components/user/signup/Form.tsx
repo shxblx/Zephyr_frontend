@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import OrangeButton from "../../common/user/OrangeButton";
 import { Link, useNavigate } from "react-router-dom";
 import { signUp } from "../../../api/user";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import Loader from "../../common/user/Loader";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 const Form: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -14,7 +15,7 @@ const Form: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
-
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({
     userName: "",
     displayName: "",
@@ -22,7 +23,9 @@ const Form: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
-
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const navigate = useNavigate();
 
   const validateEmail = (email: string) => {
@@ -193,18 +196,29 @@ const Form: React.FC = () => {
               />
               {errors.email && <p className="text-red-500">{errors.email}</p>}
             </div>
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label className="block text-black-700 mb-2" htmlFor="password">
                 Password
               </label>
               <input
-                className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09"
-                type="password"
+                className="w-full border-b-2 border-black-300 outline-none focus:border-ff5f09 pr-10"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 value={formData.password}
                 name="password"
                 onChange={handleChange}
               />
+              <button
+                type="button"
+                className="absolute right-2 top-8 text-gray-500"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="h-5 w-5" />
+                ) : (
+                  <EyeIcon className="h-5 w-5" />
+                )}
+              </button>
               {errors.password && (
                 <p className="text-red-500">{errors.password}</p>
               )}
