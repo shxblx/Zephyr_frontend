@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot } from "@fortawesome/free-solid-svg-icons";
-import Communities from "../../common/user/Dcommunities";
-import FriendSuggestions from "../../common/user/Dfriends";
-import ZepChats from "../../common/user/Dzepchats";
+import Communities from "./Dcommunities";
+import FriendSuggestions from "./Dfriends";
+import ZepChats from "./Dzepchats";
 
 const Discover: React.FC = () => {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);

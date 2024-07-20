@@ -72,7 +72,10 @@ export const UserProfile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
     e.preventDefault();
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      setLoading(false);
+      return toast.error("Please choose an image");
+    }
     const formData = new FormData();
     formData.append("profilePicture", selectedFile);
     formData.append("userId", userInfo.userId);

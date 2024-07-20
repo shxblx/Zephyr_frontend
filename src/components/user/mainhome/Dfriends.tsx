@@ -5,8 +5,9 @@ import {
   PlusIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CheckIcon,
 } from "@heroicons/react/24/outline";
-import { getGlobalFriends } from "../../../api/friends";
+import { addFriend, getGlobalFriends } from "../../../api/friends";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
@@ -22,15 +23,16 @@ const FriendSuggestions: React.FC = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentFriendIndex, setCurrentFriendIndex] = useState(0);
+  const [addedFriends, setAddedFriends] = useState<Set<string>>(new Set());
   const touchStartX = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       try {
-        const response = await getGlobalFriends();
-        console.log(response.data.users);
+        const response = await getGlobalFriends(userInfo.userId);
 
         if (response && response.data && response.data.users) {
           const filteredFriends = response.data.users.filter(
@@ -48,7 +50,7 @@ const FriendSuggestions: React.FC = () => {
       }
     };
     fetchUsers();
-  }, []);
+  }, [userInfo.userId]);
 
   const nextFriend = () => {
     setCurrentFriendIndex((prevIndex) =>
@@ -82,6 +84,21 @@ const FriendSuggestions: React.FC = () => {
     }
   };
 
+  const handleAddFriend = async (friendId: string) => {
+    try {
+      const response = await addFriend({ userId: userInfo.userId, friendId });
+      if (response && response.status === 200) {
+        toast.success("Friend added successfully!");
+        setAddedFriends(prev => new Set(prev).add(friendId));
+      } else {
+        toast.error(response.data);
+      }
+    } catch (error) {
+      console.error("Error adding friend:", error);
+      toast.error("An error occurred while adding friend.");
+    }
+  };
+
   const handleTouchEnd = () => {
     touchStartX.current = null;
   };
@@ -110,7 +127,13 @@ const FriendSuggestions: React.FC = () => {
         Friend Suggestions
       </h2>
       {loading ? (
-        <div>Loading...</div>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-24 h-24 bg-gray-700 rounded-full animate-pulse"></div>
+          <div className="w-32 h-4 bg-gray-700 rounded animate-pulse"></div>
+          <div className="w-24 h-4 bg-gray-700 rounded animate-pulse"></div>
+          <div className="w-36 h-8 bg-gray-700 rounded-full animate-pulse mt-2"></div>
+          <div className="text-gray-400 mt-2">Fetching users...</div>
+        </div>
       ) : friends.length === 0 ? (
         <div>No friend suggestions available.</div>
       ) : (
@@ -153,8 +176,19 @@ const FriendSuggestions: React.FC = () => {
                       @{friend.userName}
                     </p>
                     {isCenter && (
-                      <button className="bg-ff5f09 text-white p-2 rounded-full hover:bg-orange-600 transition-colors">
-                        <PlusIcon className="w-5 h-5" />
+                      <button
+                        onClick={() => handleAddFriend(friend._id)}
+                        className={`p-2 rounded-full transition-colors ${
+                          addedFriends.has(friend._id)
+                            ? "bg-green-500 hover:bg-green-600"
+                            : "bg-ff5f09 hover:bg-orange-600"
+                        }`}
+                      >
+                        {addedFriends.has(friend._id) ? (
+                          <CheckIcon className="w-5 h-5 text-white" />
+                        ) : (
+                          <PlusIcon className="w-5 h-5 text-white" />
+                        )}
                       </button>
                     )}
                   </div>
@@ -181,7 +215,7 @@ const FriendSuggestions: React.FC = () => {
           to="/friends"
           className="inline-block text-white px-4 py-2 text-sm bg-ff5f09 hover:bg-orange-600 transition-colors rounded"
         >
-          View All Suggestions
+          View All
         </Link>
       </div>
     </div>

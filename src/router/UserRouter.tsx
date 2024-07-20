@@ -11,6 +11,7 @@ import UserLayout from "../components/common/user/UserLayout";
 import { ForgotPassWord } from "../pages/user/ForgotPassWord";
 import { UserProfile } from "../pages/user/UserProfile";
 import { ProfileSettings } from "../pages/user/ProfileSettings";
+import FindFriends from "../components/user/Friends/FindFriends";
 
 export const UserRouter = () => {
   return (
@@ -35,6 +36,7 @@ export const UserRouter = () => {
 
       <Route element={<ProtectedRoute element={<UserLayout />} />}>
         <Route path="/home" element={<MainHome />} />
+        <Route path="/findFriends" element={<FindFriends />} />
       </Route>
 
       <Route

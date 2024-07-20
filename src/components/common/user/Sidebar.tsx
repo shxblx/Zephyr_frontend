@@ -11,13 +11,13 @@ import {
 interface NavItemProps {
   icon: React.ReactNode;
   text: string;
-  to: string;
+  to: string[];
   active: boolean;
 }
 
 const NavItem: React.FC<NavItemProps> = ({ icon, text, to, active }) => (
   <Link
-    to={to}
+    to={to[0]} // Use the first path in the array for the `to` prop
     className={`flex items-center p-2 rounded-lg ${
       active
         ? "bg-ff5f09 text-white"
@@ -36,16 +36,18 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { icon: <HomeIcon />, text: "Discover", to: "/home" },
-    { icon: <UserGroupIcon />, text: "Friends", to: "/friends" },
-    { icon: <GlobeAltIcon />, text: "Communities", to: "/communities" },
-    { icon: <ChatBubbleLeftRightIcon />, text: "Zepchats", to: "/zepchats" },
-    { icon: <QuestionMarkCircleIcon />, text: "Support", to: "/support" },
+    { icon: <HomeIcon />, text: "Discover", to: ["/home"] },
+    { icon: <UserGroupIcon />, text: "Friends", to: ["/friends", "/findFriends"] },
+    { icon: <GlobeAltIcon />, text: "Communities", to: ["/communities"] },
+    { icon: <ChatBubbleLeftRightIcon />, text: "Zepchats", to: ["/zepchats"] },
+    { icon: <QuestionMarkCircleIcon />, text: "Support", to: ["/support"] },
   ];
+
+  const isActive = (paths: string[]) =>
+    paths.some(path => location.pathname === path);
 
   return (
     <>
-      {/* Mobile Top Navigation */}
       <nav className="lg:hidden fixed top-16 left-0 right-0 bg-black z-20 border-b border-gray-700">
         <ul className="flex justify-around py-2">
           {navItems.map((item) => (
@@ -54,7 +56,7 @@ const Sidebar: React.FC = () => {
                 icon={item.icon}
                 text={item.text}
                 to={item.to}
-                active={location.pathname === item.to}
+                active={isActive(item.to)}
               />
             </li>
           ))}
@@ -71,7 +73,7 @@ const Sidebar: React.FC = () => {
                   icon={item.icon}
                   text={item.text}
                   to={item.to}
-                  active={location.pathname === item.to}
+                  active={isActive(item.to)}
                 />
               </li>
             ))}
