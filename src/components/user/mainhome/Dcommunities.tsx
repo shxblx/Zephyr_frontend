@@ -37,7 +37,7 @@ const Communities: React.FC = () => {
         {communities.map((community) => (
           <div
             key={community.id}
-            className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 border-2 border-gray-600 p-3"
+            className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 rounded-md border-2 border-gray-600 p-3"
           >
             <img
               src={community.imageUrl}

@@ -1,4 +1,3 @@
-import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Homepage } from "../pages/user/Homepage";
 import { Signup } from "../pages/user/Signup";
@@ -11,7 +10,10 @@ import UserLayout from "../components/common/user/UserLayout";
 import { ForgotPassWord } from "../pages/user/ForgotPassWord";
 import { UserProfile } from "../pages/user/UserProfile";
 import { ProfileSettings } from "../pages/user/ProfileSettings";
-import FindFriends from "../components/user/Friends/FindFriends";
+import FindFriends from "../pages/user/Friends/FindFriends";
+import MyFriends from "../pages/user/Friends/MyFriends";
+import MyCommunties from "../pages/user/community/MyCommunties";
+import CreateCommunity from "../pages/user/community/CreateCommunity";
 
 export const UserRouter = () => {
   return (
@@ -36,7 +38,9 @@ export const UserRouter = () => {
 
       <Route element={<ProtectedRoute element={<UserLayout />} />}>
         <Route path="/home" element={<MainHome />} />
-        <Route path="/findFriends" element={<FindFriends />} />
+        <Route path="/findfriends" element={<FindFriends />} />
+        <Route path="/friends" element={<MyFriends />} />
+        <Route path="/communities" element={<MyCommunties />} />
       </Route>
 
       <Route

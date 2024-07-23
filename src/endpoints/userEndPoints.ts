@@ -1,4 +1,5 @@
 
+
 const userRoutes = {
   signUp: "user/signup",
   verifyOTP: "user/verifyOtp",
@@ -14,7 +15,10 @@ const userRoutes = {
   changePassword: "user/changePassword",
   changeProfile: "user/changeProfile",
   getGlobalFriends: "user/getGlobalFriends",
-  addFriend: "user/addFriend"
+  addFriend: "user/addFriend",
+  getFriends: "user/getFriends",
+  getAllUsers: "user/getAllUsers",
+  createCommuity: "user/createCommunity"
 };
 
 export default userRoutes;

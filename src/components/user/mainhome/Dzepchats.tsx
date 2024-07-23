@@ -23,7 +23,7 @@ const ZepChats: React.FC = () => {
   ];
 
   return (
-    <div className="p-4 border-2 border-gray-600 bg-gray-900">
+    <div className="p-4 border-2 border-gray-600">
       <h2 className="text-white text-xl font-semibold mb-4 flex items-center">
         <ChatBubbleLeftRightIcon className="w-6 h-6 mr-2" />
         ZepChats
@@ -32,13 +32,13 @@ const ZepChats: React.FC = () => {
         {zepChats.map((chat) => (
           <div
             key={chat.id}
-            className="bg-gray-800 p-3 flex flex-col sm:flex-row items-center justify-between rounded-lg"
+            className="border-2 border-gray-600 p-3 flex flex-col sm:flex-row items-center justify-between rounded-lg"
           >
             <div className="text-center sm:text-left mb-2 sm:mb-0">
               <h3 className="text-white font-semibold">{chat.name}</h3>
               <p className="text-gray-300 text-sm">{chat.description}</p>
             </div>
-            <button className="bg-ff5f09 text-white p-2 rounded-full hover:bg-orange-600 transition-colors flex items-center">
+            <button className="bg-[#FF5F09] text-white p-2 rounded-full hover:bg-orange-600 transition-colors flex items-center">
               <EyeIcon className="w-5 h-5 mr-1" />
               View
             </button>
@@ -47,7 +47,7 @@ const ZepChats: React.FC = () => {
       </div>
       <Link
         to="/zepchats"
-        className="mt-4 inline-block text-white px-4 py-2 text-sm bg-ff5f09 hover:bg-orange-600 transition-colors rounded"
+        className="mt-4 inline-block text-white px-4 py-2 text-sm bg-[#FF5F09] hover:bg-orange-600 transition-colors rounded"
       >
         View All ZepChats
       </Link>

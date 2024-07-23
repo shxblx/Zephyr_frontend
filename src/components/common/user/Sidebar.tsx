@@ -37,7 +37,7 @@ const Sidebar: React.FC = () => {
 
   const navItems = [
     { icon: <HomeIcon />, text: "Discover", to: ["/home"] },
-    { icon: <UserGroupIcon />, text: "Friends", to: ["/friends", "/findFriends"] },
+    { icon: <UserGroupIcon />, text: "Friends", to: ["/friends", "/findfriends"] },
     { icon: <GlobeAltIcon />, text: "Communities", to: ["/communities"] },
     { icon: <ChatBubbleLeftRightIcon />, text: "Zepchats", to: ["/zepchats"] },
     { icon: <QuestionMarkCircleIcon />, text: "Support", to: ["/support"] },
@@ -48,7 +48,8 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      <nav className="lg:hidden fixed top-16 left-0 right-0 bg-black z-20 border-b border-gray-700">
+      {/* Mobile Sidebar */}
+      <nav className="lg:hidden fixed top-16 left-0 right-0 bg-black z-50 border-b border-gray-700">
         <ul className="flex justify-around py-2">
           {navItems.map((item) => (
             <li key={item.text}>

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { removeUserInfo } from "../../../redux/slices/userSlice/userSlice";
 import {
   ArrowLeftEndOnRectangleIcon,
+  MagnifyingGlassIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
@@ -74,6 +75,14 @@ const MainNavbar = () => {
 
       return (
         <div className="flex items-center">
+          <Link to="findfriends">
+            <button
+              className="text-white mr-4 hover:text-[#FF5F09] transition duration-300 ease-in-out"
+              title="Search for Friends"
+            >
+              <MagnifyingGlassIcon className="h-6 w-6 mt-1" />
+            </button>
+          </Link>
           <button
             onClick={handleLogout}
             className="text-white mr-4 hover:text-[#FF5F09] transition duration-300 ease-in-out"

@@ -6,6 +6,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CheckIcon,
+  UserIcon, // Importing UserIcon from Heroicons for default profile icon
 } from "@heroicons/react/24/outline";
 import { addFriend, getGlobalFriends } from "../../../api/friends";
 import { toast } from "react-hot-toast";
@@ -15,7 +16,7 @@ interface Friend {
   _id: string;
   userName: string;
   displayName: string;
-  profilePicture: string;
+  profilePicture: string | null; // Allow null for missing profile pictures
 }
 
 const FriendSuggestions: React.FC = () => {
@@ -89,7 +90,7 @@ const FriendSuggestions: React.FC = () => {
       const response = await addFriend({ userId: userInfo.userId, friendId });
       if (response && response.status === 200) {
         toast.success("Friend added successfully!");
-        setAddedFriends(prev => new Set(prev).add(friendId));
+        setAddedFriends((prev) => new Set(prev).add(friendId));
       } else {
         toast.error(response.data);
       }
@@ -164,11 +165,17 @@ const FriendSuggestions: React.FC = () => {
                   }`}
                 >
                   <div className="flex flex-col items-center space-y-2">
-                    <img
-                      src={friend.profilePicture}
-                      alt={friend.displayName}
-                      className="w-24 h-24 rounded-full object-cover"
-                    />
+                    {friend.profilePicture ? (
+                      <img
+                        src={friend.profilePicture}
+                        alt={friend.displayName}
+                        className="w-24 h-24 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 bg-ff5f09 rounded-full flex items-center justify-center">
+                        <UserIcon className="w-12 h-12 text-white" />
+                      </div>
+                    )}
                     <h3 className="text-white text-lg font-semibold text-center">
                       {friend.displayName}
                     </h3>
@@ -181,7 +188,7 @@ const FriendSuggestions: React.FC = () => {
                         className={`p-2 rounded-full transition-colors ${
                           addedFriends.has(friend._id)
                             ? "bg-green-500 hover:bg-green-600"
-                            : "bg-ff5f09 hover:bg-orange-600"
+                            : "bg-[#ff5f09] hover:bg-orange-600"
                         }`}
                       >
                         {addedFriends.has(friend._id) ? (
@@ -198,13 +205,13 @@ const FriendSuggestions: React.FC = () => {
           </div>
           <button
             onClick={prevFriend}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-ff5f09 text-white p-2 rounded-full hover:bg-orange-600 transition-colors z-30"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#ff5f09] text-white p-2 rounded-full hover:bg-orange-600 transition-colors z-30"
           >
             <ChevronLeftIcon className="w-6 h-6" />
           </button>
           <button
             onClick={nextFriend}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-ff5f09 text-white p-2 rounded-full hover:bg-orange-600 transition-colors z-30"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#ff5f09] text-white p-2 rounded-full hover:bg-orange-600 transition-colors z-30"
           >
             <ChevronRightIcon className="w-6 h-6" />
           </button>
@@ -213,7 +220,7 @@ const FriendSuggestions: React.FC = () => {
       <div className="flex justify-center mt-4">
         <Link
           to="/friends"
-          className="inline-block text-white px-4 py-2 text-sm bg-ff5f09 hover:bg-orange-600 transition-colors rounded"
+          className="inline-block text-white px-4 py-2 text-sm bg-[#ff5f09] hover:bg-orange-600 transition-colors rounded"
         >
           View All
         </Link>
