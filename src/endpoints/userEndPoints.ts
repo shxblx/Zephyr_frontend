@@ -18,7 +18,13 @@ const userRoutes = {
   addFriend: "user/addFriend",
   getFriends: "user/getFriends",
   getAllUsers: "user/getAllUsers",
-  createCommuity: "user/createCommunity"
+  removeFriend: "user/removeFriend",
+  createCommuity: "user/createCommunity",
+  getCommunities: "user/getCommunities",
+  getMyCommunity: "user/getMyCommunity",
+  joinCommunity: "user/joinCommunity",
+  leaveCommunity: "user/leaveCommunity",
+  getMembers: "user/getMembers"
 };
 
 export default userRoutes;

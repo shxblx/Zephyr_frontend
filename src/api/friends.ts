@@ -65,3 +65,17 @@ export const fetchAllUsers = async (searchText?: string) => {
         throw error;
     }
 }
+
+export const removeFriend = async (data: { userId: string, friendId: string }) => {
+    try {
+        const response = await Api.patch(userRoutes.removeFriend, data)
+        return response
+    } catch (error: any) {
+        if (error.response) {
+            return error.response;
+        } else {
+            console.error("Error", error.message);
+        }
+        throw error;
+    }
+}

@@ -94,12 +94,12 @@ const Form: React.FC = () => {
       newErrors.email = "Invalid email address";
     }
 
-    // if (!formData.password) {
-    //   newErrors.password = "Password is required";
-    // } else if (!validatePassword(formData.password)) {
-    //   newErrors.password =
-    //     "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
-    // }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (!validatePassword(formData.password)) {
+      newErrors.password =
+        "Password must be at least 8 characters long and include a number, an uppercase letter, and a lowercase letter";
+    }
 
     if (formData.confirmPassword !== formData.password) {
       newErrors.confirmPassword = "Passwords do not match";

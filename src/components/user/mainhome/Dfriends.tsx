@@ -16,7 +16,7 @@ interface Friend {
   _id: string;
   userName: string;
   displayName: string;
-  profilePicture: string | null; // Allow null for missing profile pictures
+  profilePicture: string | null;
 }
 
 const FriendSuggestions: React.FC = () => {
@@ -219,7 +219,7 @@ const FriendSuggestions: React.FC = () => {
       )}
       <div className="flex justify-center mt-4">
         <Link
-          to="/friends"
+          to="/findfriends"
           className="inline-block text-white px-4 py-2 text-sm bg-[#ff5f09] hover:bg-orange-600 transition-colors rounded"
         >
           View All

@@ -1,16 +1,23 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   UsersIcon,
   ChatBubbleLeftRightIcon,
   FlagIcon,
   QuestionMarkCircleIcon,
   ChartBarIcon,
+  ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/outline";
+import { adminLogout } from "../../../api/admin";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { removeAdminInfo } from "../../../redux/slices/adminSlice/adminSlice";
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const navItems = [
     { name: "Dashboard", icon: ChartBarIcon, path: "/admin/dashboard" },
@@ -23,6 +30,21 @@ const Sidebar: React.FC = () => {
     { name: "Reports", icon: FlagIcon, path: "/admin/reports" },
     { name: "Support", icon: QuestionMarkCircleIcon, path: "/admin/support" },
   ];
+
+  const handleLogout = async () => {
+    try {
+      const response = await adminLogout();
+      if (response.status === 200) {
+        dispatch(removeAdminInfo());
+        toast.success(response.data.message);
+        navigate("/admin/login");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Logout failed");
+    }
+  };
 
   return (
     <div
@@ -73,7 +95,7 @@ const Sidebar: React.FC = () => {
           <Link
             key={item.name}
             to={item.path}
-            className={`flex items-center py-2 px-4  ${
+            className={`flex items-center py-2 px-4 ${
               location.pathname === item.path
                 ? "bg-white text-black"
                 : "text-white hover:bg-black"
@@ -84,6 +106,19 @@ const Sidebar: React.FC = () => {
           </Link>
         ))}
       </nav>
+      <div className="absolute bottom-0 w-full px-4 py-2">
+        <button
+          onClick={handleLogout}
+          className={`flex items-center py-2 px-4 ${
+            isOpen ? "text-white hover:bg-black" : "text-white"
+          }`}
+        >
+          <ArrowLeftEndOnRectangleIcon
+            className={`w-6 h-6 ${isOpen ? "mr-3" : "mx-auto"}`}
+          />
+          {isOpen && <span>Logout</span>}
+        </button>
+      </div>
     </div>
   );
 };

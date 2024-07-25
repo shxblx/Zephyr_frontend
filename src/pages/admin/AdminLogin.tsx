@@ -4,6 +4,8 @@ import styles from "./AdminLogin.module.css";
 import { adminLogin } from "../../api/admin";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setAdminInfo } from "../../redux/slices/adminSlice/adminSlice";
 
 const AnimatedLoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +15,7 @@ const AnimatedLoginPage: React.FC = () => {
   const [errorPassword, setErrorPassword] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +41,7 @@ const AnimatedLoginPage: React.FC = () => {
 
       if (response.data === true) {
         toast.success("Admin login successful");
-
+        dispatch(setAdminInfo({ email }));
         navigate("/admin/dashboard");
       } else {
         toast.error(response.data.message);

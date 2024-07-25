@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const adminSlice = createSlice({
-  name: "auth",
+  name: "admin",
   initialState,
   reducers: {
     setAdminInfo: (state, action) => {

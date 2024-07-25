@@ -18,17 +18,13 @@ interface User {
   status: string;
 }
 
-interface UserInfo {
-  userId: string;
-  profilePicture: string;
+interface CreateCommunityProps {
+  onClose: () => void;
+  onCommunityCreated: () => void;
 }
 
-interface RootState {
-  userInfo: UserInfo;
-}
-
-const CreateCommunity: React.FC = () => {
-  const userInfo = useSelector((state: RootState) => state.userInfo);
+const CreateCommunity: React.FC<CreateCommunityProps> = ({ onClose, onCommunityCreated }) => {
+  const { userInfo } = useSelector((state: any) => state.userInfo);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [hashtag, setHashtag] = useState("");
@@ -39,6 +35,13 @@ const CreateCommunity: React.FC = () => {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Error states
+  const [nameError, setNameError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [hashtagsError, setHashtagsError] = useState("");
+  const [profilePictureError, setProfilePictureError] = useState("");
+  const [membersError, setMembersError] = useState("");
 
   const fetchUsers = async (search: string = "") => {
     setLoading(true);
@@ -76,10 +79,51 @@ const CreateCommunity: React.FC = () => {
     }
   };
 
+  const validateForm = (): boolean => {
+    let isValid = true;
+
+    if (!name.trim()) {
+      setNameError("Community name is required");
+      isValid = false;
+    } else {
+      setNameError("");
+    }
+
+    if (!description.trim()) {
+      setDescriptionError("Description is required");
+      isValid = false;
+    } else {
+      setDescriptionError("");
+    }
+
+    if (hashtags.length === 0) {
+      setHashtagsError("At least one hashtag is required");
+      isValid = false;
+    } else {
+      setHashtagsError("");
+    }
+
+    if (!profilePicture) {
+      setProfilePictureError("Profile picture is required");
+      isValid = false;
+    } else {
+      setProfilePictureError("");
+    }
+
+    if (selectedUsers.length === 0) {
+      setMembersError("At least one member must be added");
+      isValid = false;
+    } else {
+      setMembersError("");
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !description || hashtags.length === 0) {
-      toast.error("Please fill in all required fields");
+
+    if (!validateForm()) {
       return;
     }
 
@@ -89,19 +133,21 @@ const CreateCommunity: React.FC = () => {
     formData.append("description", description);
     formData.append("hashtags", JSON.stringify(hashtags));
     formData.append("isPrivate", isPrivate.toString());
+    formData.append("adminId", userInfo.userId);
 
     if (profilePicture) {
       formData.append("profilePicture", profilePicture);
     }
 
-    selectedUsers.forEach((user, index) => {
-      formData.append(`selectedUsers[${index}]`, user._id);
-    });
+    const selectedUserIds = selectedUsers.map((user) => user._id);
+    formData.append("selectedUsers", JSON.stringify(selectedUserIds));
 
     try {
       const response = await createCommunity(formData);
       if (response.status === 200) {
-        toast.success("Community created successfully!");
+        toast.success(response.data);
+        onCommunityCreated(); // Call this function to refresh the communities list
+        onClose(); // Close the form
       } else {
         toast.error("Failed to create community. Please try again.");
       }
@@ -114,6 +160,7 @@ const CreateCommunity: React.FC = () => {
   const addUser = (user: User) => {
     if (!selectedUsers.find((u) => u._id === user._id)) {
       setSelectedUsers([...selectedUsers, user]);
+      setMembersError("");
     }
   };
 
@@ -125,6 +172,7 @@ const CreateCommunity: React.FC = () => {
     if (hashtag.trim() && !hashtags.includes(hashtag.trim())) {
       setHashtags([...hashtags, hashtag.trim()]);
       setHashtag("");
+      setHashtagsError("");
     }
   };
 
@@ -140,19 +188,29 @@ const CreateCommunity: React.FC = () => {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              setNameError("");
+            }}
             className="w-full bg-gray-700 text-white rounded px-3 py-2"
-            required
           />
+          {nameError && (
+            <p className="text-red-500 text-sm mt-1">{nameError}</p>
+          )}
         </div>
         <div>
           <label className="text-white block mb-1">Description*</label>
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              setDescriptionError("");
+            }}
             className="w-full bg-gray-700 text-white rounded px-3 py-2"
-            required
           />
+          {descriptionError && (
+            <p className="text-red-500 text-sm mt-1">{descriptionError}</p>
+          )}
         </div>
         <div>
           <label className="text-white block mb-1">Hashtags*</label>
@@ -189,6 +247,9 @@ const CreateCommunity: React.FC = () => {
               </div>
             ))}
           </div>
+          {hashtagsError && (
+            <p className="text-red-500 text-sm mt-1">{hashtagsError}</p>
+          )}
         </div>
         <div>
           <label className="text-white block mb-1">Privacy</label>
@@ -202,18 +263,22 @@ const CreateCommunity: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="text-white block mb-1">Profile Picture</label>
+          <label className="text-white block mb-1">Profile Picture*</label>
           <input
             type="file"
-            onChange={(e) =>
-              setProfilePicture(e.target.files ? e.target.files[0] : null)
-            }
+            onChange={(e) => {
+              setProfilePicture(e.target.files ? e.target.files[0] : null);
+              setProfilePictureError("");
+            }}
             className="w-full bg-gray-700 text-white rounded px-3 py-2"
             accept="image/*"
           />
+          {profilePictureError && (
+            <p className="text-red-500 text-sm mt-1">{profilePictureError}</p>
+          )}
         </div>
         <div>
-          <label className="text-white block mb-1">Add Users</label>
+          <label className="text-white block mb-1">Add Users*</label>
           <div className="relative">
             <input
               type="text"
@@ -276,6 +341,9 @@ const CreateCommunity: React.FC = () => {
                 ))}
               </div>
             )
+          )}
+          {membersError && (
+            <p className="text-red-500 text-sm mt-1">{membersError}</p>
           )}
         </div>
         {selectedUsers.length > 0 && (
