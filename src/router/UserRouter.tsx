@@ -10,7 +10,7 @@ import UserLayout from "../components/common/user/UserLayout";
 import { ForgotPassWord } from "../pages/user/ForgotPassWord";
 import { UserProfile } from "../pages/user/UserProfile";
 import { ProfileSettings } from "../pages/user/ProfileSettings";
-import FindFriends from "../pages/user/Friends/FindFriends";
+import FindFriends from "../pages/user/FindFriends";
 import MyFriends from "../pages/user/Friends/MyFriends";
 import MyCommunties from "../pages/user/community/MyCommunties";
 import CreateCommunity from "../pages/user/community/CreateCommunity";

@@ -1,5 +1,3 @@
-
-
 const userRoutes = {
   signUp: "user/signup",
   verifyOTP: "user/verifyOtp",
@@ -17,6 +15,7 @@ const userRoutes = {
   getGlobalFriends: "user/getGlobalFriends",
   addFriend: "user/addFriend",
   getFriends: "user/getFriends",
+  sendMessage: "user/sendMessage",
   getAllUsers: "user/getAllUsers",
   removeFriend: "user/removeFriend",
   createCommuity: "user/createCommunity",
@@ -24,7 +23,7 @@ const userRoutes = {
   getMyCommunity: "user/getMyCommunity",
   joinCommunity: "user/joinCommunity",
   leaveCommunity: "user/leaveCommunity",
-  getMembers: "user/getMembers"
+  getMembers: "user/getMembers",
 };
 
 export default userRoutes;
