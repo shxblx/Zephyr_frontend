@@ -17,10 +17,9 @@ export const signUp = async (email: { email: string }) => {
 
 export const verifyOTP = async (data: { otp: number; email: string }) => {
   try {
-
     const response = await Api.post(userRoutes.verifyOTP, data);
 
-    return response
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -34,7 +33,7 @@ export const verifyOTP = async (data: { otp: number; email: string }) => {
 export const resendOtp = async (email: { email: string }) => {
   try {
     const response = await Api.post(userRoutes.resendOtp, email);
-    return response
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -49,7 +48,7 @@ export const login = async (data: { email: string; password: string }) => {
   try {
     const response = await Api.post(userRoutes.login, data);
 
-    return response
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -73,7 +72,7 @@ export const logout = async () => {
 export const forgotPassword = async (data: { email: string }) => {
   try {
     const response = await Api.post(userRoutes.forgotPassword, data);
-    return response
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -86,9 +85,7 @@ export const forgotPassword = async (data: { email: string }) => {
 
 export const forgotVerify = async (data: { email: string; otp: number }) => {
   try {
-
     const response = await Api.post(userRoutes.forgotVerify, data);
-
 
     return response;
   } catch (error: any) {
@@ -104,7 +101,7 @@ export const forgotVerify = async (data: { email: string; otp: number }) => {
 export const getUserInfo = async (data: { userId: string }) => {
   try {
     const response = await Api.get(`${userRoutes.getUserInfo}/${data.userId}`);
-    return response
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -113,14 +110,14 @@ export const getUserInfo = async (data: { userId: string }) => {
     }
     throw error;
   }
-}
+};
 
 export const changeProfile = async (data: FormData) => {
   try {
     const response = await Api.put(userRoutes.changeProfile, data, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        "Content-Type": "multipart/form-data",
+      },
     });
     return response;
   } catch (error: any) {
@@ -133,11 +130,13 @@ export const changeProfile = async (data: FormData) => {
   }
 };
 
-
-export const changeStatus = async (data: { status: string, userId: string }) => {
+export const changeStatus = async (data: {
+  status: string;
+  userId: string;
+}) => {
   try {
-    const response = await Api.put(userRoutes.changeStatus, data)
-    return response
+    const response = await Api.put(userRoutes.changeStatus, data);
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -146,12 +145,15 @@ export const changeStatus = async (data: { status: string, userId: string }) => 
     }
     throw error;
   }
-}
+};
 
-export const changeUserName = async (data: { userId: string, newName: string }) => {
+export const changeUserName = async (data: {
+  userId: string;
+  newName: string;
+}) => {
   try {
-    const response = await Api.put(userRoutes.changeUserName, data)
-    return response
+    const response = await Api.put(userRoutes.changeUserName, data);
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -160,12 +162,15 @@ export const changeUserName = async (data: { userId: string, newName: string }) 
     }
     throw error;
   }
-}
+};
 
-export const changeDisplayName = async (data: { userId: string, newName: string }) => {
+export const changeDisplayName = async (data: {
+  userId: string;
+  newName: string;
+}) => {
   try {
-    const response = await Api.put(userRoutes.changeDisplayName, data)
-    return response
+    const response = await Api.put(userRoutes.changeDisplayName, data);
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -174,12 +179,16 @@ export const changeDisplayName = async (data: { userId: string, newName: string 
     }
     throw error;
   }
-}
+};
 
-export const changePassword = async (data: { userId: string, currentPassword: string, newPassword: string }) => {
+export const changePassword = async (data: {
+  userId: string;
+  currentPassword: string;
+  newPassword: string;
+}) => {
   try {
-    const response = await Api.put(userRoutes.changePassword, data)
-    return response
+    const response = await Api.put(userRoutes.changePassword, data);
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -188,5 +197,19 @@ export const changePassword = async (data: { userId: string, currentPassword: st
     }
     throw error;
   }
-}
+};
 
+export const getNotification = async (userId: string) => {
+  try {
+    let url = `${userRoutes.getNotification}/${userId}`;
+    const response = await Api.get(url);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { removeUserInfo } from "../../../redux/slices/userSlice/userSlice";
@@ -6,28 +6,13 @@ import {
   ArrowLeftEndOnRectangleIcon,
   MagnifyingGlassIcon,
   UserCircleIcon,
-  BellIcon,
 } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import { logout } from "../../../api/user";
 
 const MainNavbar = () => {
-  const [isVisible, setIsVisible] = useState(true);
   const { userInfo } = useSelector((state: any) => state.userInfo);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    let lastScrollY = window.pageYOffset;
-
-    const handleScroll = () => {
-      const currentScrollY = window.pageYOffset;
-      setIsVisible(currentScrollY < lastScrollY || currentScrollY === 0);
-      lastScrollY = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const handleLogout = () => {
     Swal.fire({
@@ -84,14 +69,6 @@ const MainNavbar = () => {
               <MagnifyingGlassIcon className="h-6 w-6 mt-1" />
             </button>
           </Link>
-          <Link to="/notifications">
-            <button
-              className="text-white mr-4 hover:text-[#FF5F09] transition duration-300 ease-in-out"
-              title="Notifications"
-            >
-              <BellIcon className="h-6 w-6 mt-1" />
-            </button>
-          </Link>
           <button
             onClick={handleLogout}
             className="text-white mr-4 hover:text-[#FF5F09] transition duration-300 ease-in-out"
@@ -120,14 +97,11 @@ const MainNavbar = () => {
         </div>
       );
     }
+    return null;
   };
 
   return (
-    <nav
-      className={`bg-black text-white p-4 w-full z-30 transition-transform duration-300 ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      }`}
-    >
+    <nav className="bg-black text-white p-4 w-full z-40 fixed top-0 left-0 right-0">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/">

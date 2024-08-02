@@ -24,6 +24,9 @@ const userRoutes = {
   joinCommunity: "user/joinCommunity",
   leaveCommunity: "user/leaveCommunity",
   getMembers: "user/getMembers",
+  getNotification: "user/getNotification",
+  acceptFriendRequest: "user/acceptFriendRequest",
+  rejectFriendRequest: "user/rejectFriendRequest",
 };
 
 export default userRoutes;

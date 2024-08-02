@@ -172,7 +172,7 @@ const MyCommunities: React.FC = () => {
   };
 
   return (
-    <div className="mt-8 lg:mt-0 flex h-full ml-0 lg:ml-64 bg-black">
+    <div className="mt-24 lg:mt-12 flex h-full ml-0 lg:ml-64 bg-black">
       <div
         className={`w-full lg:w-1/3 bg-black p-4 overflow-y-auto border-r border-gray-800 ${
           selectedCommunity || showCreateForm ? "hidden lg:block" : "block"
@@ -359,7 +359,7 @@ const MyCommunities: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <div className="flex border-t border-gray-700 pt-2 mt-2">
+                <div className="flex border-t border-gray-700 pt-2 mt-2 mb-20 lg:mb-8">
                   <input
                     type="text"
                     value={newMessage}

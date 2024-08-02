@@ -23,7 +23,6 @@ const MyFriends: React.FC = () => {
 
   useEffect(() => {
     fetchFriends();
-    // Load selected friend from localStorage
     const storedFriend = localStorage.getItem('selectedFriend');
     if (storedFriend) {
       setSelectedFriend(JSON.parse(storedFriend));
@@ -34,7 +33,6 @@ const MyFriends: React.FC = () => {
     setLoading(true);
     try {
       const response = await getFriends(userInfo.userId);
-      console.log(response);
 
       if (
         response &&
@@ -43,9 +41,7 @@ const MyFriends: React.FC = () => {
         response.data.data.friends
       ) {
         setFriends(response.data.data.friends);
-      } else {
-        toast.error(response.data);
-      }
+      } 
     } catch (error) {
       console.error("Error fetching friends:", error);
       toast.error("No Friends Found, Add a Friend");

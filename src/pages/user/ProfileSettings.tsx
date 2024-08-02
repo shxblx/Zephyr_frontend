@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   changeDisplayName,
   changeUserName,
@@ -59,14 +60,14 @@ export const ProfileSettings = () => {
         title: "Success!",
         text: response.data,
         icon: "success",
-        confirmButtonColor: "#FF5F09",
+        confirmButtonColor: "#4B5563",
       });
     } else {
       Swal.fire({
         title: "Error!",
         text: response.data,
         icon: "error",
-        confirmButtonColor: "#FF5F09",
+        confirmButtonColor: "#4B5563",
       });
     }
     setUsernameError("");
@@ -96,14 +97,14 @@ export const ProfileSettings = () => {
         title: "Success!",
         text: response.data,
         icon: "success",
-        confirmButtonColor: "#FF5F09",
+        confirmButtonColor: "#4B5563",
       });
     } else {
       Swal.fire({
         title: "Error!",
         text: response.data,
         icon: "error",
-        confirmButtonColor: "#FF5F09",
+        confirmButtonColor: "#4B5563",
       });
     }
     setDisplayNameError("");
@@ -140,7 +141,7 @@ export const ProfileSettings = () => {
         title: "Success!",
         text: response.data,
         icon: "success",
-        confirmButtonColor: "#FF5F09",
+        confirmButtonColor: "#4B5563",
       });
       setCurrentPassword("");
       setNewPassword("");
@@ -150,7 +151,7 @@ export const ProfileSettings = () => {
         title: "Error!",
         text: response.data,
         icon: "error",
-        confirmButtonColor: "#FF5F09",
+        confirmButtonColor: "#4B5563",
       });
     }
 
@@ -159,20 +160,30 @@ export const ProfileSettings = () => {
     setConfirmPasswordError("");
   };
 
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="min-h-screen p-4 md:p-8 text-white ">
-      <div className="mx-auto max-w-2xl">
+    <div className="min-h-screen p-4 md:p-8 text-white bg-gradient-to-b from-gray-900 to-black">
+      <motion.div
+        className="mx-auto max-w-2xl"
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+      >
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Profile Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-300">Profile Settings</h1>
           <Link
             to="/profile"
-            className="text-[#FF5F09] hover:text-orange-700 transition"
+            className="text-gray-400 hover:text-gray-200 transition"
           >
             Back to Profile
           </Link>
         </div>
 
-        <div className="space-y-6 mb-6">
+        <motion.div className="space-y-6 mb-6" variants={fadeInUp}>
           <form
             onSubmit={handleUsernameChange}
             className="flex items-center space-x-2"
@@ -180,7 +191,7 @@ export const ProfileSettings = () => {
             <div className="flex-grow">
               <label
                 htmlFor="username"
-                className="block text-sm font-medium mb-1"
+                className="block text-sm font-medium mb-1 text-gray-400"
               >
                 Username
               </label>
@@ -189,16 +200,18 @@ export const ProfileSettings = () => {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-gray-800 text-white p-2 rounded"
+                className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
               />
               {usernameError && <p className="text-red-500">{usernameError}</p>}
             </div>
-            <button
+            <motion.button
               type="submit"
-              className="bg-[#FF5F09] text-white py-2 px-4 rounded hover:bg-orange-700 transition-colors duration-200 self-end"
+              className="bg-[#FF5F09] text-white py-2 px-4 rounded hover:bg-orange-800 transition-colors duration-200 self-end"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Save
-            </button>
+            </motion.button>
           </form>
 
           <form
@@ -208,7 +221,7 @@ export const ProfileSettings = () => {
             <div className="flex-grow">
               <label
                 htmlFor="displayName"
-                className="block text-sm font-medium mb-1"
+                className="block text-sm font-medium mb-1 text-gray-400"
               >
                 Display Name
               </label>
@@ -217,29 +230,37 @@ export const ProfileSettings = () => {
                 id="displayName"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full bg-gray-800 text-white p-2 rounded"
+                className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
               />
               {displayNameError && (
                 <p className="text-red-500">{displayNameError}</p>
               )}
             </div>
-            <button
+            <motion.button
               type="submit"
-              className="bg-[#FF5F09] text-white py-2 px-4 rounded hover:bg-orange-700 transition-colors duration-200 self-end"
+              className="bg-[#FF5F09] text-white py-2 px-4 rounded hover:bg-orange-800 transition-colors duration-200 self-end"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Save
-            </button>
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
 
-        <form onSubmit={handlePasswordChange} className="space-y-6">
+        <motion.form
+          onSubmit={handlePasswordChange}
+          className="space-y-6"
+          variants={fadeInUp}
+        >
           <div className="border-t border-gray-700 pt-6">
-            <h2 className="text-lg font-semibold mb-4">Change Password</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-300">
+              Change Password
+            </h2>
             <div className="space-y-4">
               <div>
                 <label
                   htmlFor="currentPassword"
-                  className="block text-sm font-medium mb-1"
+                  className="block text-sm font-medium mb-1 text-gray-400"
                 >
                   Current Password
                 </label>
@@ -248,7 +269,7 @@ export const ProfileSettings = () => {
                   id="currentPassword"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full bg-gray-800 text-white p-2 rounded"
+                  className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
                 />
                 {currentPasswordError && (
                   <p className="text-red-500">{currentPasswordError}</p>
@@ -257,7 +278,7 @@ export const ProfileSettings = () => {
               <div>
                 <label
                   htmlFor="newPassword"
-                  className="block text-sm font-medium mb-1"
+                  className="block text-sm font-medium mb-1 text-gray-400"
                 >
                   New Password
                 </label>
@@ -266,7 +287,7 @@ export const ProfileSettings = () => {
                   id="newPassword"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-gray-800 text-white p-2 rounded"
+                  className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
                 />
                 {newPasswordError && (
                   <p className="text-red-500">{newPasswordError}</p>
@@ -275,7 +296,7 @@ export const ProfileSettings = () => {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium mb-1"
+                  className="block text-sm font-medium mb-1 text-gray-400"
                 >
                   Confirm New Password
                 </label>
@@ -284,7 +305,7 @@ export const ProfileSettings = () => {
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-gray-800 text-white p-2 rounded"
+                  className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
                 />
                 {confirmPasswordError && (
                   <p className="text-red-500">{confirmPasswordError}</p>
@@ -292,14 +313,16 @@ export const ProfileSettings = () => {
               </div>
             </div>
           </div>
-          <button
+          <motion.button
             type="submit"
-            className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-orange-700 transition-colors duration-200"
+            className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-orange-800 transition-colors duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             Change Password
-          </button>
-        </form>
-      </div>
+          </motion.button>
+        </motion.form>
+      </motion.div>
     </div>
   );
 };

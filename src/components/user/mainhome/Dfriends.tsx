@@ -89,7 +89,7 @@ const FriendSuggestions: React.FC = () => {
     try {
       const response = await addFriend({ userId: userInfo.userId, friendId });
       if (response && response.status === 200) {
-        toast.success("Friend added successfully!");
+        toast.success(response.data);
         setAddedFriends((prev) => new Set(prev).add(friendId));
       } else {
         toast.error(response.data);

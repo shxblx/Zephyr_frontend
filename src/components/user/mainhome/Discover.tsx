@@ -35,7 +35,7 @@ const Discover: React.FC = () => {
               </svg>
             </button>
           </div>
-          <div className="h-64 overflow-y-auto p-3">
+          <div className="h-64 overflow-hidden p-3">
             <p className="text-white">Hello! How can I assist you today?</p>
           </div>
           <div className="p-3 border-t border-gray-700">
@@ -51,7 +51,7 @@ const Discover: React.FC = () => {
   );
 
   return (
-    <div className="p-4 max-h-screen bg-black text-white w-full">
+    <div className="p-4 max-h-screen bg-black text-white w-full -mt-10">
       <h1 className="text-2xl font-bold mb-6">Discover</h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
@@ -69,4 +69,4 @@ const Discover: React.FC = () => {
   );
 };
 
-export default Discover;  
+export default Discover;

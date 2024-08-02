@@ -147,7 +147,6 @@ const FindFriends: React.FC = () => {
           Find Friends and Communities
         </h1>
 
-        {/* Tabs */}
         <div className="flex mb-4">
           <button
             className={`mr-4 px-4 py-2 rounded-lg ${
@@ -163,7 +162,7 @@ const FindFriends: React.FC = () => {
             className={`px-4 py-2 rounded-lg ${
               activeTab === "communities"
                 ? "bg-[#FF5F09] text-white"
-                : "border border-gray-400 bg-gray-700 text-gray-300"
+                : "border border-gray-400  text-gray-300"
             }`}
             onClick={() => setActiveTab("communities")}
           >

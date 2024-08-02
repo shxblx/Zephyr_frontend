@@ -85,13 +85,8 @@ const FriendChat: React.FC<FriendChatProps> = ({
           senderPicture: userInfo.profilePicture,
         };
 
-        // Emit the message through socket
         socket.emit("sendMessage", { room: roomId, message });
-
-        // Add message to local state
         setMessages((prevMessages) => [...prevMessages, message]);
-
-        // Clear input
         setNewMessage("");
       } catch (error) {
         console.error("Error sending message:", error);
@@ -120,7 +115,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   };
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <button
@@ -220,7 +215,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
           Send
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

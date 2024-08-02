@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserGroupIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { UserGroupIcon, PlusIcon, UserIcon } from "@heroicons/react/24/outline";
 import { getCommunities, joinCommunity } from "../../../api/community";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -19,14 +19,6 @@ interface Community {
   isJoined?: boolean;
 }
 
-interface RootState {
-  user: {
-    userInfo: {
-      userId: string;
-    };
-  };
-}
-
 const Communities: React.FC = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +31,8 @@ const Communities: React.FC = () => {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
+        // Simulate a delay to show the loading animation
+        await new Promise(resolve => setTimeout(resolve, 3000));
         const response = await getCommunities(userId);
         if (response.data.success) {
           setCommunities(response.data.data);
@@ -54,7 +48,7 @@ const Communities: React.FC = () => {
     };
 
     fetchCommunities();
-  }, []);
+  }, [userId]);
 
   const handleJoinCommunity = async (communityId: string) => {
     setJoiningCommunity(communityId);
@@ -81,7 +75,28 @@ const Communities: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="text-white">Loading communities...</div>;
+    return (
+      <div className="p-4 mb-4 border-2 border-gray-600">
+        <h2 className="text-white text-xl font-semibold mb-4 flex items-center">
+          <UserGroupIcon className="w-6 h-6 mr-2" />
+          Communities
+        </h2>
+        <div className="space-y-4">
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 rounded-md border-2 border-gray-600 p-3">
+              <div className="w-16 h-16 bg-gray-700 rounded-full animate-pulse"></div>
+              <div className="flex-1">
+                <div className="w-3/4 h-4 bg-gray-700 rounded animate-pulse mb-2"></div>
+                <div className="w-full h-3 bg-gray-700 rounded animate-pulse mb-1"></div>
+                <div className="w-2/3 h-3 bg-gray-700 rounded animate-pulse"></div>
+              </div>
+              <div className="w-20 h-8 bg-gray-700 rounded-full animate-pulse"></div>
+            </div>
+          ))}
+        </div>
+        <div className="text-gray-400 mt-4">Fetching communities...</div>
+      </div>
+    );
   }
 
   if (error) {
@@ -100,11 +115,17 @@ const Communities: React.FC = () => {
             key={community._id}
             className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 rounded-md border-2 border-gray-600 p-3"
           >
-            <img
-              src={community.profilePicture}
-              alt={community.name}
-              className="w-16 h-16 rounded-full object-cover"
-            />
+            {community.profilePicture ? (
+              <img
+                src={community.profilePicture}
+                alt={community.name}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-16 h-16 bg-ff5f09 rounded-full flex items-center justify-center">
+                <UserIcon className="w-8 h-8 text-white" />
+              </div>
+            )}
             <div className="flex-1 text-center sm:text-left">
               <h3 className="text-white font-semibold">{community.name}</h3>
               <p className="text-gray-300 text-sm">{community.description}</p>
@@ -135,7 +156,7 @@ const Communities: React.FC = () => {
       </div>
       <Link
         to="/communities"
-        className="mt-4 inline-block text-white px-4 py-2 text-sm hover:bg-ff5f09 transition-colors"
+        className="mt-4 inline-block text-white px-4 py-2 text-sm bg-ff5f09 hover:bg-orange-600 transition-colors rounded"
       >
         View All Communities
       </Link>

@@ -90,7 +90,48 @@ export const sendMessage = async (data: {
   try {
     const response = await Api.post(userRoutes.sendMessage, data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const acceptFriendRequest = async (data: {
+  userId: string;
+  friendId: string;
+}) => {
+  try {
+    console.log(data);
+
+    const response = await Api.patch(userRoutes.acceptFriendRequest, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const rejectFriendRequest = async (data: {
+  userId: string;
+  friendId: string;
+}) => {
+  try {
+    const response = await Api.patch(userRoutes.rejectFriendRequest, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
     throw error;
   }
 };
