@@ -27,6 +27,14 @@ const userRoutes = {
   getNotification: "user/getNotification",
   acceptFriendRequest: "user/acceptFriendRequest",
   rejectFriendRequest: "user/rejectFriendRequest",
+  clearNotifications: "user/clearNotifications",
+  newZepchat: "user/newZepchat",
+  getZepchats: "user/getZepchats",
+  postReply: "user/postReply",
+  getReplies: "user/getReplies",
+  getZepchatById: "user/getZepchatById",
+  replyVote: "user/replyVote",
+  voteZepchat: "user/voteZepchat",
 };
 
 export default userRoutes;

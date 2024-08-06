@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useSelector } from "react-redux";
-import { getNotification } from "../../../api/user";
+import { clearNotifications, getNotification } from "../../../api/user";
 import { acceptFriendRequest, rejectFriendRequest } from "../../../api/friends";
 import toast from "react-hot-toast";
+import io from "socket.io-client";
 
 interface Notification {
   _id: string;
@@ -58,6 +59,25 @@ const Notifications: React.FC<NotificationsProps> = ({ isOpen }) => {
     }
   }, [isOpen, userInfo.userId]);
 
+  useEffect(() => {
+    const socket = io("http://your-socket-io-server-url");
+
+    socket.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.on("newNotification", (newNotification: Notification) => {
+      setNotifications((prevNotifications) => [
+        newNotification,
+        ...prevNotifications,
+      ]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   const handleAcceptFriendRequest = async (
     notificationId: string,
     friendId: string,
@@ -105,8 +125,14 @@ const Notifications: React.FC<NotificationsProps> = ({ isOpen }) => {
     }
   };
 
-  const handleClearAllNotifications = () => {
-    setNotifications([]);
+  const handleClearAllNotifications = async () => {
+    const response = await clearNotifications({ userId: userInfo.userId });
+    if (response.status === 200) {
+      setNotifications([]);
+      toast.success(response.data);
+    } else {
+      toast.error(response.data);
+    }
   };
 
   const filteredNotifications = notifications.filter(

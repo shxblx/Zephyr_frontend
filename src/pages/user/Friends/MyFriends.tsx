@@ -23,7 +23,7 @@ const MyFriends: React.FC = () => {
 
   useEffect(() => {
     fetchFriends();
-    const storedFriend = localStorage.getItem('selectedFriend');
+    const storedFriend = localStorage.getItem("selectedFriend");
     if (storedFriend) {
       setSelectedFriend(JSON.parse(storedFriend));
     }
@@ -41,7 +41,7 @@ const MyFriends: React.FC = () => {
         response.data.data.friends
       ) {
         setFriends(response.data.data.friends);
-      } 
+      }
     } catch (error) {
       console.error("Error fetching friends:", error);
       toast.error("No Friends Found, Add a Friend");
@@ -53,20 +53,20 @@ const MyFriends: React.FC = () => {
   const handleSelectFriend = (friend: Friend) => {
     setSelectedFriend(friend);
     // Store selected friend in localStorage
-    localStorage.setItem('selectedFriend', JSON.stringify(friend));
+    localStorage.setItem("selectedFriend", JSON.stringify(friend));
   };
 
   const handleBackClick = () => {
     setSelectedFriend(null);
     // Remove selected friend from localStorage
-    localStorage.removeItem('selectedFriend');
+    localStorage.removeItem("selectedFriend");
   };
 
   const handleRemoveFriend = (friendId: string) => {
     setFriends(friends.filter((friend) => friend._id !== friendId));
     setSelectedFriend(null);
     // Remove selected friend from localStorage
-    localStorage.removeItem('selectedFriend');
+    localStorage.removeItem("selectedFriend");
   };
 
   return (

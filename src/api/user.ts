@@ -213,3 +213,17 @@ export const getNotification = async (userId: string) => {
     throw error;
   }
 };
+
+export const clearNotifications = async (data: { userId: string }) => {
+  try {
+    const response = await Api.patch(userRoutes.clearNotifications, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

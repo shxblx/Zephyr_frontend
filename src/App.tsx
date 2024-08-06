@@ -5,7 +5,7 @@ import "./index.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter> 
       <Toaster />
       <AppRouter />
     </BrowserRouter>

@@ -17,17 +17,17 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({ icon, text, to, active }) => (
   <Link
-    to={to[0]} // Use the first path in the array for the `to` prop
-    className={`flex items-center p-2 rounded-lg ${
+    to={to[0]}
+    className={`flex items-center justify-center p-2 rounded-lg ${
       active
         ? "bg-ff5f09 text-white"
         : "text-gray-300 hover:bg-gray-700 hover:text-white"
     }`}
   >
-    <div className="w-6 h-6 mr-3">{icon}</div>
-    <span className="font-orbitron hidden lg:inline">{text}</span>
+    <div className="w-6 h-6">{icon}</div>
+    <span className="font-orbitron hidden lg:inline ml-3">{text}</span>
     {active && (
-      <div className="w-1 h-6 bg-white rounded-full ml-auto hidden lg:block"></div>
+      <div className="w-1 h-6 bg-white rounded-full ml-3 hidden lg:block"></div>
     )}
   </Link>
 );
@@ -37,19 +37,23 @@ const Sidebar: React.FC = () => {
 
   const navItems = [
     { icon: <HomeIcon />, text: "Discover", to: ["/home"] },
-    { icon: <UserGroupIcon />, text: "Friends", to: ["/friends", "/findfriends"] },
+    {
+      icon: <UserGroupIcon />,
+      text: "Friends",
+      to: ["/friends", "/findfriends"],
+    },
     { icon: <GlobeAltIcon />, text: "Communities", to: ["/communities"] },
     { icon: <ChatBubbleLeftRightIcon />, text: "Zepchats", to: ["/zepchats"] },
     { icon: <QuestionMarkCircleIcon />, text: "Support", to: ["/support"] },
   ];
 
   const isActive = (paths: string[]) =>
-    paths.some(path => location.pathname === path);
+    paths.some((path) => location.pathname === path);
 
   return (
     <>
       {/* Mobile Sidebar */}
-      <nav className="lg:hidden fixed top-16 left-0 right-0 bg-black z-50 border-b border-gray-700">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-black z-50 border-t border-gray-700">
         <ul className="flex justify-around py-2">
           {navItems.map((item) => (
             <li key={item.text}>

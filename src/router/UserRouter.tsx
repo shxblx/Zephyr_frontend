@@ -14,6 +14,8 @@ import FindFriends from "../pages/user/FindFriends";
 import MyFriends from "../pages/user/Friends/MyFriends";
 import MyCommunties from "../pages/user/community/MyCommunties";
 import CreateCommunity from "../pages/user/community/CreateCommunity";
+import ZepChats from "../pages/user/zepchats/Zepchats";
+import ZepChatView from "../pages/user/zepchats/ZepChatView";
 
 export const UserRouter = () => {
   return (
@@ -41,6 +43,8 @@ export const UserRouter = () => {
         <Route path="/findfriends" element={<FindFriends />} />
         <Route path="/friends" element={<MyFriends />} />
         <Route path="/communities" element={<MyCommunties />} />
+        <Route path="/zepchats" element={<ZepChats />} />
+        <Route path="/zepchats/:id" element={<ZepChatView />} />
       </Route>
 
       <Route

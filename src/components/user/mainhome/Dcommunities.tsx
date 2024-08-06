@@ -31,8 +31,6 @@ const Communities: React.FC = () => {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        // Simulate a delay to show the loading animation
-        await new Promise(resolve => setTimeout(resolve, 3000));
         const response = await getCommunities(userId);
         if (response.data.success) {
           setCommunities(response.data.data);
@@ -83,7 +81,10 @@ const Communities: React.FC = () => {
         </h2>
         <div className="space-y-4">
           {[...Array(3)].map((_, index) => (
-            <div key={index} className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 rounded-md border-2 border-gray-600 p-3">
+            <div
+              key={index}
+              className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 rounded-md border-2 border-gray-600 p-3"
+            >
               <div className="w-16 h-16 bg-gray-700 rounded-full animate-pulse"></div>
               <div className="flex-1">
                 <div className="w-3/4 h-4 bg-gray-700 rounded animate-pulse mb-2"></div>

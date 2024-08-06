@@ -31,9 +31,9 @@ const FriendSuggestions: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
       try {
         const response = await getGlobalFriends(userInfo.userId);
+        console.log(response);
 
         if (response && response.data && response.data.users) {
           const filteredFriends = response.data.users.filter(
@@ -45,7 +45,6 @@ const FriendSuggestions: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching users:", error);
-        toast.error("Failed to fetch friends. Please try again later.");
       } finally {
         setLoading(false);
       }
