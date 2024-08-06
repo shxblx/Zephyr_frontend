@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import { getReplies, postReply, voteReply } from "../../../api/zepchat";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 interface Reply {
   _id: string;
@@ -43,7 +44,12 @@ const ZepChatReplies: React.FC<ZepChatRepliesProps> = ({ zepChatId }) => {
       const repliesResponse = await getReplies(zepChatId);
       if (repliesResponse.status === 200) {
         setReplies(
-          Array.isArray(repliesResponse.data) ? repliesResponse.data : []
+          Array.isArray(repliesResponse.data)
+            ? repliesResponse.data.sort(
+                (a: any, b: any) =>
+                  b.upVotes - b.downVotes - (a.upVotes - a.downVotes)
+              )
+            : []
         );
       } else {
         setReplies([]);
@@ -74,7 +80,7 @@ const ZepChatReplies: React.FC<ZepChatRepliesProps> = ({ zepChatId }) => {
         if (response.status === 201) {
           setNewReply("");
           toast.success("Reply posted successfully");
-          fetchReplies(); // Refresh the replies after posting
+          fetchReplies();
         } else {
           toast.error("Failed to post reply");
         }
@@ -124,8 +130,8 @@ const ZepChatReplies: React.FC<ZepChatRepliesProps> = ({ zepChatId }) => {
       });
 
       if (response.status === 200) {
-        setReplies((prevReplies) =>
-          prevReplies.map((r) => {
+        setReplies((prevReplies) => {
+          const updatedReplies = prevReplies.map((r) => {
             if (r._id === replyId) {
               const updatedReply = { ...r };
 
@@ -168,8 +174,12 @@ const ZepChatReplies: React.FC<ZepChatRepliesProps> = ({ zepChatId }) => {
               return updatedReply;
             }
             return r;
-          })
-        );
+          });
+
+          return updatedReplies.sort(
+            (a, b) => b.upVotes - b.downVotes - (a.upVotes - a.downVotes)
+          );
+        });
         toast.success("Vote recorded successfully");
       } else {
         toast.error("Failed to vote");
@@ -223,53 +233,54 @@ const ZepChatReplies: React.FC<ZepChatRepliesProps> = ({ zepChatId }) => {
             No replies yet. Be the first to reply!
           </p>
         ) : (
-          replies.map((reply) => (
-            <div
-              key={reply._id}
-              className="bg-gray-800 rounded-lg p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09"
-            >
-              <div className="flex items-center mb-4">
-                <img
-                  src={reply.profilePicture}
-                  alt={reply.displayName}
-                  className="w-8 h-8 rounded-full mr-3"
-                />
-                <div>
-                  <span className="text-white font-semibold">
-                    {reply.displayName}
-                  </span>
-                  <p className="text-gray-400 text-sm">
-                    {formatDate(reply.createdAt)}
-                  </p>
+          <TransitionGroup>
+            {replies.map((reply) => (
+              <CSSTransition key={reply._id} timeout={500} classNames="reply">
+                <div className="bg-gray-800 rounded-lg p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09">
+                  <div className="flex items-center mb-4">
+                    <img
+                      src={reply.profilePicture}
+                      alt={reply.displayName}
+                      className="w-8 h-8 rounded-full mr-3"
+                    />
+                    <div>
+                      <span className="text-white font-semibold">
+                        {reply.displayName}
+                      </span>
+                      <p className="text-gray-400 text-sm">
+                        {formatDate(reply.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-gray-300 mb-4">{reply.content}</p>
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => handleVoteReply(reply._id, "upVote")}
+                      className={`flex items-center mr-4 transition-colors duration-300 ${
+                        hasUserVoted(reply, "upVote")
+                          ? "text-ff5f09"
+                          : "text-gray-400 hover:text-ff5f09"
+                      }`}
+                    >
+                      <ArrowUpIcon className="w-5 h-5 mr-1" />
+                      <span>{reply.upVotes}</span>
+                    </button>
+                    <button
+                      onClick={() => handleVoteReply(reply._id, "downVote")}
+                      className={`flex items-center transition-colors duration-300 ${
+                        hasUserVoted(reply, "downVote")
+                          ? "text-ff5f09"
+                          : "text-gray-400 hover:text-ff5f09"
+                      }`}
+                    >
+                      <ArrowDownIcon className="w-5 h-5 mr-1" />
+                      <span>{reply.downVotes}</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <p className="text-gray-300 mb-4">{reply.content}</p>
-              <div className="flex items-center">
-                <button
-                  onClick={() => handleVoteReply(reply._id, "upVote")}
-                  className={`flex items-center mr-4 transition-colors duration-300 ${
-                    hasUserVoted(reply, "upVote")
-                      ? "text-ff5f09"
-                      : "text-gray-400 hover:text-ff5f09"
-                  }`}
-                >
-                  <ArrowUpIcon className="w-5 h-5 mr-1" />
-                  <span>{reply.upVotes}</span>
-                </button>
-                <button
-                  onClick={() => handleVoteReply(reply._id, "downVote")}
-                  className={`flex items-center transition-colors duration-300 ${
-                    hasUserVoted(reply, "downVote")
-                      ? "text-ff5f09"
-                      : "text-gray-400 hover:text-ff5f09"
-                  }`}
-                >
-                  <ArrowDownIcon className="w-5 h-5 mr-1" />
-                  <span>{reply.downVotes}</span>
-                </button>
-              </div>
-            </div>
-          ))
+              </CSSTransition>
+            ))}
+          </TransitionGroup>
         )}
       </div>
       <div className="absolute bottom-0 left-0 right-0 bg-black p-4">
