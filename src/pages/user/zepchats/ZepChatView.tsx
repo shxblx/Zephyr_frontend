@@ -86,7 +86,92 @@ const ZepChatView: React.FC = () => {
   }, [fetchZepChat]);
 
   const handleVoteZepChat = async (voteType: "upVote" | "downVote") => {
-    // ... (keep the existing handleVoteZepChat function)
+    if (!zepChat) return;
+
+    const userId = userInfo.userId;
+    const hasUpvoted = zepChat.upVoters.some(
+      (voter) => voter.userId === userId
+    );
+    const hasDownvoted = zepChat.downVoters.some(
+      (voter) => voter.userId === userId
+    );
+
+    let actualVoteType:
+      | "upVote"
+      | "downVote"
+      | "removeUpVote"
+      | "removeDownVote";
+
+    if (voteType === "upVote" && hasUpvoted) {
+      actualVoteType = "removeUpVote";
+    } else if (voteType === "downVote" && hasDownvoted) {
+      actualVoteType = "removeDownVote";
+    } else if (voteType === "upVote" && hasDownvoted) {
+      actualVoteType = "upVote";
+    } else if (voteType === "downVote" && hasUpvoted) {
+      actualVoteType = "downVote";
+    } else {
+      actualVoteType = voteType;
+    }
+
+    try {
+      const response = await voteZepchat({
+        zepchatId: zepChat._id,
+        voteType: actualVoteType,
+        userId: userId,
+      });
+
+      if (response.status === 200) {
+        setZepChat((prevZepChat) => {
+          if (!prevZepChat) return null;
+          const updatedZepChat = { ...prevZepChat };
+
+          if (actualVoteType === "upVote") {
+            updatedZepChat.upVotes++;
+            updatedZepChat.upVoters.push({
+              userId,
+              _id: Date.now().toString(),
+            });
+            if (hasDownvoted) {
+              updatedZepChat.downVotes--;
+              updatedZepChat.downVoters = updatedZepChat.downVoters.filter(
+                (voter) => voter.userId !== userId
+              );
+            }
+          } else if (actualVoteType === "downVote") {
+            updatedZepChat.downVotes++;
+            updatedZepChat.downVoters.push({
+              userId,
+              _id: Date.now().toString(),
+            });
+            if (hasUpvoted) {
+              updatedZepChat.upVotes--;
+              updatedZepChat.upVoters = updatedZepChat.upVoters.filter(
+                (voter) => voter.userId !== userId
+              );
+            }
+          } else if (actualVoteType === "removeUpVote") {
+            updatedZepChat.upVotes--;
+            updatedZepChat.upVoters = updatedZepChat.upVoters.filter(
+              (voter) => voter.userId !== userId
+            );
+          } else if (actualVoteType === "removeDownVote") {
+            updatedZepChat.downVotes--;
+            updatedZepChat.downVoters = updatedZepChat.downVoters.filter(
+              (voter) => voter.userId !== userId
+            );
+          }
+
+          return updatedZepChat;
+        });
+        toast.success("Vote recorded successfully");
+      } else {
+        toast.error("Failed to vote");
+      }
+    } catch (error) {
+      console.error("Error voting:", error);
+      toast.error("An error occurred. Please try again.");
+    }
   };
 
   const handleBack = () => {

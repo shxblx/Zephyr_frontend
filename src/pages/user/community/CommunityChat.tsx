@@ -146,13 +146,14 @@ const CommunityChat: React.FC = () => {
 
   const handleLeaveCommunity = async () => {
     if (community) {
+      const communityName = community.name;
       try {
         await leaveCommunity({
           userId: userInfo.userId,
           communityId: community._id,
         });
-        toast.success(`You have left ${community.name}`);
-        window.location.href = "/my-communities";
+        toast.success(`You have left ${communityName}`);
+        window.location.href = "/communities";
       } catch (error) {
         console.error("Error leaving community:", error);
         toast.error("Failed to leave community. Please try again.");
