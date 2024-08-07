@@ -15,7 +15,6 @@ import {
   getCommunityMessages,
   reportCommunity,
 } from "../../../api/community";
-import { reportUser } from "../../../api/friends";
 import socket from "../../../components/common/socket";
 
 interface Community {

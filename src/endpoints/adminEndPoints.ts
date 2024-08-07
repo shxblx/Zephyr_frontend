@@ -9,6 +9,7 @@ const adminRoutes = {
   unbanCommunity: "admin/unbanCommunity",
   getUserInfo: "admin/getUserInfo",
   getReports: "admin/getReports ",
+  getCommunityReports: "admin/getCommunityReports",
 };
 
 export default adminRoutes;

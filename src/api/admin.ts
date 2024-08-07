@@ -149,3 +149,16 @@ export const getReports = async () => {
     throw error;
   }
 };
+export const getCommunityReports = async () => {
+  try {
+    const response = await Api.get(adminRoutes.getCommunityReports);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
-import { toast } from "react-hot-toast";
 import CreateCommunity from "./CreateCommunity";
 import { getMycommunities } from "../../../api/community";
 
