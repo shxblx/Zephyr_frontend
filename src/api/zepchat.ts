@@ -124,3 +124,57 @@ export const voteZepchat = async (data: {
     throw error;
   }
 };
+
+export const deleteZepchat = async (data: {
+  zepchatId: string;
+  userId: string;
+}) => {
+  try {
+    const response = await Api.patch(userRoutes.deleteZepchat, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+export const updateZepchat = async (data: {
+  zepchatId: string;
+  title: string;
+  content: string;
+  tags: string[];
+}) => {
+  try {
+    const response = await Api.patch(userRoutes.updateZepchat, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const reportZepchat = async (data: {
+  zepchatId: string;
+  userId: string;
+  subject: string;
+  reason: string;
+}) => {
+  try {
+    const response = await Api.patch(userRoutes.updateZepchat, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

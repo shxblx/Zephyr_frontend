@@ -100,6 +100,21 @@ export const sendMessage = async (data: {
   }
 };
 
+export const fetchMessages = async (member1: string, member2: string) => {
+  try {
+    const url = `${userRoutes.fetchMessages}/${member1}-${member2}`;
+    const response = await Api.get(url);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
 export const acceptFriendRequest = async (data: {
   userId: string;
   friendId: string;

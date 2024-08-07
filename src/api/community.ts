@@ -116,3 +116,76 @@ export const getMembers = async (communityId: string) => {
     }
   }
 };
+
+export const getCommunityById = async (communityId: string | undefined) => {
+  try {
+    let url = `${userRoutes.getCommunityById}/${communityId}`;
+
+    const response = await Api.get(url);
+    return response;
+  } catch (error: any) {
+    console.error("Error in createCommunity:", error);
+    if (error.response) {
+      return error.response;
+    } else {
+      throw new Error(
+        error.message || "An error occurred while creating the community"
+      );
+    }
+  }
+};
+
+export const removeMember = async (data: {
+  userId: string;
+  communityId: string;
+}) => {
+  try {
+    const response = await Api.patch(userRoutes.removeMember, data);
+    return response;
+  } catch (error: any) {
+    console.error("Error in createCommunity:", error);
+    if (error.response) {
+      return error.response;
+    } else {
+      throw new Error(
+        error.message || "An error occurred while creating the community"
+      );
+    }
+  }
+};
+
+export const updateCommunity = async (data: {
+  name: string;
+  description: string;
+  tags: string[];
+}) => {
+  try {
+    const response = await Api.patch(userRoutes.updateCommunity, data);
+    return response;
+  } catch (error: any) {
+    console.error("Error in createCommunity:", error);
+    if (error.response) {
+      return error.response;
+    } else {
+      throw new Error(
+        error.message || "An error occurred while creating the community"
+      );
+    }
+  }
+};
+
+export const sendCommunityMessage = async (data: { communityId: string ,sender:string,userName:string,profilePicture:string,content:string}) => {
+  try {
+    const response = await Api.patch(userRoutes.updateCommunity, data);
+    return response;
+  } catch (error: any) {
+    console.error("Error in createCommunity:", error);
+    if (error.response) {
+      return error.response;
+    } else {
+      throw new Error(
+        error.message || "An error occurred while creating the community"
+      );
+    }
+  }
+};

@@ -16,11 +16,13 @@ const userRoutes = {
   addFriend: "user/addFriend",
   getFriends: "user/getFriends",
   sendMessage: "user/sendMessage",
+  fetchMessages: "user/fetchMessages",
   getAllUsers: "user/getAllUsers",
   removeFriend: "user/removeFriend",
   createCommuity: "user/createCommunity",
   getCommunities: "user/getCommunities",
   getMyCommunity: "user/getMyCommunity",
+  getCommunityById: "user/getCommunityById",
   joinCommunity: "user/joinCommunity",
   leaveCommunity: "user/leaveCommunity",
   getMembers: "user/getMembers",
@@ -35,6 +37,10 @@ const userRoutes = {
   getZepchatById: "user/getZepchatById",
   replyVote: "user/replyVote",
   voteZepchat: "user/voteZepchat",
+  deleteZepchat: "user/deleteZepchat",
+  updateZepchat: "user/updateZepchat",
+  removeMember: "user/removeMember",
+  updateCommunity: "user/updateCommunity  ",
 };
 
 export default userRoutes;

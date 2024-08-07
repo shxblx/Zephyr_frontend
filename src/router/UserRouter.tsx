@@ -1,3 +1,4 @@
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Homepage } from "../pages/user/Homepage";
 import { Signup } from "../pages/user/Signup";
@@ -12,12 +13,12 @@ import { UserProfile } from "../pages/user/UserProfile";
 import { ProfileSettings } from "../pages/user/ProfileSettings";
 import FindFriends from "../pages/user/FindFriends";
 import MyFriends from "../pages/user/Friends/MyFriends";
-import MyCommunties from "../pages/user/community/MyCommunties";
-import CreateCommunity from "../pages/user/community/CreateCommunity";
+import CommunityChat from "../pages/user/community/CommunityChat";
 import ZepChats from "../pages/user/zepchats/Zepchats";
 import ZepChatView from "../pages/user/zepchats/ZepChatView";
+import MyCommunities from "../pages/user/community/MyCommunties";
 
-export const UserRouter = () => {
+export const UserRouter: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
@@ -42,7 +43,8 @@ export const UserRouter = () => {
         <Route path="/home" element={<MainHome />} />
         <Route path="/findfriends" element={<FindFriends />} />
         <Route path="/friends" element={<MyFriends />} />
-        <Route path="/communities" element={<MyCommunties />} />
+        <Route path="/communities" element={<MyCommunities />} />
+        <Route path="/community/:communityId" element={<CommunityChat />} />
         <Route path="/zepchats" element={<ZepChats />} />
         <Route path="/zepchats/:id" element={<ZepChatView />} />
       </Route>
@@ -58,3 +60,5 @@ export const UserRouter = () => {
     </Routes>
   );
 };
+
+export default UserRouter;

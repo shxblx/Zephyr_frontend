@@ -1,3 +1,4 @@
+// MyFriends.tsx
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
@@ -52,29 +53,27 @@ const MyFriends: React.FC = () => {
 
   const handleSelectFriend = (friend: Friend) => {
     setSelectedFriend(friend);
-    // Store selected friend in localStorage
     localStorage.setItem("selectedFriend", JSON.stringify(friend));
   };
 
   const handleBackClick = () => {
     setSelectedFriend(null);
-    // Remove selected friend from localStorage
     localStorage.removeItem("selectedFriend");
   };
 
   const handleRemoveFriend = (friendId: string) => {
     setFriends(friends.filter((friend) => friend._id !== friendId));
     setSelectedFriend(null);
-    // Remove selected friend from localStorage
     localStorage.removeItem("selectedFriend");
   };
 
   return (
     <div className="mt-8 lg:mt-0 flex h-full ml-0 lg:ml-64 bg-black">
       <div
-        className={`w-full lg:w-1/3 bg-black p-4 overflow-y-auto border-r border-gray-800 ${
+        className={`w-full lg:w-1/3 bg-black p-4 border-r border-gray-800 ${
           selectedFriend ? "hidden lg:block" : "block"
         }`}
+        style={{ height: 'calc(100vh - 4rem)', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <h2 className="text-white text-2xl font-semibold mb-4">My Friends</h2>
         {loading ? (
@@ -130,6 +129,7 @@ const MyFriends: React.FC = () => {
             ? "block"
             : "hidden lg:flex lg:items-center lg:justify-center"
         }`}
+        style={{ height: 'calc(100vh - 4rem)' }}
       >
         {selectedFriend ? (
           <FriendChat

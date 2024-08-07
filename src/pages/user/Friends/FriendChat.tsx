@@ -1,11 +1,10 @@
-// FriendChat.tsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowLeftIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
-import { removeFriend, sendMessage } from "../../../api/friends";
+import { removeFriend, sendMessage, fetchMessages } from "../../../api/friends";
 import socket from "../../../components/common/socket";
 
 interface Friend {
@@ -18,11 +17,14 @@ interface Friend {
 }
 
 interface Message {
-  id: string;
-  senderId: string;
+  _id: string;
+  conversationId: string;
+  sender: string;
   content: string;
   timestamp: string;
-  senderPicture: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 interface FriendChatProps {
@@ -42,12 +44,32 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const [newMessage, setNewMessage] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [roomId, setRoomId] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (selectedFriend && userInfo) {
       const newRoomId = [userInfo.userId, selectedFriend._id].sort().join("-");
       setRoomId(newRoomId);
+
+      const fetchMessagesFromBackend = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetchMessages(
+            userInfo.userId,
+            selectedFriend._id
+          );
+          setMessages(Array.isArray(response.data) ? response.data : []);
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+          toast.error("Failed to load messages. Please try again.");
+          setMessages([]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchMessagesFromBackend();
 
       socket.emit("join", { room: newRoomId });
 
@@ -78,15 +100,18 @@ const FriendChat: React.FC<FriendChatProps> = ({
         const response = await sendMessage(messageData);
 
         const message: Message = {
-          id: response.id || Date.now().toString(),
-          senderId: userInfo.userId,
+          _id: response._id || Date.now().toString(),
+          conversationId: response.conversationId || roomId,
+          sender: userInfo.userId,
           content: newMessage.trim(),
           timestamp: response.timestamp || new Date().toISOString(),
-          senderPicture: userInfo.profilePicture,
+          createdAt: response.createdAt || new Date().toISOString(),
+          updatedAt: response.updatedAt || new Date().toISOString(),
+          __v: response.__v || 0,
         };
 
         socket.emit("sendMessage", { room: roomId, message });
-        setMessages((prevMessages) => [...prevMessages, message]);
+
         setNewMessage("");
       } catch (error) {
         console.error("Error sending message:", error);
@@ -116,7 +141,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between p-4 bg-gray-900">
         <div className="flex items-center">
           <button
             onClick={onBackClick}
@@ -151,55 +176,64 @@ const FriendChat: React.FC<FriendChatProps> = ({
           )}
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto mb-4 border border-gray-700 rounded-lg p-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex items-start mb-4 ${
-              message.senderId === userInfo.userId
-                ? "justify-end"
-                : "justify-start"
-            }`}
-          >
-            {message.senderId !== userInfo.userId && (
-              <img
-                src={selectedFriend?.profilePicture}
-                alt="Sender"
-                className="w-8 h-8 rounded-full mr-2 flex-shrink-0"
-              />
-            )}
+      <div
+        className="flex-grow overflow-y-auto p-4"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {isLoading ? (
+          <div className="text-white text-center">Loading messages...</div>
+        ) : messages.length === 0 ? (
+          <div className="text-white text-center">No messages yet</div>
+        ) : (
+          messages.map((message) => (
             <div
-              className={`flex flex-col ${
-                message.senderId === userInfo.userId
-                  ? "items-end"
-                  : "items-start"
+              key={message._id}
+              className={`flex items-start mb-4 ${
+                message.sender === userInfo.userId
+                  ? "justify-end"
+                  : "justify-start"
               }`}
             >
-              <span
-                className={`inline-block p-2 rounded-lg ${
-                  message.senderId === userInfo.userId
-                    ? "bg-[#ff5f09] text-white"
-                    : "bg-gray-700 text-white"
+              {message.sender !== userInfo.userId && (
+                <img
+                  src={selectedFriend?.profilePicture}
+                  alt="Sender"
+                  className="w-8 h-8 rounded-full mr-2 flex-shrink-0"
+                />
+              )}
+              <div
+                className={`flex flex-col ${
+                  message.sender === userInfo.userId
+                    ? "items-end"
+                    : "items-start"
                 }`}
               >
-                {message.content}
-              </span>
-              <p className="text-xs text-gray-500 mt-1">
-                {new Date(message.timestamp).toLocaleTimeString()}
-              </p>
+                <span
+                  className={`inline-block p-2 rounded-lg ${
+                    message.sender === userInfo.userId
+                      ? "bg-[#ff5f09] text-white"
+                      : "bg-gray-700 text-white"
+                  }`}
+                >
+                  {message.content}
+                </span>
+                <p className="text-xs text-gray-500 mt-1">
+                  {new Date(message.timestamp).toLocaleTimeString()}
+                </p>
+              </div>
+              {message.sender === userInfo.userId && (
+                <img
+                  src={userInfo.profile}
+                  alt="Sender"
+                  className="w-8 h-8 rounded-full ml-2 flex-shrink-0"
+                />
+              )}
             </div>
-            {message.senderId === userInfo.userId && (
-              <img
-                src={userInfo.profile}
-                alt="Sender"
-                className="w-8 h-8 rounded-full ml-2 flex-shrink-0"
-              />
-            )}
-          </div>
-        ))}
+          ))
+        )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="flex border-t border-gray-700 pt-2 mt-2">
+      <div className="flex border-t border-gray-700 p-4 bg-gray-900">
         <input
           type="text"
           value={newMessage}

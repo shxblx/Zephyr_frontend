@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import NewZepChat from "./NewZepChat";
 import { getZepchats } from "../../../api/zepchat";
