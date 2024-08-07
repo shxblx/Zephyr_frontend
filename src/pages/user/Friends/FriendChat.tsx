@@ -2,9 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowLeftIcon,
   EllipsisVerticalIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
-import { removeFriend, sendMessage, fetchMessages } from "../../../api/friends";
+import {
+  removeFriend,
+  sendMessage,
+  fetchMessages,
+  reportUser,
+} from "../../../api/friends";
 import socket from "../../../components/common/socket";
 
 interface Friend {
@@ -45,6 +51,9 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const [showMenu, setShowMenu] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportSubject, setReportSubject] = useState("");
+  const [reportReason, setReportReason] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -139,9 +148,40 @@ const FriendChat: React.FC<FriendChatProps> = ({
     setShowMenu(false);
   };
 
+  const handleReportUser = () => {
+    setShowReportModal(true);
+    setShowMenu(false);
+  };
+
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFriend) return;
+
+    try {
+      const response = await reportUser({
+        reporterId: userInfo.userId,
+        reportedUserId: selectedFriend._id,
+        subject: reportSubject,
+        reason: reportReason,
+      });
+
+      if (response.status === 200) {
+        setShowReportModal(false);
+        toast.success("Report submitted successfully");
+        setReportSubject("");
+        setReportReason("");
+      } else {
+        toast.error("Failed to submit report");
+      }
+    } catch (error) {
+      console.error("Error reporting user:", error);
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 bg-gray-900">
+      <div className="flex items-center justify-between p-4 ">
         <div className="flex items-center">
           <button
             onClick={onBackClick}
@@ -169,6 +209,14 @@ const FriendChat: React.FC<FriendChatProps> = ({
                     className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
                   >
                     Remove Friend
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleReportUser}
+                    className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
+                  >
+                    Report User
                   </button>
                 </li>
               </ul>
@@ -233,7 +281,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
         )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="flex border-t border-gray-700 p-4 bg-gray-900">
+      <div className="flex border-t border-gray-700 p-4 ">
         <input
           type="text"
           value={newMessage}
@@ -249,6 +297,62 @@ const FriendChat: React.FC<FriendChatProps> = ({
           Send
         </button>
       </div>
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-gray-900 rounded-lg p-8 w-full max-w-md">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-white text-2xl font-bold">Report User</h2>
+              <button
+                onClick={() => setShowReportModal(false)}
+                className="text-gray-400 hover:text-white transition-colors duration-300"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+            <form onSubmit={handleReportSubmit}>
+              <div className="mb-4">
+                <label
+                  htmlFor="reportSubject"
+                  className="block text-gray-300 mb-2"
+                >
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  id="reportSubject"
+                  value={reportSubject}
+                  onChange={(e) => setReportSubject(e.target.value)}
+                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ff5f09"
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label
+                  htmlFor="reportReason"
+                  className="block text-gray-300 mb-2"
+                >
+                  Reason
+                </label>
+                <textarea
+                  id="reportReason"
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-ff5f09"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-ff5f09 text-white py-2 px-4 rounded-lg hover:bg-orange-700 focus:outline-none transition-colors duration-300"
+              >
+                Submit Report
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

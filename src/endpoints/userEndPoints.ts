@@ -41,6 +41,10 @@ const userRoutes = {
   updateZepchat: "user/updateZepchat",
   removeMember: "user/removeMember",
   updateCommunity: "user/updateCommunity  ",
+  sendCommunityMessage: "user/sendCommunityMessage",
+  getCommunityMessages: "user/getCommunityMessages",
+  reportUser: "user/reportUser ",
+  communityReport: "user/communityReport",
 };
 
 export default userRoutes;

@@ -158,6 +158,7 @@ export const updateCommunity = async (data: {
   name: string;
   description: string;
   tags: string[];
+  communityId: string;
 }) => {
   try {
     const response = await Api.patch(userRoutes.updateCommunity, data);
@@ -174,18 +175,61 @@ export const updateCommunity = async (data: {
   }
 };
 
-export const sendCommunityMessage = async (data: { communityId: string ,sender:string,userName:string,profilePicture:string,content:string}) => {
+export const sendCommunityMessage = async (data: {
+  communityId: string;
+  sender: string;
+  userName: string;
+  profilePicture: string;
+  content: string;
+}) => {
   try {
-    const response = await Api.patch(userRoutes.updateCommunity, data);
+    const response = await Api.post(userRoutes.sendCommunityMessage, data);
+
+    console.log(response);
+
     return response;
   } catch (error: any) {
-    console.error("Error in createCommunity:", error);
+    console.error("Error in sendCommunityMessage:", error);
     if (error.response) {
       return error.response;
     } else {
       throw new Error(
-        error.message || "An error occurred while creating the community"
+        error.message || "An error occurred while sending the community message"
       );
     }
+  }
+};
+export const getCommunityMessages = async (communityId: string) => {
+  try {
+    const url = `${userRoutes.getCommunityMessages}/${communityId}`;
+    const response = await Api.get(url);
+    return response;
+  } catch (error: any) {
+    console.error("Error in sendCommunityMessage:", error);
+    if (error.response) {
+      return error.response;
+    } else {
+      throw new Error(
+        error.message || "An error occurred while sending the community message"
+      );
+    }
+  }
+};
+export const reportCommunity = async (data: {
+  reporterId: string;
+  reportedCommunityId: string;
+  subject: string;
+  reason: string;
+}) => {
+  try {
+    const response = await Api.post(userRoutes.communityReport, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
   }
 };

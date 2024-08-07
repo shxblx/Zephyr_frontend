@@ -1,5 +1,3 @@
-
-
 const adminRoutes = {
   login: "admin/login",
   getUsers: "admin/getUsers",
@@ -9,6 +7,8 @@ const adminRoutes = {
   logout: "admin/logout",
   banCommunity: "admin/banCommunity",
   unbanCommunity: "admin/unbanCommunity",
+  getUserInfo: "admin/getUserInfo",
+  getReports: "admin/getReports ",
 };
 
 export default adminRoutes;

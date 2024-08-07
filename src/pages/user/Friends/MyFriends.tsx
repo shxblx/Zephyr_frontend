@@ -73,7 +73,12 @@ const MyFriends: React.FC = () => {
         className={`w-full lg:w-1/3 bg-black p-4 border-r border-gray-800 ${
           selectedFriend ? "hidden lg:block" : "block"
         }`}
-        style={{ height: 'calc(100vh - 4rem)', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        style={{
+          height: "calc(100vh - 4rem)",
+          overflowY: "auto",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
       >
         <h2 className="text-white text-2xl font-semibold mb-4">My Friends</h2>
         {loading ? (
@@ -129,7 +134,7 @@ const MyFriends: React.FC = () => {
             ? "block"
             : "hidden lg:flex lg:items-center lg:justify-center"
         }`}
-        style={{ height: 'calc(100vh - 4rem)' }}
+        style={{ height: "calc(100vh - 4rem)" }}
       >
         {selectedFriend ? (
           <FriendChat

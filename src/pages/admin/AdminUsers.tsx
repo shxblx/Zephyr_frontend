@@ -9,6 +9,7 @@ import { NoSymbolIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import Loader from "../../components/common/admin/Loader";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;
@@ -22,6 +23,7 @@ interface User {
 const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -119,7 +121,7 @@ const AdminUsers: React.FC = () => {
   };
 
   const handleViewUser = (_id: string) => {
-    console.log(`Viewing user ${_id}`);
+    navigate(`/admin/users/${_id}`);
   };
 
   if (loading) {

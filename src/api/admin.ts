@@ -22,19 +22,19 @@ export const getUsers = async () => {
     return data;
   } catch (error: any) {
     if (error.response) {
-      return error.response.data
+      return error.response.data;
     } else {
-      console.error("Error", error.message)
+      console.error("Error", error.message);
     }
-    throw error
+    throw error;
   }
 };
 
 export const blockUser = async (data: { userId: string }) => {
   try {
-    const response = await Api.post(adminRoutes.blockUser, data)
+    const response = await Api.post(adminRoutes.blockUser, data);
 
-    return response
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -43,12 +43,12 @@ export const blockUser = async (data: { userId: string }) => {
     }
     throw error;
   }
-}
+};
 
 export const unblockUser = async (data: { userId: string }) => {
   try {
-    const response = await Api.post(adminRoutes.unblockUser, data)
-    return response
+    const response = await Api.post(adminRoutes.unblockUser, data);
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -57,44 +57,47 @@ export const unblockUser = async (data: { userId: string }) => {
     }
     throw error;
   }
-}
+};
 
 export const AdminGetCommunities = async () => {
   try {
-    const response = await Api.get(adminRoutes.getCommunities)
-    return response
+    const response = await Api.get(adminRoutes.getCommunities);
+    return response;
   } catch (error: any) {
     console.error("Error in createCommunity:", error);
     if (error.response) {
       return error.response;
     } else {
-      throw new Error(error.message || "An error occurred while creating the community");
+      throw new Error(
+        error.message || "An error occurred while creating the community"
+      );
     }
   }
-}
+};
 
 export const adminLogout = async () => {
   try {
-    const response = await Api.post(adminRoutes.logout)
+    const response = await Api.post(adminRoutes.logout);
     console.log("here");
 
-    return response
+    return response;
   } catch (error: any) {
     console.error("Error in createCommunity:", error);
     if (error.response) {
       return error.response;
     } else {
-      throw new Error(error.message || "An error occurred while creating the community");
+      throw new Error(
+        error.message || "An error occurred while creating the community"
+      );
     }
   }
-}
-
+};
 
 export const banCommunity = async (data: { communityId: string }) => {
   try {
-    const response = await Api.post(adminRoutes.banCommunity, data)
+    const response = await Api.post(adminRoutes.banCommunity, data);
 
-    return response
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -103,12 +106,12 @@ export const banCommunity = async (data: { communityId: string }) => {
     }
     throw error;
   }
-}
+};
 
 export const unbanCommunity = async (data: { communityId: string }) => {
   try {
-    const response = await Api.post(adminRoutes.unbanCommunity, data)
-    return response
+    const response = await Api.post(adminRoutes.unbanCommunity, data);
+    return response;
   } catch (error: any) {
     if (error.response) {
       return error.response;
@@ -117,4 +120,32 @@ export const unbanCommunity = async (data: { communityId: string }) => {
     }
     throw error;
   }
-}
+};
+
+export const getUserDetails = async (userId: string) => {
+  try {
+    let url = `${adminRoutes.getUserInfo}/${userId}`;
+    const response = await Api.get(url);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+export const getReports = async () => {
+  try {
+    const response = await Api.get(adminRoutes.getReports);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

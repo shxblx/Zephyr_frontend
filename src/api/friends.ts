@@ -150,3 +150,21 @@ export const rejectFriendRequest = async (data: {
     throw error;
   }
 };
+export const reportUser = async (data: {
+  reporterId: string;
+  reportedUserId: string;
+  subject: string;
+  reason: string;
+}) => {
+  try {
+    const response = await Api.post(userRoutes.reportUser, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

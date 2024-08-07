@@ -90,6 +90,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
   const handleSave = async () => {
     try {
       const response = await updateCommunity({
+        communityId: community._id,
         name: editedCommunity.name,
         description: editedCommunity.description,
         tags: editedCommunity.hashtags,
@@ -145,8 +146,6 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
           (member) => member._id === userId
         );
         if (removedUser) {
-          console.log("here");
-
           toast.success(
             `${removedUser.displayName} removed successfully from the community`
           );
