@@ -233,3 +233,20 @@ export const reportCommunity = async (data: {
     throw error;
   }
 };
+
+export const makeAdmin = async (data: {
+  userId: string;
+  communityId: string;
+}) => {
+  try {
+    const response = await Api.post(userRoutes.makeAdmin, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

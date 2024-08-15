@@ -46,6 +46,25 @@ export const getFriends = async (userId: string) => {
     throw error;
   }
 };
+export const getNearbyFriends = async (data: {
+  userId: string;
+  latitude: number;
+  longitude: number;
+}) => {
+  try {
+    const { userId, latitude, longitude } = data;
+    const url = `${userRoutes.findNearbyFriends}?userId=${userId}&latitude=${latitude}&longitude=${longitude}`;
+    const response = await Api.get(url);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
 
 export const fetchAllUsers = async (searchText?: string) => {
   try {
@@ -158,6 +177,25 @@ export const reportUser = async (data: {
 }) => {
   try {
     const response = await Api.post(userRoutes.reportUser, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const setUserLocation = async (data: {
+  userId: string;
+  newLocation: { latitude: number; longitude: number };
+}) => {
+  try {
+    console.log("here");
+    
+    const response = await Api.post(userRoutes.setUserLocation, data);
     return response;
   } catch (error: any) {
     if (error.response) {

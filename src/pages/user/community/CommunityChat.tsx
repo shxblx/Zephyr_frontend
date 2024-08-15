@@ -269,7 +269,7 @@ const CommunityChat: React.FC = () => {
             />
           </div>
         ) : (
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col max-h-[700px]">
             <div className="flex-grow overflow-hidden">
               <div className="h-full overflow-y-auto scrollbar-hide p-4">
                 {isLoading ? (

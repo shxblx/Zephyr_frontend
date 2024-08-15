@@ -6,6 +6,7 @@ const userRoutes = {
   logout: "user/logout",
   forgotPassword: "user/forgotPassword",
   forgotVerify: "user/forgotVerify",
+  setUserLocation: "user/setUserLocation",
   changeStatus: "user/changeStatus",
   getUserInfo: "user/getUser",
   changeUserName: "user/changeUserName",
@@ -16,6 +17,7 @@ const userRoutes = {
   addFriend: "user/addFriend",
   getFriends: "user/getFriends",
   sendMessage: "user/sendMessage",
+  findNearbyFriends: "user/findNearbyFriends",
   fetchMessages: "user/fetchMessages",
   getAllUsers: "user/getAllUsers",
   removeFriend: "user/removeFriend",
@@ -25,6 +27,7 @@ const userRoutes = {
   getCommunityById: "user/getCommunityById",
   joinCommunity: "user/joinCommunity",
   leaveCommunity: "user/leaveCommunity",
+  makeAdmin: "user/makeAdmin",
   getMembers: "user/getMembers",
   getNotification: "user/getNotification",
   acceptFriendRequest: "user/acceptFriendRequest",
@@ -35,6 +38,7 @@ const userRoutes = {
   postReply: "user/postReply",
   getReplies: "user/getReplies",
   getZepchatById: "user/getZepchatById",
+  getMyZepchats: "user/getMyZepchats",
   replyVote: "user/replyVote",
   voteZepchat: "user/voteZepchat",
   deleteZepchat: "user/deleteZepchat",
@@ -45,6 +49,8 @@ const userRoutes = {
   getCommunityMessages: "user/getCommunityMessages",
   reportUser: "user/reportUser ",
   communityReport: "user/communityReport",
+  chatWithBot: "user/chatWithBot",
+  initializeChat: "user/initializeChat",
 };
 
 export default userRoutes;

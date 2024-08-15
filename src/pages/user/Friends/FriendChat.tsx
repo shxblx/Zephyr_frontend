@@ -180,7 +180,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-[1000px]">
       <div className="flex items-center justify-between p-4 ">
         <div className="flex items-center">
           <button

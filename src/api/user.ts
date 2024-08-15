@@ -227,3 +227,18 @@ export const clearNotifications = async (data: { userId: string }) => {
     throw error;
   }
 };
+
+export const sendMessageToChatbot = async (data: { message: string }) => {
+  try {
+    const response = await Api.post(userRoutes.chatWithBot, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+

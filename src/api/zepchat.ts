@@ -178,3 +178,18 @@ export const reportZepchat = async (data: {
     throw error;
   }
 };
+
+export const getMyZepchats = async (userId: string) => {
+  try {
+    const url = `${userRoutes.getMyZepchats}/${userId}`;
+    const response = await Api.get(url);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

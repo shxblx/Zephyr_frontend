@@ -4,12 +4,14 @@ import {
   PencilIcon,
   UserMinusIcon,
   FlagIcon,
+  UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import {
   getMembers,
   removeMember,
   updateCommunity,
+  makeAdmin,
 } from "../../../api/community";
 import { toast } from "react-hot-toast";
 
@@ -63,6 +65,8 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
   const [reportedUser, setReportedUser] = useState<User | null>(null);
   const [reportSubject, setReportSubject] = useState("");
   const [reportReason, setReportReason] = useState("");
+  const [makeAdminModalOpen, setMakeAdminModalOpen] = useState(false);
+  const [newAdminUser, setNewAdminUser] = useState<User | null>(null);
 
   useEffect(() => {
     fetchCommunityData();
@@ -158,6 +162,39 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
     } catch (error) {
       console.error("Error removing member:", error);
       toast.error("An error occurred while removing the member");
+    }
+  };
+
+  const handleMakeAdmin = (userId: string) => {
+    if (!isAdmin) return;
+    const newAdmin = communityData?.members.find(
+      (member) => member._id === userId
+    );
+    if (newAdmin) {
+      setNewAdminUser(newAdmin);
+      setMakeAdminModalOpen(true);
+    }
+  };
+
+  const confirmMakeAdmin = async () => {
+    if (!newAdminUser) return;
+    try {
+      const response = await makeAdmin({
+        userId: newAdminUser._id,
+        communityId: community._id,
+      });
+
+      if (response.status === 200) {
+        toast.success(`${newAdminUser.displayName} has been promoted to admin`);
+        fetchCommunityData();
+        setMakeAdminModalOpen(false);
+        setNewAdminUser(null);
+      } else {
+        toast.error("Failed to promote member to admin");
+      }
+    } catch (error) {
+      console.error("Error making admin:", error);
+      toast.error("An error occurred while promoting the member to admin");
     }
   };
 
@@ -346,13 +383,22 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
                 {isAdmin &&
                   member._id !== userInfo.userId &&
                   !isUserAdmin(member._id) && (
-                    <button
-                      onClick={() => handleRemoveMember(member._id)}
-                      className="text-red-500 hover:text-red-600 mr-2"
-                      title="Remove member"
-                    >
-                      <UserMinusIcon className="w-5 h-5" />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleMakeAdmin(member._id)}
+                        className="text-green-500 hover:text-green-600 mr-2"
+                        title="Make admin"
+                      >
+                        <UserPlusIcon className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleRemoveMember(member._id)}
+                        className="text-red-500 hover:text-red-600 mr-2"
+                        title="Remove member"
+                      >
+                        <UserMinusIcon className="w-5 h-5" />
+                      </button>
+                    </>
                   )}
                 {member._id !== userInfo.userId && (
                   <button
@@ -368,6 +414,36 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
           ))}
         </div>
       </div>
+
+      {/* Make Admin Modal */}
+      {makeAdminModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-96">
+            <h3 className="text-xl font-semibold text-white mb-4">
+              Make {newAdminUser?.displayName} Admin
+            </h3>
+            <p className="text-gray-300 mb-4">
+              If you make {newAdminUser?.displayName} the admin, you will no
+              longer be the admin of this community. Are you sure you want to
+              proceed?
+            </p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setMakeAdminModalOpen(false)}
+                className="bg-gray-600 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmMakeAdmin}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Report User Modal */}
       {reportModalOpen && (

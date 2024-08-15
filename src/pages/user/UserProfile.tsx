@@ -8,12 +8,14 @@ import {
   PencilIcon,
   UserCircleIcon,
   ArrowLeftIcon,
+  EyeIcon,
 } from "@heroicons/react/24/solid";
 import { setUserInfo } from "../../redux/slices/userSlice/userSlice";
 import { changeProfile, changeStatus } from "../../api/user";
 import { getMycommunities } from "../../api/community";
 import { getFriends } from "../../api/friends";
 import Loader from "../../components/common/user/Loader";
+import { getMyZepchats } from "../../api/zepchat";
 
 interface UserInfo {
   displayName: string;
@@ -47,6 +49,11 @@ interface Friend {
   createdAt: string;
 }
 
+interface Zepchat {
+  _id: string;
+  title: string;
+}
+
 interface RootState {
   userInfo: {
     userInfo: UserInfo;
@@ -75,6 +82,7 @@ export const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [communities, setCommunities] = useState<Community[]>([]);
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [zepchats, setZepchats] = useState<Zepchat[]>([]);
 
   const formattedJoinedDate = userInfo.joined_date
     ? new Date(userInfo.joined_date).toLocaleDateString()
@@ -83,6 +91,7 @@ export const UserProfile: React.FC = () => {
   useEffect(() => {
     fetchCommunities();
     fetchFriends();
+    fetchZepchats();
   }, []);
 
   const fetchCommunities = async () => {
@@ -115,6 +124,23 @@ export const UserProfile: React.FC = () => {
     } catch (error) {
       console.error("Error fetching friends:", error);
       toast.error("Failed to fetch friends");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchZepchats = async () => {
+    setLoading(true);
+    try {
+      const response = await getMyZepchats(userInfo.userId);
+      if (response.status === 200 && response.data) {
+        setZepchats(response.data);
+      } else {
+        toast.error("No Zepchats found");
+      }
+    } catch (error) {
+      console.error("Error fetching Zepchats:", error);
+      toast.error("Failed to fetch Zepchats");
     } finally {
       setLoading(false);
     }
@@ -305,24 +331,39 @@ export const UserProfile: React.FC = () => {
                 {section}
               </h2>
               <ul className="space-y-4">
-                {(section === "Communities"
-                  ? communities
-                  : section === "Friends"
-                  ? friends
-                  : Array(5)
-                      .fill(null)
-                      .map((_, i) => ({ _id: i, name: `Chat ${i + 1}` }))
-                )
-                  .slice(0, 5)
-                  .map((item: any, itemIndex) => (
-                    <motion.li
-                      key={item._id}
-                      className="flex items-center space-x-3"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: itemIndex * 0.1 }}
-                    >
-                      {section !== "Your Zepchats" ? (
+                {section === "Your Zepchats" ? (
+                  zepchats.length > 0 ? (
+                    zepchats.slice(0, 5).map((zepchat, itemIndex) => (
+                      <motion.li
+                        key={zepchat._id}
+                        className="flex items-center space-x-3"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: itemIndex * 0.1 }}
+                      >
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#FF5F09]">
+                          <span className="text-sm">{itemIndex + 1}</span>
+                        </div>
+                        <span>{zepchat.title}</span>
+                        <Link to={`/zepchats/${zepchat._id}`}>
+                          <EyeIcon className="h-5 w-5 text-[#FF5F09] cursor-pointer" />
+                        </Link>
+                      </motion.li>
+                    ))
+                  ) : (
+                    <li>No Zepchats found</li>
+                  )
+                ) : (
+                  (section === "Communities" ? communities : friends)
+                    .slice(0, 5)
+                    .map((item: any, itemIndex) => (
+                      <motion.li
+                        key={item._id}
+                        className="flex items-center space-x-3"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: itemIndex * 0.1 }}
+                      >
                         <img
                           src={
                             item.profilePicture ||
@@ -331,27 +372,35 @@ export const UserProfile: React.FC = () => {
                           alt={item.name || item.displayName}
                           className="w-10 h-10 rounded-full object-cover"
                         />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#FF5F09]">
-                          <span className="text-sm">{itemIndex + 1}</span>
-                        </div>
-                      )}
-                      <span>{item.name || item.displayName}</span>
-                    </motion.li>
-                  ))}
+                        <span>{item.name || item.displayName}</span>
+                      </motion.li>
+                    ))
+                )}
               </ul>
-              <Link
-                to={`/${section.toLowerCase().replace(/\s+/g, "")}`}
-                className="block mt-4"
-              >
-                <motion.button
-                  className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-[#FF7F3F] transition-all duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+              {section === "Your Zepchats" ? (
+                <Link to={`/zepchats`} className="block mt-4">
+                  <motion.button
+                    className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-[#FF7F3F] transition-all duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    View all
+                  </motion.button>
+                </Link>
+              ) : (
+                <Link
+                  to={`/${section.toLowerCase().replace(/\s+/g, "")}`}
+                  className="block mt-4"
                 >
-                  View all
-                </motion.button>
-              </Link>
+                  <motion.button
+                    className="w-full bg-[#FF5F09] text-white py-2 rounded hover:bg-[#FF7F3F] transition-all duration-300"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    View all
+                  </motion.button>
+                </Link>
+              )}
             </motion.div>
           ))}
         </motion.div>

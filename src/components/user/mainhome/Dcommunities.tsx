@@ -37,6 +37,10 @@ const Communities: React.FC = () => {
         } else {
           setError("Failed to fetch communities");
         }
+
+        if(response.status===403){
+          
+        }
       } catch (err) {
         setError("An error occurred while fetching communities");
         console.error(err);
@@ -156,7 +160,7 @@ const Communities: React.FC = () => {
         ))}
       </div>
       <Link
-        to="/communities"
+        to="/findfriends"
         className="mt-4 inline-block text-white px-4 py-2 text-sm bg-ff5f09 hover:bg-orange-600 transition-colors rounded"
       >
         View All Communities

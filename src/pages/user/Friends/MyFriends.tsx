@@ -68,7 +68,7 @@ const MyFriends: React.FC = () => {
   };
 
   return (
-    <div className="mt-8 lg:mt-0 flex h-full ml-0 lg:ml-64 bg-black">
+    <div className="lg:mt-0 flex h-full ml-0 lg:ml-64 bg-black">
       <div
         className={`w-full lg:w-1/3 bg-black p-4 border-r border-gray-800 ${
           selectedFriend ? "hidden lg:block" : "block"
@@ -80,7 +80,7 @@ const MyFriends: React.FC = () => {
           msOverflowStyle: "none",
         }}
       >
-        <h2 className="text-white text-2xl font-semibold mb-4">My Friends</h2>
+        <h2 className="text-white text-2xl font-semibold">My Friends</h2>
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#ff5f09]"></div>

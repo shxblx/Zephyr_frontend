@@ -7,8 +7,13 @@ import {
   MagnifyingGlassIcon,
   UserIcon,
   UserGroupIcon,
+  MapPinIcon,
 } from "@heroicons/react/24/outline";
-import { getGlobalFriends, addFriend } from "../../api/friends";
+import {
+  getGlobalFriends,
+  addFriend,
+  getNearbyFriends,
+} from "../../api/friends";
 import { getCommunities, joinCommunity } from "../../api/community";
 
 interface Friend {
@@ -17,6 +22,7 @@ interface Friend {
   displayName: string;
   profilePicture: string | null;
   status: string;
+  distance?: number;
 }
 
 interface Community {
@@ -39,6 +45,8 @@ const FindFriends: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"friends" | "communities">(
     "friends"
   );
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [nearbyFriends, setNearbyFriends] = useState<Friend[]>([]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -140,6 +148,55 @@ const FindFriends: React.FC = () => {
     }
   };
 
+  const handleFindNearbyFriends = () => {
+    setShowLocationModal(true);
+  };
+
+  const handleAllowLocation = () => {
+    setShowLocationModal(false);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await getNearbyFriends({
+              userId: userInfo.userId,
+              latitude,
+              longitude,
+            });
+            if (response.status === 200 && response.data.length > 0) {
+              const nearbyFriendsData = response.data.map((friend: any) => ({
+                _id: friend._id,
+                userName: friend.userName,
+                displayName: friend.displayName,
+                profilePicture: friend.profilePicture,
+                status: "Online", // Assuming all nearby friends are online
+                distance: friend.distance,
+              }));
+              setNearbyFriends(nearbyFriendsData);
+              setFriends(nearbyFriendsData);
+              setActiveTab("friends");
+              toast.success("Nearby friends found!");
+            } else {
+              toast.error("No nearby friends found");
+            }
+          } catch (error) {
+            console.error("Error fetching nearby friends:", error);
+            toast.error(
+              "Failed to fetch nearby friends. Please try again later."
+            );
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast.error("Failed to get your location. Please try again.");
+        }
+      );
+    } else {
+      toast.error("Geolocation is not supported by your browser.");
+    }
+  };
+
   return (
     <div className="flex-1 ml-64">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -167,6 +224,13 @@ const FindFriends: React.FC = () => {
             onClick={() => setActiveTab("communities")}
           >
             Communities
+          </button>
+          <button
+            className="ml-4 px-4 py-2 rounded-lg bg-[#FF5F09] text-white flex items-center"
+            onClick={handleFindNearbyFriends}
+          >
+            <MapPinIcon className="w-5 h-5 mr-2" />
+            Find Nearby
           </button>
         </div>
 
@@ -219,6 +283,11 @@ const FindFriends: React.FC = () => {
                   >
                     {friend.status}
                   </p>
+                  {friend.distance !== undefined && (
+                    <p className="text-gray-400 text-sm mb-2">
+                      {friend.distance.toFixed(2)} km away
+                    </p>
+                  )}
                   <button
                     onClick={() => handleAddFriend(friend._id)}
                     className={`p-2 rounded-full transition-colors ${
@@ -303,6 +372,34 @@ const FindFriends: React.FC = () => {
           </div>
         )}
       </div>
+
+      {showLocationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <h2 className="text-white text-xl font-semibold mb-4">
+              Allow Location Access
+            </h2>
+            <p className="text-gray-300 mb-4">
+              To find nearby friends, we need access to your location. Do you
+              want to allow this?
+            </p>
+            <div className="flex justify-end">
+              <button
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg mr-2"
+                onClick={() => setShowLocationModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-[#FF5F09] text-white rounded-lg"
+                onClick={handleAllowLocation}
+              >
+                Allow
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

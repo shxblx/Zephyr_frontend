@@ -14,11 +14,11 @@ const UserLayout: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-black">
+    <div className="flex flex-col min-h-screen mt-20 bg-black">
       <MainNavbar />
-      <div className="flex flex-1 pt-16">
+      <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-4">
+        <main className="flex-1">
           <Outlet />
         </main>
       </div>
