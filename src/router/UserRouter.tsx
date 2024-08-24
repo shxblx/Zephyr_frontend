@@ -5,7 +5,7 @@ import { Signup } from "../pages/user/Signup";
 import { Login } from "../pages/user/Login";
 import { Otp } from "../pages/user/Otp";
 import { MainHome } from "../pages/user/MainHome";
-import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
+import Protectedroute from "../components/protectedRoute/ProtectedRoute";
 import PublicRoute from "../components/protectedRoute/PublicRoute";
 import UserLayout from "../components/common/user/UserLayout";
 import { ForgotPassWord } from "../pages/user/ForgotPassWord";
@@ -39,7 +39,7 @@ export const UserRouter: React.FC = () => {
         element={<PublicRoute element={<ForgotPassWord />} redirectTo="/" />}
       />
 
-      <Route element={<ProtectedRoute element={<UserLayout />} />}>
+      <Route element={<Protectedroute element={<UserLayout />} />}>
         <Route path="/home" element={<MainHome />} />
         <Route path="/findfriends" element={<FindFriends />} />
         <Route path="/friends" element={<MyFriends />} />
@@ -51,11 +51,11 @@ export const UserRouter: React.FC = () => {
 
       <Route
         path="/profile"
-        element={<ProtectedRoute element={<UserProfile />} />}
+        element={<Protectedroute element={<UserProfile />} />}
       />
       <Route
         path="/profile/settings"
-        element={<ProtectedRoute element={<ProfileSettings />} />}
+        element={<Protectedroute element={<ProfileSettings />} />}
       />
     </Routes>
   );

@@ -7,10 +7,10 @@ interface ProtectedRouteProps {
   element: React.ReactElement;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+const Protectedroute: React.FC<ProtectedRouteProps> = ({ element }) => {
   const userInfo = useSelector((state: RootState) => state.userInfo.userInfo);
 
   return userInfo ? element : <Navigate to="/login" replace />;
 };
 
-export default ProtectedRoute;
+export default Protectedroute;
