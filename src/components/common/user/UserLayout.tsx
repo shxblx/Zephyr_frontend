@@ -14,7 +14,7 @@ const UserLayout: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen mt-20 bg-black">
+    <div className="flex flex-col bg-black">
       <MainNavbar />
       <div className="flex flex-1">
         <Sidebar />

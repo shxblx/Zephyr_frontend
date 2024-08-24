@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faRobot,
   faPaperPlane,
-  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import Communities from "./Dcommunities";
 import FriendSuggestions from "./Dfriends";
@@ -32,7 +31,7 @@ const Discover: React.FC = () => {
   const { userInfo } = useSelector((state: any) => state.userInfo);
   const [isLoading, setIsLoading] = useState(false);
   const [decryptionText, setDecryptionText] = useState("");
-  const [location, setLocation] = useState<Location | null>(null);
+  const [_location, setLocation] = useState<Location | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 

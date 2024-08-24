@@ -320,7 +320,7 @@ export const UserProfile: React.FC = () => {
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
           variants={fadeInUp}
         >
-          {["Communities", "Friends", "Your Zepchats"].map((section, index) => (
+          {["Communities", "Friends", "Your Zepchats"].map((section, _index) => (
             <motion.div
               key={section}
               className="p-6"

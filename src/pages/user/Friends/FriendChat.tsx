@@ -180,8 +180,8 @@ const FriendChat: React.FC<FriendChatProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-[1000px]">
-      <div className="flex items-center justify-between p-4 ">
+    <div className="flex flex-col h-full relative">
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <div className="flex items-center">
           <button
             onClick={onBackClick}
@@ -224,10 +224,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
           )}
         </div>
       </div>
-      <div
-        className="flex-grow overflow-y-auto p-4"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
+      <div className="flex-grow overflow-y-auto p-4 pb-24">
         {isLoading ? (
           <div className="text-white text-center">Loading messages...</div>
         ) : messages.length === 0 ? (
@@ -281,24 +278,24 @@ const FriendChat: React.FC<FriendChatProps> = ({
         )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="flex border-t border-gray-700 p-4 ">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-          className="flex-grow bg-gray-800 text-white rounded-l-lg px-4 py-2 focus:outline-none border border-gray-700"
-          placeholder="Type a message..."
-        />
-        <button
-          onClick={handleSendMessage}
-          className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors"
-        >
-          Send
-        </button>
+      <div className="absolute bottom-0 left-0 right-0 border-t border-gray-700 bg-black p-4">
+        <div className="flex">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            className="flex-grow bg-gray-800 text-white rounded-l-lg px-4 py-2 focus:outline-none border border-gray-700"
+            placeholder="Type a message..."
+          />
+          <button
+            onClick={handleSendMessage}
+            className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors"
+          >
+            Send
+          </button>
+        </div>
       </div>
-
-      {/* Report Modal */}
       {showReportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-900 rounded-lg p-8 w-full max-w-md">

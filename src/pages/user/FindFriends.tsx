@@ -46,7 +46,7 @@ const FindFriends: React.FC = () => {
     "friends"
   );
   const [showLocationModal, setShowLocationModal] = useState(false);
-  const [nearbyFriends, setNearbyFriends] = useState<Friend[]>([]);
+  const [_nearbyFriends, setNearbyFriends] = useState<Friend[]>([]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {

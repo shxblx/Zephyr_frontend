@@ -100,7 +100,7 @@ const MainNavbar = () => {
   };
 
   return (
-    <nav className="bg-black text-white p-4 w-full z-40 fixed top-0 left-0 right-0">
+    <nav className="bg-black text-white p-4 w-full z-40 sticky top-0 left-0 right-0">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/">

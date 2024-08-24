@@ -74,7 +74,6 @@ const MyFriends: React.FC = () => {
           selectedFriend ? "hidden lg:block" : "block"
         }`}
         style={{
-          height: "calc(100vh - 4rem)",
           overflowY: "auto",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -134,7 +133,6 @@ const MyFriends: React.FC = () => {
             ? "block"
             : "hidden lg:flex lg:items-center lg:justify-center"
         }`}
-        style={{ height: "calc(100vh - 4rem)" }}
       >
         {selectedFriend ? (
           <FriendChat

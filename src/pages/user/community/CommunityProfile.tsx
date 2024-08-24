@@ -67,6 +67,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
   const [reportReason, setReportReason] = useState("");
   const [makeAdminModalOpen, setMakeAdminModalOpen] = useState(false);
   const [newAdminUser, setNewAdminUser] = useState<User | null>(null);
+  const [memberCount, setMemberCount] = useState(0);
 
   useEffect(() => {
     fetchCommunityData();
@@ -75,8 +76,10 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
   const fetchCommunityData = async () => {
     try {
       const response = await getMembers(community._id);
+
       if (response.data) {
         setCommunityData(response.data);
+        setMemberCount(response.data.memberCount)
         setIsAdmin(response.data.admin._id === userInfo.userId);
       } else {
         console.error("No community data received from API");
@@ -308,6 +311,9 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
         )}
         <p className="text-gray-500 text-sm">
           Created on: {new Date(community.createdAt).toLocaleDateString()}
+        </p>
+        <p className="text-gray-500 text-sm">
+          Total Members:{memberCount}
         </p>
         <p className="text-gray-500 text-sm mb-4">
           {community.isPrivate ? "Private Community" : "Public Community"}
