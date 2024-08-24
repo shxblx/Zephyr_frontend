@@ -51,7 +51,7 @@ body {
 }
 
 .white-button {
-  position: relative;
+  position:  relative;
   isolation: isolate;
   overflow: hidden;
   transition: color 0.3s ease-in-out;
