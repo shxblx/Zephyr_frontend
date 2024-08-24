@@ -5,7 +5,7 @@ import { Signup } from "../pages/user/Signup";
 import { Login } from "../pages/user/Login";
 import { Otp } from "../pages/user/Otp";
 import { MainHome } from "../pages/user/MainHome";
-import Protectedroute from "../components/protectedRoute/ProtectedRoute";
+import Protectedroute from "../components/common/user/Protectedroute";
 import PublicRoute from "../components/protectedRoute/PublicRoute";
 import UserLayout from "../components/common/user/UserLayout";
 import { ForgotPassWord } from "../pages/user/ForgotPassWord";
