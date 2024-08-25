@@ -238,7 +238,7 @@ const ZepChatReplies: React.FC<ZepChatRepliesProps> = ({ zepChatId }) => {
           <TransitionGroup>
             {replies.map((reply) => (
               <CSSTransition key={reply._id} timeout={500} classNames="reply">
-                <div className="bg-gray-800 rounded-lg p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09">
+                <div className="bg-gray-800  p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09">
                   <div className="flex items-center mb-4">
                     <img
                       src={reply.profilePicture}

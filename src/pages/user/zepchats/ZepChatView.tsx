@@ -343,7 +343,7 @@ const ZepChatView: React.FC = () => {
         </div>
         <div className="space-y-6">
           {/* Main ZepChat */}
-          <div className="bg-gray-800 rounded-lg p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09">
+          <div className="bg-gray-800  p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09">
             <div className="flex items-center mb-4">
               <img
                 src={zepChat.author.profilePicture}
@@ -404,7 +404,7 @@ const ZepChatView: React.FC = () => {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-gray-900 rounded-lg p-8 w-full max-w-md">
+          <div className="bg-gray-900  p-8 w-full max-w-md">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-white text-2xl font-bold">Edit ZepChat</h2>
               <button
@@ -424,7 +424,7 @@ const ZepChatView: React.FC = () => {
                   id="editTitle"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ff5f09"
+                  className="w-full bg-gray-700 text-white  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ff5f09"
                   required
                 />
               </div>
@@ -439,7 +439,7 @@ const ZepChatView: React.FC = () => {
                   id="editContent"
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-ff5f09"
+                  className="w-full bg-gray-700 text-white  px-4 py-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-ff5f09"
                   required
                 />
               </div>
@@ -452,12 +452,12 @@ const ZepChatView: React.FC = () => {
                   id="editTags"
                   value={editTags}
                   onChange={(e) => setEditTags(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ff5f09"
+                  className="w-full bg-gray-700 text-white  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ff5f09"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-ff5f09 text-white py-2 px-4 rounded-lg hover:bg-orange-700 focus:outline-none transition-colors duration-300"
+                className="w-full bg-ff5f09 text-white py-2 px-4  hover:bg-orange-700 focus:outline-none transition-colors duration-300"
               >
                 Update
               </button>
@@ -468,7 +468,7 @@ const ZepChatView: React.FC = () => {
       {/* Report Modal */}
       {showReportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-gray-900 rounded-lg p-8 w-full max-w-md">
+          <div className="bg-gray-900  p-8 w-full max-w-md">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-white text-2xl font-bold">Report ZepChat</h2>
               <button
@@ -491,7 +491,7 @@ const ZepChatView: React.FC = () => {
                   id="reportSubject"
                   value={reportSubject}
                   onChange={(e) => setReportSubject(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ff5f09"
+                  className="w-full bg-gray-700 text-white  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ff5f09"
                   required
                 />
               </div>
@@ -506,13 +506,13 @@ const ZepChatView: React.FC = () => {
                   id="reportReason"
                   value={reportReason}
                   onChange={(e) => setReportReason(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-ff5f09"
+                  className="w-full bg-gray-700 text-white  px-4 py-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-ff5f09"
                   required
                 />
               </div>
               <button
                 type="submit"
-                className="w-full bg-ff5f09 text-white py-2 px-4 rounded-lg hover:bg-orange-700 focus:outline-none transition-colors duration-300"
+                className="w-full bg-ff5f09 text-white py-2 px-4  hover:bg-orange-700 focus:outline-none transition-colors duration-300"
               >
                 Submit Report
               </button>

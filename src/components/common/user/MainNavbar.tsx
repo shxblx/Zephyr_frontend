@@ -108,6 +108,7 @@ const MainNavbar = () => {
             {showOptions && (
               <div className="absolute right-0 mt-2 w-48 bg-black rounded-md shadow-lg py-1 z-50">
                 <Link
+                onClick={() => setShowOptions(!showOptions)}
                   to="findfriends"
                   className="block px-4 py-2 text-sm text-white hover:bg-gray-800"
                 >

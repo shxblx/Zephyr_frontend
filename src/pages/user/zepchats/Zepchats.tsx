@@ -67,7 +67,7 @@ const ZepChats: React.FC = () => {
           <h2 className="text-white text-3xl font-bold">ZepChats</h2>
           <button
             onClick={() => setShowNewZepChat(true)}
-            className="bg-ff5f09 text-white py-2 px-4 rounded-lg hover:bg-orange-700 focus:outline-none transition-colors duration-300"
+            className="bg-ff5f09 text-white py-2 px-4  hover:bg-orange-700 focus:outline-none transition-colors duration-300"
           >
             New ZepChat
           </button>
@@ -78,7 +78,7 @@ const ZepChats: React.FC = () => {
             placeholder="Search ZepChats..."
             value={searchTerm}
             onChange={handleSearch}
-            className="w-full text-white bg-gray-800 rounded-lg px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-ff5f09"
+            className="w-full text-white bg-gray-800  px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-ff5f09"
           />
           <MagnifyingGlassIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
         </div>
@@ -90,7 +90,7 @@ const ZepChats: React.FC = () => {
           <div className="space-y-6">
             {filteredZepChats.map((zepChat) => (
               <Link to={`/zepchats/${zepChat._id}`} key={zepChat._id}>
-                <div className="bg-gray-800 rounded-lg p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09">
+                <div className="bg-gray-800  p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-ff5f09/30 border border-gray-700 hover:border-ff5f09">
                   <h3 className="text-white text-xl font-semibold mb-3">
                     {zepChat.title}
                   </h3>
