@@ -170,7 +170,7 @@ const FindFriends: React.FC = () => {
                 userName: friend.userName,
                 displayName: friend.displayName,
                 profilePicture: friend.profilePicture,
-                status: "Online", // Assuming all nearby friends are online
+                status: "Online",
                 distance: friend.distance,
               }));
               setNearbyFriends(nearbyFriendsData);
@@ -196,17 +196,16 @@ const FindFriends: React.FC = () => {
       toast.error("Geolocation is not supported by your browser.");
     }
   };
-
   return (
-    <div className="flex-1 ml-64">
+    <div className="flex-1 ml-0 md:ml-64">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold mb-6 text-white">
           Find Friends and Communities
         </h1>
 
-        <div className="flex mb-4">
+        <div className="flex flex-wrap mb-4 gap-2">
           <button
-            className={`mr-4 px-4 py-2 rounded-lg ${
+            className={`flex-grow md:flex-grow-0 px-4 py-2 rounded-lg ${
               activeTab === "friends"
                 ? "bg-[#FF5F09] text-white"
                 : "border border-gray-400 text-gray-300"
@@ -216,17 +215,17 @@ const FindFriends: React.FC = () => {
             Friends
           </button>
           <button
-            className={`px-4 py-2 rounded-lg ${
+            className={`flex-grow md:flex-grow-0 px-4 py-2 rounded-lg ${
               activeTab === "communities"
                 ? "bg-[#FF5F09] text-white"
-                : "border border-gray-400  text-gray-300"
+                : "border border-gray-400 text-gray-300"
             }`}
             onClick={() => setActiveTab("communities")}
           >
             Communities
           </button>
           <button
-            className="ml-4 px-4 py-2 rounded-lg bg-[#FF5F09] text-white flex items-center"
+            className="flex-grow md:flex-grow-0 px-4 py-2 rounded-lg bg-[#FF5F09] text-white flex items-center justify-center"
             onClick={handleFindNearbyFriends}
           >
             <MapPinIcon className="w-5 h-5 mr-2" />
@@ -253,7 +252,7 @@ const FindFriends: React.FC = () => {
           </div>
         ) : activeTab === "friends" ? (
           friends.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {friends.map((friend) => (
                 <div
                   key={friend._id}
@@ -270,10 +269,12 @@ const FindFriends: React.FC = () => {
                       <UserIcon className="w-12 h-12 text-gray-400" />
                     </div>
                   )}
-                  <h3 className="text-white text-lg font-semibold">
+                  <h3 className="text-white text-lg font-semibold text-center">
                     {friend.displayName}
                   </h3>
-                  <p className="text-gray-400 text-sm">@{friend.userName}</p>
+                  <p className="text-gray-400 text-sm text-center">
+                    @{friend.userName}
+                  </p>
                   <p
                     className={`text-sm mb-2 ${
                       friend.status === "Online"
@@ -309,7 +310,7 @@ const FindFriends: React.FC = () => {
             <div className="flex flex-col justify-center items-center h-64 bg-gray-800 rounded-lg">
               <UserIcon className="w-16 h-16 text-gray-400 mb-4" />
               <p className="text-white text-lg font-semibold">No users found</p>
-              <p className="text-gray-400 text-sm mt-2">
+              <p className="text-gray-400 text-sm mt-2 text-center">
                 {searchTerm
                   ? "Try a different search term"
                   : "No friends available at the moment"}
@@ -338,7 +339,7 @@ const FindFriends: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  className={`bg-ff5f09 text-white p-2 rounded-full hover:bg-ff5f09 transition-colors flex items-center ${
+                  className={`bg-[#FF5F09] text-white p-2 rounded-full hover:bg-orange-600 transition-colors flex items-center ${
                     joiningCommunity === community._id
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -364,7 +365,7 @@ const FindFriends: React.FC = () => {
             <p className="text-white text-lg font-semibold">
               No communities found
             </p>
-            <p className="text-gray-400 text-sm mt-2">
+            <p className="text-gray-400 text-sm mt-2 text-center">
               {searchTerm
                 ? "Try a different search term"
                 : "No communities available at the moment"}
@@ -374,8 +375,8 @@ const FindFriends: React.FC = () => {
       </div>
 
       {showLocationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-gray-800 p-6 rounded-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-gray-800 p-6 rounded-lg w-full max-w-md">
             <h2 className="text-white text-xl font-semibold mb-4">
               Allow Location Access
             </h2>

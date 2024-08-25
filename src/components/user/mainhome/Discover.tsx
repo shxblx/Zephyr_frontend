@@ -157,7 +157,7 @@ const Discover: React.FC = () => {
   };
 
   const renderChatbotButton = () => (
-    <div className="fixed left-10 bottom-4 z-50 lg:left-56 ">
+    <div className="fixed left-10 bottom-16 z-50 lg:left-56 ">
       <button
         onClick={() => setIsChatbotOpen(!isChatbotOpen)}
         className="bg-ff5f09 text-white p-3 rounded-full hover:bg-ff5f09 transition-colors shadow-lg"
