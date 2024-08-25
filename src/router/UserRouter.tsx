@@ -16,6 +16,7 @@ import MyFriends from "../pages/user/Friends/MyFriends";
 import ZepChats from "../pages/user/zepchats/Zepchats";
 import ZepChatView from "../pages/user/zepchats/ZepChatView";
 import MyCommunities from "../pages/user/community/MyCommunties";
+import Support from "../pages/user/support/Support";
 
 export const UserRouter: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ export const UserRouter: React.FC = () => {
         <Route path="/communities" element={<MyCommunities />} />
         <Route path="/zepchats" element={<ZepChats />} />
         <Route path="/zepchats/:id" element={<ZepChatView />} />
+        <Route path="/support" element={<Support />} />
       </Route>
 
       <Route

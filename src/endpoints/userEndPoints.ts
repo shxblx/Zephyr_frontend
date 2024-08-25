@@ -51,6 +51,8 @@ const userRoutes = {
   communityReport: "user/communityReport",
   chatWithBot: "user/chatWithBot",
   initializeChat: "user/initializeChat",
+  raiseTicket:"user/raiseTicket",
+  fetchTickets:"user/fetchTickets"
 };
 
 export default userRoutes;

@@ -242,3 +242,37 @@ export const sendMessageToChatbot = async (data: { message: string }) => {
   }
 };
 
+export const raiseTicket = async (data: {
+  userId: string;
+  subject: string;
+  description: string;
+}) => {
+  try {
+    const response = await Api.post(userRoutes.raiseTicket, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const getTickets = async (userId: string) => {
+  try {
+    const url = `${userRoutes.fetchTickets}/${userId}`;
+    const response = await Api.get(url);
+    console.log(response);
+
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
