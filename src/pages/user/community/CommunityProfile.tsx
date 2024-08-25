@@ -279,6 +279,9 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
               <p className="text-gray-500 text-sm mb-4">
                 {community.isPrivate ? "Private Community" : "Public Community"}
               </p>
+              <p className="text-gray-500 text-sm mb-4">
+                {memberCount}
+              </p>
               {isAdmin && (
                 <button
                   onClick={handleEdit}
