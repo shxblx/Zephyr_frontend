@@ -41,6 +41,7 @@ interface CommunityData {
   communityId: string;
   members: User[];
   admin: User;
+  memberCount: number;
 }
 
 interface CommunityProfileProps {
@@ -50,16 +51,15 @@ interface CommunityProfileProps {
 }
 
 const CommunityProfile: React.FC<CommunityProfileProps> = ({
-  community,
+  community: initialCommunity,
   onClose,
   onUpdate,
 }) => {
   const { userInfo } = useSelector((state: any) => state.userInfo);
+  const [community, setCommunity] = useState<Community>(initialCommunity);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedCommunity, setEditedCommunity] = useState(community);
-  const [communityData, setCommunityData] = useState<CommunityData | null>(
-    null
-  );
+  const [editedCommunity, setEditedCommunity] = useState<Community>(community);
+  const [communityData, setCommunityData] = useState<CommunityData | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [newTag, setNewTag] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -72,7 +72,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
 
   useEffect(() => {
     fetchCommunityData();
-  }, [community]);
+  }, [community._id]);
 
   const fetchCommunityData = async () => {
     try {
@@ -80,8 +80,8 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
 
       if (response.data) {
         setCommunityData(response.data);
-        setMemberCount(response.data.memberCount);
         setIsAdmin(response.data.admin._id === userInfo.userId);
+        setMemberCount(response.data.memberCount);
       } else {
         console.error("No community data received from API");
       }
@@ -92,6 +92,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
 
   const handleEdit = () => {
     setIsEditing(true);
+    setEditedCommunity({ ...community });
   };
 
   const handleSave = async () => {
@@ -105,6 +106,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
 
       if (response.status === 200) {
         toast.success("Community updated successfully");
+        setCommunity(editedCommunity);
         onUpdate(editedCommunity);
         setIsEditing(false);
       } else {
@@ -236,6 +238,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
       toast.error("An error occurred. Please try again.");
     }
   };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
