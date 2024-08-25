@@ -1,4 +1,3 @@
-// MyFriends.tsx
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
@@ -34,7 +33,6 @@ const MyFriends: React.FC = () => {
     setLoading(true);
     try {
       const response = await getFriends(userInfo.userId);
-
       if (
         response &&
         response.data &&
@@ -68,69 +66,66 @@ const MyFriends: React.FC = () => {
   };
 
   return (
-    <div className="lg:mt-0 flex h-full ml-0 lg:ml-64 bg-black">
+    <div className="flex h-[calc(100vh-5rem)] ml-0 lg:ml-64 bg-black overflow-hidden">
       <div
-        className={`w-full lg:w-1/3 bg-black p-4 border-r border-gray-800 ${
-          selectedFriend ? "hidden lg:block" : "block"
+        className={`w-full lg:w-1/3 bg-black border-r border-gray-800 flex flex-col ${
+          selectedFriend ? "hidden lg:flex" : "flex"
         }`}
-        style={{
-          overflowY: "auto",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
       >
-        <h2 className="text-white text-2xl font-semibold">My Friends</h2>
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#ff5f09]"></div>
-          </div>
-        ) : friends.length > 0 ? (
-          <div className="space-y-4">
-            {friends.map((friend) => (
-              <div
-                key={friend._id}
-                className={`rounded-lg p-4 cursor-pointer transition-colors ${
-                  selectedFriend?._id === friend._id
-                    ? "border-2 border-[#ff5f09]"
-                    : "border border-gray-700"
-                }`}
-                onClick={() => handleSelectFriend(friend)}
-              >
-                <div className="flex items-center">
-                  <img
-                    src={friend.profilePicture}
-                    alt={friend.displayName}
-                    className="w-12 h-12 rounded-full object-cover mr-4"
-                  />
-                  <div>
-                    <h3 className="text-white text-lg font-semibold">
-                      {friend.displayName}
-                    </h3>
-                    <p className="text-gray-400 text-sm">@{friend.userName}</p>
-                    <p
-                      className={`text-sm ${
-                        friend.status === "Online"
-                          ? "text-green-500"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      {friend.status}
-                    </p>
+        <h2 className="text-white text-2xl font-semibold p-4">My Friends</h2>
+        <div className="flex-1 overflow-y-auto">
+          {loading ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#ff5f09]"></div>
+            </div>
+          ) : friends.length > 0 ? (
+            <div className="space-y-4 p-4">
+              {friends.map((friend) => (
+                <div
+                  key={friend._id}
+                  className={`rounded-lg p-4 cursor-pointer transition-colors ${
+                    selectedFriend?._id === friend._id
+                      ? "border-2 border-[#ff5f09]"
+                      : "border border-gray-700"
+                  }`}
+                  onClick={() => handleSelectFriend(friend)}
+                >
+                  <div className="flex items-center">
+                    <img
+                      src={friend.profilePicture}
+                      alt={friend.displayName}
+                      className="w-12 h-12 rounded-full object-cover mr-4"
+                    />
+                    <div>
+                      <h3 className="text-white text-lg font-semibold">
+                        {friend.displayName}
+                      </h3>
+                      <p className="text-gray-400 text-sm">@{friend.userName}</p>
+                      <p
+                        className={`text-sm ${
+                          friend.status === "Online"
+                            ? "text-green-500"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {friend.status}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex justify-center items-center h-64 text-gray-500">
-            <p className="text-xl text-center">Add friends to start chatting</p>
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-full text-gray-500">
+              <p className="text-xl text-center">Add friends to start chatting</p>
+            </div>
+          )}
+        </div>
       </div>
       <div
-        className={`w-full lg:w-2/3 bg-black p-4 flex flex-col border-l border-gray-800 ${
+        className={`w-full lg:w-2/3 bg-black flex flex-col border-l border-gray-800 ${
           selectedFriend
-            ? "block"
+            ? "flex"
             : "hidden lg:flex lg:items-center lg:justify-center"
         }`}
       >

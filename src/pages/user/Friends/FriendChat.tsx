@@ -180,7 +180,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-[calc(100vh-5rem)] relative">
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <div className="flex items-center">
           <button
@@ -224,7 +224,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
           )}
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto p-4 pb-24">
+      <div className="flex-grow overflow-y-auto p-4 pb-24 scrollbar-hide">
         {isLoading ? (
           <div className="text-white text-center">Loading messages...</div>
         ) : messages.length === 0 ? (
@@ -278,7 +278,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
         )}
         <div ref={messagesEndRef} />
       </div>
-      <div className="absolute bottom-0 left-0 right-0 border-t border-gray-700 bg-black p-4">
+      <div className="absolute bottom-0 left-0 right-0 border-t border-gray-700 bg-black p-4 mb-12 md:mb-0">
         <div className="flex">
           <input
             type="text"

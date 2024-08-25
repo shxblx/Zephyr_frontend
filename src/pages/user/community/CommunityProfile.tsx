@@ -14,6 +14,7 @@ import {
   makeAdmin,
 } from "../../../api/community";
 import { toast } from "react-hot-toast";
+import { reportUser } from "../../../api/friends";
 
 interface User {
   _id: string;
@@ -79,7 +80,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
 
       if (response.data) {
         setCommunityData(response.data);
-        setMemberCount(response.data.memberCount)
+        setMemberCount(response.data.memberCount);
         setIsAdmin(response.data.admin._id === userInfo.userId);
       } else {
         console.error("No community data received from API");
@@ -210,142 +211,89 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
     setReportModalOpen(true);
   };
 
-  const submitReport = () => {
-    // Implement the report submission logic here
-    console.log("Report submitted:", {
-      reportedUser,
-      subject: reportSubject,
-      reason: reportReason,
-    });
-    toast.success("Report submitted successfully");
-    setReportModalOpen(false);
-    setReportedUser(null);
-    setReportSubject("");
-    setReportReason("");
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportedUser) return;
+
+    try {
+      const response = await reportUser({
+        reporterId: userInfo.userId,
+        reportedUserId: reportedUser._id,
+        subject: reportSubject,
+        reason: reportReason,
+      });
+
+      if (response.status === 200) {
+        setReportModalOpen(false);
+        toast.success("Report submitted successfully");
+        setReportSubject("");
+        setReportReason("");
+      } else {
+        toast.error("Failed to submit report");
+      }
+    } catch (error) {
+      console.error("Error reporting user:", error);
+      toast.error("An error occurred. Please try again.");
+    }
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6 relative w-full h-full overflow-y-auto">
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-gray-400 hover:text-white"
-      >
-        <XMarkIcon className="w-6 h-6" />
-      </button>
-      <div className="flex flex-col items-center">
-        <img
-          src={community.profilePicture || "default-avatar.png"}
-          alt={community.name}
-          className="w-32 h-32 rounded-full object-cover mb-4 border-4 border-orange-500"
-        />
-        {isEditing ? (
-          <input
-            type="text"
-            name="name"
-            value={editedCommunity.name}
-            onChange={handleChange}
-            className="text-3xl font-bold text-white mb-2 bg-gray-800 rounded px-2 py-1 text-center"
-          />
-        ) : (
-          <h2 className="text-3xl font-bold text-white mb-2">
-            {community.name}
-          </h2>
-        )}
-        {isEditing ? (
-          <textarea
-            name="description"
-            value={editedCommunity.description}
-            onChange={handleChange}
-            className="text-gray-300 text-center mb-4 bg-gray-800 rounded px-2 py-1 w-full"
-          />
-        ) : (
-          <p className="text-gray-300 text-center mb-4">
-            {community.description}
-          </p>
-        )}
-        {isEditing ? (
-          <div className="w-full mb-4">
-            <div className="flex mb-2">
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                className="flex-grow bg-gray-800 text-gray-300 px-2 py-1 rounded-l"
-                placeholder="Add a hashtag"
-              />
-              <button
-                onClick={handleAddTag}
-                className="bg-orange-500 text-white px-4 py-1 rounded-r hover:bg-orange-600 transition-colors"
-              >
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {editedCommunity.hashtags.map((tag, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-700 rounded-full px-3 py-1 flex items-center"
-                >
-                  <span className="text-gray-300 text-sm">#{tag}</span>
-                  <button
-                    onClick={() => handleRemoveTag(tag)}
-                    className="ml-2 text-red-500 font-bold"
-                  >
-                    <XMarkIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-wrap justify-center gap-2 mb-4">
-            {community.hashtags.map((tag, index) => (
-              <span
-                key={index}
-                className="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
-        <p className="text-gray-500 text-sm">
-          Created on: {new Date(community.createdAt).toLocaleDateString()}
-        </p>
-        <p className="text-gray-500 text-sm">
-          Total Members:{memberCount}
-        </p>
-        <p className="text-gray-500 text-sm mb-4">
-          {community.isPrivate ? "Private Community" : "Public Community"}
-        </p>
-        {isAdmin && !isEditing && (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white p-4 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-black text-xl font-bold">Community Profile</h2>
           <button
-            onClick={handleEdit}
-            className="mb-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition-colors flex items-center"
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
           >
-            <PencilIcon className="w-4 h-4 mr-2" />
-            Edit Community
+            <XMarkIcon className="w-5 h-5" />
           </button>
-        )}
-        {isEditing && (
-          <div className="mb-4 flex gap-2">
-            <button
-              onClick={handleSave}
-              className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition-colors"
-            >
-              Save Changes
-            </button>
-            <button
-              onClick={() => setIsEditing(false)}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
+        </div>
+        <div className="flex flex-col items-center">
+          <img
+            src={community.profilePicture || "/default-avatar.png"}
+            alt={community.name}
+            className="w-24 h-24 object-cover mb-4 border-4 border-orange-500"
+          />
+          {!isEditing && (
+            <>
+              <h2 className="text-2xl font-bold text-black mb-2">
+                {community.name}
+              </h2>
+              <p className="text-gray-600 text-center mb-4">
+                {community.description}
+              </p>
+              <div className="flex flex-wrap justify-center gap-2 mb-4">
+                {community.hashtags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-700 text-gray-300 px-3 py-1 text-sm"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+              <p className="text-gray-500 text-sm">
+                Created on: {new Date(community.createdAt).toLocaleDateString()}
+              </p>
+              <p className="text-gray-500 text-sm mb-4">
+                {community.isPrivate ? "Private Community" : "Public Community"}
+              </p>
+              {isAdmin && (
+                <button
+                  onClick={handleEdit}
+                  className="mb-4 bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 transition-colors flex items-center"
+                >
+                  <PencilIcon className="w-4 h-4 mr-2" />
+                  Edit Community
+                </button>
+              )}
+            </>
+          )}
+        </div>
 
-        <h3 className="text-2xl font-semibold text-white mt-6 mb-4">Members</h3>
-        <div className="w-full max-h-80 overflow-y-auto bg-gray-800 rounded-lg p-4">
+        <h3 className="text-xl font-semibold text-black mt-6 mb-4">Members</h3>
+        <div className="max-h-64 overflow-y-auto bg-gray-100 p-4">
           {communityData?.admin && (
             <div className="flex items-center justify-between py-3 border-b border-gray-700">
               <div className="flex items-center">
@@ -354,7 +302,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
                     communityData.admin.profilePicture || "default-avatar.png"
                   }
                   alt={communityData.admin.userName}
-                  className="w-10 h-10 rounded-full object-cover mr-3"
+                  className="w-10 h-10 object-cover mr-3"
                 />
                 <div>
                   <span className="text-gray-200 font-semibold">
@@ -363,6 +311,15 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
                   <div className="text-sm text-orange-500">Admin</div>
                 </div>
               </div>
+              {communityData.admin._id !== userInfo.userId && (
+                <button
+                  onClick={() => handleReportUser(communityData.admin)}
+                  className="text-yellow-500 hover:text-yellow-600"
+                  title="Report user"
+                >
+                  <FlagIcon className="w-5 h-5" />
+                </button>
+              )}
             </div>
           )}
           {communityData?.members.map((member) => (
@@ -374,7 +331,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
                 <img
                   src={member.profilePicture || "default-avatar.png"}
                   alt={member.userName}
-                  className="w-10 h-10 rounded-full object-cover mr-3"
+                  className="w-10 h-10 object-cover mr-3"
                 />
                 <div>
                   <span className="text-gray-200 font-semibold">
@@ -421,14 +378,85 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
         </div>
       </div>
 
+      {/* Edit Community Modal */}
+      {isEditing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 w-96">
+            <h3 className="text-xl font-semibold text-black mb-4">
+              Edit Community
+            </h3>
+            <input
+              type="text"
+              name="name"
+              value={editedCommunity.name}
+              onChange={handleChange}
+              className="w-full bg-gray-100 text-black px-3 py-2 mb-3"
+              placeholder="Community Name"
+            />
+            <textarea
+              name="description"
+              value={editedCommunity.description}
+              onChange={handleChange}
+              className="w-full bg-gray-100 text-black px-3 py-2 mb-3 h-24"
+              placeholder="Community Description"
+            />
+            <div className="flex mb-2">
+              <input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                className="flex-grow bg-gray-100 text-black px-2 py-1"
+                placeholder="Add a hashtag"
+              />
+              <button
+                onClick={handleAddTag}
+                className="bg-orange-500 text-white px-4 py-1 hover:bg-orange-600 transition-colors"
+              >
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {editedCommunity.hashtags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-700 px-3 py-1 flex items-center"
+                >
+                  <span className="text-gray-300 text-sm">#{tag}</span>
+                  <button
+                    onClick={() => handleRemoveTag(tag)}
+                    className="ml-2 text-red-500 font-bold"
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="bg-gray-300 text-black px-4 py-2 mr-2 hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 transition-colors"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Make Admin Modal */}
       {makeAdminModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-96">
-            <h3 className="text-xl font-semibold text-white mb-4">
+          <div className="bg-white p-6 w-96">
+            <h3 className="text-xl font-semibold text-black mb-4">
               Make {newAdminUser?.displayName} Admin
             </h3>
-            <p className="text-gray-300 mb-4">
+            <p className="text-gray-600 mb-4">
               If you make {newAdminUser?.displayName} the admin, you will no
               longer be the admin of this community. Are you sure you want to
               proceed?
@@ -436,13 +464,13 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
             <div className="flex justify-end">
               <button
                 onClick={() => setMakeAdminModalOpen(false)}
-                className="bg-gray-600 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition-colors"
+                className="bg-gray-300 text-black px-4 py-2 mr-2 hover:bg-gray-400 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmMakeAdmin}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+                className="bg-green-500 text-white px-4 py-2 hover:bg-green-600 transition-colors"
               >
                 Confirm
               </button>
@@ -454,37 +482,42 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
       {/* Report User Modal */}
       {reportModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-96">
-            <h3 className="text-xl font-semibold text-white mb-4">
+          <div className="bg-white p-6 w-96">
+            <h3 className="text-xl font-semibold text-black mb-4">
               Report User: {reportedUser?.displayName}
             </h3>
-            <input
-              type="text"
-              value={reportSubject}
-              onChange={(e) => setReportSubject(e.target.value)}
-              placeholder="Subject"
-              className="w-full bg-gray-700 text-white rounded px-3 py-2 mb-3"
-            />
-            <textarea
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-              placeholder="Reason for reporting"
-              className="w-full bg-gray-700 text-white rounded px-3 py-2 mb-3 h-32"
-            />
-            <div className="flex justify-end">
-              <button
-                onClick={() => setReportModalOpen(false)}
-                className="bg-gray-600 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitReport}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-              >
-                Submit Report
-              </button>
-            </div>
+            <form onSubmit={handleReportSubmit}>
+              <input
+                type="text"
+                value={reportSubject}
+                onChange={(e) => setReportSubject(e.target.value)}
+                placeholder="Subject"
+                className="w-full bg-gray-100 text-black px-3 py-2 mb-3"
+                required
+              />
+              <textarea
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="Reason for reporting"
+                className="w-full bg-gray-100 text-black px-3 py-2 mb-3 h-32"
+                required
+              />
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setReportModalOpen(false)}
+                  className="bg-gray-300 text-black px-4 py-2 mr-2 hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-red-500 text-white px-4 py-2 hover:bg-red-600 transition-colors"
+                >
+                  Submit Report
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
