@@ -139,7 +139,6 @@ export const acceptFriendRequest = async (data: {
   friendId: string;
 }) => {
   try {
-    console.log(data);
 
     const response = await Api.patch(userRoutes.acceptFriendRequest, data);
     return response;
@@ -193,7 +192,6 @@ export const setUserLocation = async (data: {
   newLocation: { latitude: number; longitude: number };
 }) => {
   try {
-    console.log("here");
     
     const response = await Api.post(userRoutes.setUserLocation, data);
     return response;

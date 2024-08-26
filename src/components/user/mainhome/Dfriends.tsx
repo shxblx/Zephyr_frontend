@@ -33,7 +33,6 @@ const FriendSuggestions: React.FC = () => {
       setLoading(true);
       try {
         const response = await getGlobalFriends(userInfo.userId);
-        console.log(response);
 
         if (response && response.data && response.data.users) {
           const filteredFriends = response.data.users.filter(

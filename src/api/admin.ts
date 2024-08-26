@@ -78,7 +78,6 @@ export const AdminGetCommunities = async () => {
 export const adminLogout = async () => {
   try {
     const response = await Api.post(adminRoutes.logout);
-    console.log("here");
 
     return response;
   } catch (error: any) {

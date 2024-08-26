@@ -264,8 +264,6 @@ export const getTickets = async (userId: string) => {
   try {
     const url = `${userRoutes.fetchTickets}/${userId}`;
     const response = await Api.get(url);
-    console.log(response);
-
     return response;
   } catch (error: any) {
     if (error.response) {

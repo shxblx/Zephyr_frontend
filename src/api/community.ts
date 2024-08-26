@@ -3,7 +3,6 @@ import userRoutes from "../endpoints/userEndPoints";
 
 export const createCommunity = async (data: FormData) => {
   try {
-    console.log("Sending data to backend:", Object.fromEntries(data));
 
     let response = await Api.post(userRoutes.createCommuity, data, {
       headers: {
@@ -185,7 +184,6 @@ export const sendCommunityMessage = async (data: {
   try {
     const response = await Api.post(userRoutes.sendCommunityMessage, data);
 
-    console.log(response);
 
     return response;
   } catch (error: any) {

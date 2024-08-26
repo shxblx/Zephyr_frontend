@@ -82,7 +82,6 @@ const Form: React.FC = () => {
 
         if (response.status === 200) {
           const { userData, token } = response.data;
-          console.log(userData);
 
           dispatch(
             setUserInfo({

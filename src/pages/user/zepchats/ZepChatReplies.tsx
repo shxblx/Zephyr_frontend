@@ -82,8 +82,6 @@ const ZepChatReplies: React.FC<ZepChatRepliesProps> = ({ zepChatId }) => {
           toast.success("Reply posted successfully");
           fetchReplies();
         } else {
-          console.log(response);
-          
           toast.error("Failed to post reply");
         }
       } catch (error) {

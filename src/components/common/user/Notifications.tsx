@@ -32,7 +32,6 @@ const Notifications: React.FC<NotificationsProps> = ({ isOpen }) => {
     const fetchNotifications = async () => {
       try {
         const response = await getNotification(userInfo.userId);
-        console.log(response);
 
         if (
           response.status === 200 &&
@@ -61,10 +60,6 @@ const Notifications: React.FC<NotificationsProps> = ({ isOpen }) => {
 
   useEffect(() => {
     const socket = io("http://your-socket-io-server-url");
-
-    socket.on("connect", () => {
-      console.log("Connected to socket server");
-    });
 
     socket.on("newNotification", (newNotification: Notification) => {
       setNotifications((prevNotifications) => [

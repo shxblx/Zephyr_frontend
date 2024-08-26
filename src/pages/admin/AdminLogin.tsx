@@ -37,7 +37,6 @@ const AnimatedLoginPage: React.FC = () => {
 
     if (valid) {
       const response = await adminLogin({ email, password });
-      console.log(response);
 
       if (response.data === true) {
         toast.success("Admin login successful");

@@ -41,7 +41,6 @@ export const postReply = async (data: {
 }) => {
   try {
     const response = await Api.post(userRoutes.postReply, data);
-    console.log(response);
 
     return response;
   } catch (error: any) {
@@ -73,7 +72,6 @@ export const getZepchatById = async (zepchatId: string) => {
   try {
     const url = `${userRoutes.getZepchatById}/${zepchatId}`;
     const response = await Api.get(url);
-    console.log(response);
 
     return response;
   } catch (error: any) {
@@ -91,8 +89,6 @@ export const voteReply = async (data: {
   userId: string;
 }) => {
   try {
-    console.log(data);
-
     const response = await Api.patch(userRoutes.replyVote, data);
     return response;
   } catch (error: any) {
@@ -111,8 +107,6 @@ export const voteZepchat = async (data: {
   userId: string;
 }) => {
   try {
-    console.log(data);
-
     const response = await Api.patch(userRoutes.voteZepchat, data);
     return response;
   } catch (error: any) {
