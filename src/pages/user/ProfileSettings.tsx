@@ -9,6 +9,7 @@ import {
 } from "../../api/user";
 import { setUserInfo } from "../../redux/slices/userSlice/userSlice";
 import Swal from "sweetalert2";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const validatePassword = (password: string) => {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[A-Z]).{8,}$/;
@@ -29,6 +30,9 @@ export const ProfileSettings = () => {
   const [currentPasswordError, setCurrentPasswordError] = useState("");
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleUsernameChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +113,6 @@ export const ProfileSettings = () => {
     }
     setDisplayNameError("");
   };
-
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -264,13 +267,22 @@ export const ProfileSettings = () => {
                 >
                   Current Password
                 </label>
-                <input
-                  type="password"
-                  id="currentPassword"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showCurrentPassword ? "text" : "password"}
+                    id="currentPassword"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="w-full bg-gray-800 text-white p-2 pr-10 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
+                  >
+                    {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
                 {currentPasswordError && (
                   <p className="text-red-500">{currentPasswordError}</p>
                 )}
@@ -282,13 +294,22 @@ export const ProfileSettings = () => {
                 >
                   New Password
                 </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    id="newPassword"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full bg-gray-800 text-white p-2 pr-10 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
+                  >
+                    {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
                 {newPasswordError && (
                   <p className="text-red-500">{newPasswordError}</p>
                 )}
@@ -300,13 +321,22 @@ export const ProfileSettings = () => {
                 >
                   Confirm New Password
                 </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-gray-800 text-white p-2 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-gray-800 text-white p-2 pr-10 rounded border border-gray-700 focus:border-gray-500 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
                 {confirmPasswordError && (
                   <p className="text-red-500">{confirmPasswordError}</p>
                 )}

@@ -39,8 +39,6 @@ const FriendSuggestions: React.FC = () => {
             (friend: Friend) => friend._id !== userInfo.userId
           );
           setFriends(filteredFriends);
-        } else {
-          toast.error("Failed to fetch friends data");
         }
       } catch (error) {
         console.error("Error fetching users:", error);

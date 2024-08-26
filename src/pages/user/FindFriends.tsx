@@ -70,8 +70,6 @@ const FindFriends: React.FC = () => {
         setFriends([]);
         if (search) {
           toast.error("No users found");
-        } else {
-          toast.error("Failed to fetch friends data");
         }
       }
     } catch (error) {
