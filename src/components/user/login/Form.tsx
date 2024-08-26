@@ -6,7 +6,6 @@ import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../../redux/slices/userSlice/userSlice";
 import Loader from "../../common/user/Loader";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 const Form: React.FC = () => {
   const [Loading, setLoading] = useState(false);
@@ -161,11 +160,6 @@ const Form: React.FC = () => {
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                   onClick={togglePasswordVisibility}
                 >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
                 </button>
               </div>
               {errors.password && (
