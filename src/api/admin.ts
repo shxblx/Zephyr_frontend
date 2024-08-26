@@ -161,3 +161,35 @@ export const getCommunityReports = async () => {
     throw error;
   }
 };
+
+export const getTickets = async () => {
+  try {
+    const response = await Api.get(adminRoutes.getTickets);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const updateTicketStatus = async (data: {
+  ticketId: string;
+  newStatus: string;
+  adminComments: string;
+}) => {
+  try {
+    const response = await Api.post(adminRoutes.updateTicket, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

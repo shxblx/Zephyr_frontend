@@ -4,6 +4,11 @@ import { toast } from "react-hot-toast";
 import { raiseTicket } from "../../../api/user";
 import { useSelector } from "react-redux";
 
+interface AdminReply {
+  _id: string;
+  Reply: string;
+}
+
 interface Ticket {
   _id: string;
   userId: string;
@@ -12,6 +17,7 @@ interface Ticket {
   status: string;
   created: string;
   __v: number;
+  adminReplies: AdminReply[];
 }
 
 interface RaiseTicketProps {
@@ -42,11 +48,12 @@ const RaiseTicket: React.FC<RaiseTicketProps> = ({ onClose, onSubmit }) => {
         const newTicket: Ticket = {
           _id: response.data._id || `temp-${Date.now()}`,
           userId: userInfo.userId,
-          subject: subject, // Use the subject from the form
-          description: description, // Use the description from the form
+          subject: subject,
+          description: description,
           status: response.data.status || "Pending",
           created: response.data.created || new Date().toISOString(),
           __v: response.data.__v || 0,
+          adminReplies: [], // Initialize with an empty array
         };
 
         onSubmit(newTicket);

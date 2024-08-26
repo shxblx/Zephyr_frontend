@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import { TicketIcon } from "@heroicons/react/24/outline";
+import { TicketIcon, UserCircleIcon, CheckCircleIcon, ClockIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import RaiseTicket from "./RaiseTicket";
 import { getTickets } from "../../../api/user";
+
+interface AdminReply {
+  _id: string;
+  Reply: string;
+}
 
 interface Ticket {
   _id: string;
@@ -13,6 +18,7 @@ interface Ticket {
   status: string;
   created: string;
   __v: number;
+  adminReplies: AdminReply[];
 }
 
 const Support: React.FC = () => {
@@ -30,6 +36,8 @@ const Support: React.FC = () => {
     setLoading(true);
     try {
       const response = await getTickets(userInfo.userId);
+      console.log(response);
+
       if (Array.isArray(response.data)) {
         setTickets(response.data);
       } else {
@@ -83,6 +91,19 @@ const Support: React.FC = () => {
     return date.toLocaleString(undefined, options);
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'solved':
+        return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
+      case 'inprogress':
+        return <ClockIcon className="h-5 w-5 text-yellow-500" />;
+      case 'pending':
+        return <ClockIcon className="h-5 w-5 text-gray-500" />;
+      default:
+        return <XCircleIcon className="h-5 w-5 text-red-500" />;
+    }
+  };
+
   return (
     <div className="flex h-[calc(100vh-5rem)] ml-0 lg:ml-64 bg-black overflow-hidden">
       <div
@@ -119,9 +140,11 @@ const Support: React.FC = () => {
                   <h3 className="text-white text-lg font-semibold">
                     {ticket.subject}
                   </h3>
-                  <p className="text-gray-400 text-sm">
-                    Status: {ticket.status || "Pending"}
-                  </p>
+                  <div className="flex items-center text-gray-400 text-sm">
+                    <span className="mr-2">Status:</span>
+                    {getStatusIcon(ticket.status)}
+                    <span className="ml-1">{ticket.status}</span>
+                  </div>
                   <p className="text-gray-400 text-sm">
                     Created: {formatDate(ticket.created)}
                   </p>
@@ -143,7 +166,7 @@ const Support: React.FC = () => {
         }`}
       >
         {selectedTicket ? (
-          <div className="p-4">
+          <div className="p-4 h-full flex flex-col">
             <button
               onClick={handleBackClick}
               className="text-white hover:text-gray-300 mb-4"
@@ -153,11 +176,38 @@ const Support: React.FC = () => {
             <h2 className="text-white text-2xl font-semibold mb-4">
               {selectedTicket.subject}
             </h2>
-            <p className="text-gray-400">Status: {selectedTicket.status || "Pending"}</p>
-            <p className="text-gray-400">
-              Created: {formatDate(selectedTicket.created)}
-            </p>
-            <p className="text-white mt-4">{selectedTicket.description}</p>
+            <div className="bg-gray-800 rounded-lg p-4 mb-4">
+              <div className="flex items-center text-gray-400 text-sm mb-2">
+                <span className="mr-2">Status:</span>
+                {getStatusIcon(selectedTicket.status)}
+                <span className="ml-1">{selectedTicket.status}</span>
+              </div>
+              <p className="text-gray-400 text-sm mb-2">
+                Created: {formatDate(selectedTicket.created)}
+              </p>
+              <p className="text-white">{selectedTicket.description}</p>
+            </div>
+
+            {/* Admin Replies Section */}
+            <div className="flex-1 overflow-y-auto">
+              <h3 className="text-white text-xl font-semibold mb-4">Admin Replies</h3>
+              {selectedTicket.adminReplies && selectedTicket.adminReplies.length > 0 ? (
+                <div className="space-y-4">
+                  {selectedTicket.adminReplies.map((reply) => (
+                    <div key={reply._id} className="p-4 rounded-lg bg-blue-900">
+                      <div className="flex items-center mb-2">
+                        <UserCircleIcon className="h-6 w-6 mr-2 text-blue-500" />
+                        <span className="text-white font-semibold">Admin</span>
+                        {/* Add timestamp if available in the future */}
+                      </div>
+                      <p className="text-white">{reply.Reply}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-400">No admin replies yet.</p>
+              )}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">

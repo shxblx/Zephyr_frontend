@@ -9,6 +9,7 @@ import AdminCommunities from "../pages/admin/AdminCommunities";
 import AdminProtectedRoute from "../components/protectedRoute/AdminProtectedRoute";
 import AdminReports from "../pages/admin/AdminReports";
 import AdminUserDetails from "../pages/admin/AdminUserDetails";
+import AdminTickets from "../pages/admin/AdminTickets";
 
 export const AdminRouter = () => {
   return (
@@ -34,6 +35,10 @@ export const AdminRouter = () => {
         <Route
           path="/reports"
           element={<AdminProtectedRoute element={<AdminReports />} />}
+        />
+        <Route
+          path="/support"
+          element={<AdminProtectedRoute element={<AdminTickets />} />}
         />
       </Route>
     </Routes>
