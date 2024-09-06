@@ -162,6 +162,7 @@ const CommunityChat: React.FC<CommunityProps> = ({
           updatedAt: response.updatedAt,
         };
 
+        setMessages((prevMessages) => [...prevMessages, sentMessage]);
         socket.emit("sendCommunityMessage", {
           communityId: community._id,
           message: sentMessage,
@@ -177,7 +178,6 @@ const CommunityChat: React.FC<CommunityProps> = ({
       }
     }
   };
-
   const handleLeaveCommunity = async () => {
     try {
       await leaveCommunity({
