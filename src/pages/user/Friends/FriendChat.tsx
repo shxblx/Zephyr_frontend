@@ -61,6 +61,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const [reportSubject, setReportSubject] = useState("");
   const [reportReason, setReportReason] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -108,6 +109,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
 
   const handleSendMessage = async () => {
     if ((newMessage.trim() || selectedFile) && selectedFriend) {
+      setIsSending(true);
       let fileUrl = "";
       let fileType: "image" | "video" | undefined = undefined;
 
@@ -127,6 +129,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
           console.error("Error uploading file:", error);
           toast.error("Failed to upload file. Please try again.");
           setIsUploading(false);
+          setIsSending(false);
           return;
         }
         setIsUploading(false);
@@ -164,6 +167,8 @@ const FriendChat: React.FC<FriendChatProps> = ({
       } catch (error) {
         console.error("Error sending message:", error);
         toast.error("Failed to send message. Please try again.");
+      } finally {
+        setIsSending(false);
       }
     }
   };
