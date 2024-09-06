@@ -61,7 +61,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const [reportSubject, setReportSubject] = useState("");
   const [reportReason, setReportReason] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isSending, setIsSending] = useState(false);
+  const [_isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
