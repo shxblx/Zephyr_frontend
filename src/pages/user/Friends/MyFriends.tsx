@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
-import { useTransition, animated } from "react-spring";
 import { getFriends, fetchMessages } from "../../../api/friends";
 import FriendChat from "./FriendChat";
 import socket from "../../../components/common/socket";
@@ -52,14 +51,6 @@ const MyFriends: React.FC = () => {
       return bTimestamp - aTimestamp;
     });
   }, []);
-
-  const transitions = useTransition(friends, {
-    from: { opacity: 0, transform: "translate3d(0,-40px,0)" },
-    enter: { opacity: 1, transform: "translate3d(0,0px,0)" },
-    leave: { opacity: 0, transform: "translate3d(0,-40px,0)" },
-    keys: (friend) => friend._id,
-    config: { tension: 220, friction: 20 },
-  });
 
   useEffect(() => {
     fetchFriendsAndMessages();
@@ -164,20 +155,15 @@ const MyFriends: React.FC = () => {
     const date = new Date(timestamp);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
 
-    if (days === 0) {
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } else if (days === 1) {
-      return "Yesterday";
-    } else if (days < 7) {
-      return date.toLocaleDateString([], { weekday: "short" });
-    } else {
-      return date.toLocaleDateString([], { month: "short", day: "numeric" });
-    }
+    if (days > 0) return `${days}d ago`;
+    if (hours > 0) return `${hours}h ago`;
+    if (minutes > 0) return `${minutes}m ago`;
+    return "Just now";
   };
 
   return (
@@ -187,7 +173,9 @@ const MyFriends: React.FC = () => {
           selectedFriend ? "hidden lg:flex" : "flex"
         }`}
       >
-        <h2 className="text-white text-2xl font-semibold p-4">My Friends</h2>
+        <div className="flex justify-between items-center p-4">
+          <h2 className="text-white text-2xl font-semibold">My Friends</h2>
+        </div>
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center items-center h-full">
@@ -195,48 +183,43 @@ const MyFriends: React.FC = () => {
             </div>
           ) : friends.length > 0 ? (
             <div className="space-y-4 p-4">
-              {transitions((style, friend) => (
-                <animated.div style={style} key={friend._id}>
-                  <div
-                    className={`rounded-lg p-4 cursor-pointer transition-colors ${
-                      selectedFriend?._id === friend._id
-                        ? "border-2 border-[#ff5f09]"
-                        : "border border-gray-700"
-                    }`}
-                    onClick={() => handleSelectFriend(friend)}
-                  >
-                    <div className="flex items-center">
-                      <img
-                        src={friend.profilePicture}
-                        alt={friend.displayName}
-                        className="w-12 h-12 rounded-full object-cover mr-4"
-                      />
-                      <div className="flex-grow">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-white text-lg font-semibold">
-                            {friend.displayName}
-                          </h3>
-                          {friend.lastMessage && (
-                            <span className="text-gray-400 text-xs">
-                              {formatTimestamp(friend.lastMessage.timestamp)}
-                            </span>
-                          )}
-                        </div>
-                        {friend.lastMessage ? (
-                          <p className="text-gray-500 text-sm truncate mt-1">
+              {friends.map((friend) => (
+                <div
+                  key={friend._id}
+                  className={`rounded-lg p-4 cursor-pointer transition-colors ${
+                    selectedFriend?._id === friend._id
+                      ? "bg-gray-800 border-2 border-[#ff5f09]"
+                      : "bg-gray-900 border border-gray-700 hover:bg-gray-800"
+                  }`}
+                  onClick={() => handleSelectFriend(friend)}
+                >
+                  <div className="flex items-center">
+                    <img
+                      src={friend.profilePicture || "/default-avatar.png"}
+                      alt={friend.displayName}
+                      className="w-12 h-12 rounded-full object-cover mr-4"
+                    />
+                    <div className="flex-1">
+                      <h3 className="text-white text-lg font-semibold">
+                        {friend.displayName}
+                      </h3>
+                      {friend.lastMessage ? (
+                        <div>
+                          <p className="text-gray-400 text-sm truncate">
                             {friend.lastMessage.fileUrl
                               ? `Sent a ${friend.lastMessage.fileType}`
                               : friend.lastMessage.content}
                           </p>
-                        ) : (
-                          <p className="text-gray-500 text-sm mt-1">
-                            No messages yet
+                          <p className="text-gray-500 text-xs">
+                            {formatTimestamp(friend.lastMessage.timestamp)}
                           </p>
-                        )}
-                      </div>
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-sm">No messages yet</p>
+                      )}
                     </div>
                   </div>
-                </animated.div>
+                </div>
               ))}
             </div>
           ) : (

@@ -1,85 +1,104 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
-import {
-  UsersIcon,
-  CurrencyDollarIcon,
-  FlagIcon,
-  ChatBubbleLeftRightIcon,
-} from "@heroicons/react/24/solid";
+import { UsersIcon, FlagIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import { getDashboardData } from "../../api/admin";
 
-const profitData = [
-  { name: "Jan", profit: 4000 },
-  { name: "Feb", profit: 3000 },
-  { name: "Mar", profit: 5000 },
-  { name: "Apr", profit: 4500 },
-  { name: "May", profit: 6000 },
-  { name: "Jun", profit: 5500 },
-];
+interface User {
+  _id: string;
+  userName: string;
+  displayName: string;
+  email: string;
+}
 
-const recentUsers = [
-  { id: 1, name: "John Doe", email: "john@example.com" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com" },
-  { id: 3, name: "Bob Johnson", email: "bob@example.com" },
-];
+interface Community {
+  _id: string;
+  name: string;
+  description: string;
+}
 
-const recentReports = [
-  { id: 1, title: "Inappropriate content", user: "Alice" },
-  { id: 2, title: "Spam in community", user: "Charlie" },
-  { id: 3, title: "Harassment report", user: "David" },
-];
+interface Report {
+  _id: string;
+  subject: string;
+  reporterUser: string;
+}
+
+interface DashboardData {
+  users: {
+    total: number;
+    users: User[];
+  };
+  communities: Community[];
+  reports: Report[];
+}
 
 const AdminDashboard: React.FC = () => {
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    users: { total: 0, users: [] },
+    communities: [],
+    reports: [],
+  });
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await getDashboardData();
+        setDashboardData(response.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const graphData = [
+    { name: "Users", value: dashboardData.users.total },
+    { name: "Communities", value: dashboardData.communities.length },
+    { name: "Reports", value: dashboardData.reports.length },
+  ];
+
   return (
     <div className="p-6 bg-white min-h-screen">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <StatCard
           icon={<UsersIcon className="w-8 h-8" />}
           title="Total Users"
-          value="10,234"
+          value={dashboardData.users.total.toLocaleString()}
         />
         <StatCard
-          icon={<ChatBubbleLeftRightIcon className="w-8 h-8" />}
+          icon={<UserGroupIcon className="w-8 h-8" />}
           title="Total Communities"
-          value="1,532"
-        />
-        <StatCard
-          icon={<CurrencyDollarIcon className="w-8 h-8" />}
-          title="Total Profit"
-          value="₹152,345"
+          value={dashboardData.communities.length.toLocaleString()}
         />
         <StatCard
           icon={<FlagIcon className="w-8 h-8" />}
           title="Total Reports"
-          value="3,421"
+          value={dashboardData.reports.length.toLocaleString()}
         />
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 className="text-xl font-semibold mb-4">Profit Over Time</h2>
+        <h2 className="text-xl font-semibold mb-4">Dashboard Overview</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={profitData}>
+          <LineChart data={graphData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Area
-              type="monotone"
-              dataKey="profit"
-              stroke="#8884d8"
-              fill="#8884d8"
-            />
-          </AreaChart>
+            <Legend />
+            <Line type="monotone" dataKey="value" stroke="#8884d8" />
+          </LineChart>
         </ResponsiveContainer>
       </div>
 
@@ -87,9 +106,21 @@ const AdminDashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Recent Users</h2>
           <ul>
-            {recentUsers.map((user) => (
-              <li key={user.id} className="mb-2">
-                <span className="font-medium">{user.name}</span> - {user.email}
+            {dashboardData.users.users.slice(0, 5).map((user) => (
+              <li key={user._id} className="mb-2">
+                <span className="font-medium">{user.displayName}</span> -{" "}
+                {user.email}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Recent Communities</h2>
+          <ul>
+            {dashboardData.communities.slice(0, 5).map((community) => (
+              <li key={community._id} className="mb-2">
+                <span className="font-medium">{community.name}</span> -{" "}
+                {community.description}
               </li>
             ))}
           </ul>
@@ -97,21 +128,10 @@ const AdminDashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Recent Reports</h2>
           <ul>
-            {recentReports.map((report) => (
-              <li key={report.id} className="mb-2">
-                <span className="font-medium">{report.title}</span> - reported
-                by {report.user}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Recent Reports</h2>
-          <ul>
-            {recentReports.map((report) => (
-              <li key={report.id} className="mb-2">
-                <span className="font-medium">{report.title}</span> - reported
-                by {report.user}
+            {dashboardData.reports.slice(0, 5).map((report) => (
+              <li key={report._id} className="mb-2">
+                <span className="font-medium">{report.subject}</span> - reported
+                by {report.reporterUser}
               </li>
             ))}
           </ul>

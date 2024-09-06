@@ -10,8 +10,9 @@ const adminRoutes = {
   getUserInfo: "admin/getUserInfo",
   getReports: "admin/getReports ",
   getCommunityReports: "admin/getCommunityReports",
-  getTickets:"admin/getTickets",
-  updateTicket:"admin/updateTicket"
+  getTickets: "admin/getTickets",
+  updateTicket: "admin/updateTicket",
+  getDashboardData: "admin/getDashboardData",
 };
 
 export default adminRoutes;

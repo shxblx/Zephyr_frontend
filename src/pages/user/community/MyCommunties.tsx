@@ -22,13 +22,17 @@ interface Community {
     sender: string;
     userName: string;
     timestamp: string;
+    fileUrl?: string;
+    fileType?: string;
   };
 }
 
 const MyCommunities: React.FC = () => {
   const { userInfo } = useSelector((state: any) => state.userInfo);
   const [communities, setCommunities] = useState<Community[]>([]);
-  const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
+  const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -54,19 +58,25 @@ const MyCommunities: React.FC = () => {
         const communitiesWithLastMessage = await Promise.all(
           response.data.myCommunities.map(async (community: Community) => {
             const messages = await getCommunityMessages(community._id);
-            const lastMessage = messages.data[0];
+            const lastMessage = messages.data[messages.data.length - 1];
             return {
               ...community,
-              lastMessage: lastMessage ? {
-                content: lastMessage.content,
-                sender: lastMessage.sender,
-                userName: lastMessage.userName,
-                timestamp: lastMessage.timestamp,
-              } : undefined,
+              lastMessage: lastMessage
+                ? {
+                    content: lastMessage.content,
+                    sender: lastMessage.sender,
+                    userName: lastMessage.userName,
+                    timestamp: lastMessage.timestamp,
+                    fileUrl: lastMessage.fileUrl,
+                    fileType: lastMessage.fileType,
+                  }
+                : undefined,
             };
           })
         );
-        setCommunities(sortCommunitiesByLastMessage(communitiesWithLastMessage));
+        setCommunities(
+          sortCommunitiesByLastMessage(communitiesWithLastMessage)
+        );
       }
     } catch (error) {
       console.error("Error fetching communities:", error);
@@ -81,7 +91,10 @@ const MyCommunities: React.FC = () => {
       if (!a.lastMessage && !b.lastMessage) return 0;
       if (!a.lastMessage) return 1;
       if (!b.lastMessage) return -1;
-      return new Date(b.lastMessage.timestamp).getTime() - new Date(a.lastMessage.timestamp).getTime();
+      return (
+        new Date(b.lastMessage.timestamp).getTime() -
+        new Date(a.lastMessage.timestamp).getTime()
+      );
     });
   };
 
@@ -96,6 +109,8 @@ const MyCommunities: React.FC = () => {
               sender: message.sender,
               userName: message.userName,
               timestamp: message.timestamp,
+              fileUrl: message.fileUrl,
+              fileType: message.fileType,
             },
           };
         }
@@ -122,6 +137,37 @@ const MyCommunities: React.FC = () => {
   const handleCommunityCreated = () => {
     fetchCommunities();
     setShowCreateForm(false);
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return `${days}d ago`;
+    if (hours > 0) return `${hours}h ago`;
+    if (minutes > 0) return `${minutes}m ago`;
+    return "Just now";
+  };
+
+  const renderLastMessageContent = (lastMessage: Community["lastMessage"]) => {
+    if (!lastMessage) return "No messages yet";
+
+    if (lastMessage.fileUrl) {
+      if (lastMessage.fileType?.startsWith("image/")) {
+        return "Sent an image";
+      } else if (lastMessage.fileType?.startsWith("video/")) {
+        return "Sent a video";
+      } else {
+        return `Sent a ${lastMessage.fileType}`;
+      }
+    }
+
+    return lastMessage.content;
   };
 
   return (
@@ -152,8 +198,8 @@ const MyCommunities: React.FC = () => {
                   key={community._id}
                   className={`rounded-lg p-4 cursor-pointer transition-colors ${
                     selectedCommunity?._id === community._id
-                      ? "border-2 border-[#ff5f09]"
-                      : "border border-gray-700"
+                      ? "bg-gray-800 border-2 border-[#ff5f09]"
+                      : "bg-gray-900 border border-gray-700 hover:bg-gray-800"
                   }`}
                   onClick={() => handleSelectCommunity(community)}
                 >
@@ -170,10 +216,11 @@ const MyCommunities: React.FC = () => {
                       {community.lastMessage ? (
                         <div>
                           <p className="text-gray-400 text-sm truncate">
-                            {community.lastMessage.userName}: {community.lastMessage.content}
+                            {community.lastMessage.userName}:{" "}
+                            {renderLastMessageContent(community.lastMessage)}
                           </p>
                           <p className="text-gray-500 text-xs">
-                            {new Date(community.lastMessage.timestamp).toLocaleString()}
+                            {formatTimestamp(community.lastMessage.timestamp)}
                           </p>
                         </div>
                       ) : (
@@ -186,7 +233,9 @@ const MyCommunities: React.FC = () => {
             </div>
           ) : (
             <div className="flex justify-center items-center h-full text-gray-500">
-              <p className="text-xl text-center">Create a community to get started</p>
+              <p className="text-xl text-center">
+                Create a community to get started
+              </p>
             </div>
           )}
         </div>

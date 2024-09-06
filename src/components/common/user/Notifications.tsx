@@ -32,6 +32,7 @@ const Notifications: React.FC<NotificationsProps> = ({ isOpen }) => {
     const fetchNotifications = async () => {
       try {
         const response = await getNotification(userInfo.userId);
+        console.log(response);
 
         if (
           response.status === 200 &&

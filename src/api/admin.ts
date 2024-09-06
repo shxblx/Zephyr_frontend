@@ -175,6 +175,22 @@ export const getTickets = async () => {
     throw error;
   }
 };
+export const getDashboardData = async () => {
+  try {
+    console.log("here");
+
+    const response = await Api.get(adminRoutes.getDashboardData);
+
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
 
 export const updateTicketStatus = async (data: {
   ticketId: string;
