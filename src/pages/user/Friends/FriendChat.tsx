@@ -3,6 +3,7 @@ import {
   ArrowLeftIcon,
   EllipsisVerticalIcon,
   XMarkIcon,
+  PaperClipIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import {
@@ -10,6 +11,7 @@ import {
   sendMessage,
   fetchMessages,
   reportUser,
+  sendFiletoFriends,
 } from "../../../api/friends";
 import socket from "../../../components/common/socket";
 
@@ -30,6 +32,8 @@ interface Message {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  fileUrl?: string;
+  fileType?: string;
 }
 
 interface FriendChatProps {
@@ -48,6 +52,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   onNewMessage,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [showMenu, setShowMenu] = useState(false);
   const [roomId, setRoomId] = useState("");
@@ -55,7 +60,9 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportSubject, setReportSubject] = useState("");
   const [reportReason, setReportReason] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (selectedFriend && userInfo) {
@@ -100,11 +107,37 @@ const FriendChat: React.FC<FriendChatProps> = ({
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() && selectedFriend) {
+    if ((newMessage.trim() || selectedFile) && selectedFriend) {
+      let fileUrl = "";
+      let fileType = "";
+
+      if (selectedFile) {
+        setIsUploading(true);
+        try {
+          const formData = new FormData();
+          formData.append("selectedFile", selectedFile);
+
+          const uploadResponse = await sendFiletoFriends(formData);
+          console.log(uploadResponse);
+
+          fileUrl = uploadResponse.data.fileUrl;
+          fileType = selectedFile.type.startsWith("image/") ? "image" : "video";
+          console.log(fileUrl, fileType);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          toast.error("Failed to upload file. Please try again.");
+          setIsUploading(false);
+          return;
+        }
+        setIsUploading(false);
+      }
+
       const messageData = {
         senderId: userInfo.userId,
         receiverId: selectedFriend._id,
         content: newMessage.trim(),
+        fileUrl,
+        fileType,
       };
 
       try {
@@ -119,12 +152,15 @@ const FriendChat: React.FC<FriendChatProps> = ({
           createdAt: response.createdAt || new Date().toISOString(),
           updatedAt: response.updatedAt || new Date().toISOString(),
           __v: response.__v || 0,
+          fileUrl,
+          fileType,
         };
 
         socket.emit("sendMessage", { room: roomId, message });
         onNewMessage(message);
 
         setNewMessage("");
+        setSelectedFile(null);
       } catch (error) {
         console.error("Error sending message:", error);
         toast.error("Failed to send message. Please try again.");
@@ -182,6 +218,16 @@ const FriendChat: React.FC<FriendChatProps> = ({
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const openFileInput = () => {
+    fileInputRef.current?.click();
+  };
   return (
     <div className="flex flex-col h-[calc(100vh-5rem)] relative">
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -256,6 +302,23 @@ const FriendChat: React.FC<FriendChatProps> = ({
                     : "items-start"
                 }`}
               >
+                {message.fileUrl && (
+                  <div className="mb-2">
+                    {message.fileType === "image" ? (
+                      <img
+                        src={message.fileUrl}
+                        alt="Shared image"
+                        className="max-w-xs rounded-lg"
+                      />
+                    ) : (
+                      <video
+                        src={message.fileUrl}
+                        controls
+                        className="max-w-xs rounded-lg"
+                      />
+                    )}
+                  </div>
+                )}
                 <span
                   className={`inline-block p-2 rounded-lg ${
                     message.sender === userInfo.userId
@@ -282,22 +345,41 @@ const FriendChat: React.FC<FriendChatProps> = ({
         <div ref={messagesEndRef} />
       </div>
       <div className="absolute bottom-0 left-0 right-0 border-t border-gray-700 bg-black p-4 mb-12 md:mb-0">
-        <div className="flex">
+        <div className="flex items-center">
+          <button
+            onClick={openFileInput}
+            className="bg-gray-800 text-white p-2 rounded-l-lg hover:bg-gray-700 focus:outline-none transition-colors"
+          >
+            <PaperClipIcon className="w-6 h-6" />
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept="image/*,video/*"
+            className="hidden"
+          />
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-grow bg-gray-800 text-white rounded-l-lg px-4 py-2 focus:outline-none border border-gray-700"
+            className="flex-grow bg-gray-800 text-white px-4 py-2 focus:outline-none border border-gray-700"
             placeholder="Type a message..."
           />
           <button
             onClick={handleSendMessage}
-            className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors"
+            disabled={isUploading}
+            className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors disabled:bg-gray-500"
           >
-            Send
+            {isUploading ? "Uploading..." : "Send"}
           </button>
         </div>
+        {selectedFile && (
+          <div className="mt-2 text-sm text-gray-300">
+            Selected file: {selectedFile.name}
+          </div>
+        )}
       </div>
       {showReportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

@@ -115,7 +115,7 @@ export const getUserInfo = async (data: { userId: string }) => {
 export const changeProfile = async (data: FormData) => {
   try {
     const response = await Api.put(userRoutes.changeProfile, data, {
-      headers: {
+      headers: {  
         "Content-Type": "multipart/form-data",
       },
     });

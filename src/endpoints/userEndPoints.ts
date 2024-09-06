@@ -16,6 +16,7 @@ const userRoutes = {
   getGlobalFriends: "user/getGlobalFriends",
   addFriend: "user/addFriend",
   getFriends: "user/getFriends",
+  sendFiletoFriends: "user/sendFiletoFriends",
   sendMessage: "user/sendMessage",
   findNearbyFriends: "user/findNearbyFriends",
   fetchMessages: "user/fetchMessages",

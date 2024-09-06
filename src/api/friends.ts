@@ -139,7 +139,6 @@ export const acceptFriendRequest = async (data: {
   friendId: string;
 }) => {
   try {
-
     const response = await Api.patch(userRoutes.acceptFriendRequest, data);
     return response;
   } catch (error: any) {
@@ -192,8 +191,25 @@ export const setUserLocation = async (data: {
   newLocation: { latitude: number; longitude: number };
 }) => {
   try {
-    
     const response = await Api.post(userRoutes.setUserLocation, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const sendFiletoFriends = async (data: FormData) => {
+  try {
+    const response = await Api.post(userRoutes.sendFiletoFriends, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response;
   } catch (error: any) {
     if (error.response) {
