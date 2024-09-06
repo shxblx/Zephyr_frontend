@@ -52,6 +52,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   onNewMessage,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isSending, setIsSending] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [showMenu, setShowMenu] = useState(false);
@@ -61,7 +62,6 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const [reportSubject, setReportSubject] = useState("");
   const [reportReason, setReportReason] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [_isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -377,10 +377,33 @@ const FriendChat: React.FC<FriendChatProps> = ({
           />
           <button
             onClick={handleSendMessage}
-            disabled={isUploading}
-            className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors disabled:bg-gray-500"
+            disabled={isSending || isUploading}
+            className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors disabled:bg-gray-500 flex items-center justify-center"
           >
-            {isUploading ? "Uploading..." : "Send"}
+            {isSending || isUploading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : (
+              "Send"
+            )}
           </button>
         </div>
         {selectedFile && (
