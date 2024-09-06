@@ -42,12 +42,14 @@ interface CommunityProps {
   community: Community;
   userInfo: any;
   onBackClick: () => void;
+  onNewMessage: (message: Message) => void;
 }
 
 const CommunityChat: React.FC<CommunityProps> = ({
   community,
   userInfo,
   onBackClick,
+  onNewMessage,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -63,13 +65,11 @@ const CommunityChat: React.FC<CommunityProps> = ({
     fetchMessages();
     socket.emit("joinCommunity", { communityId: community._id });
 
-    socket.on("newCommunityMessage", (message: Message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+    socket.on("newCommunityMessage", handleNewMessage);
 
     return () => {
       socket.emit("leaveCommunity", { communityId: community._id });
-      socket.off("newCommunityMessage");
+      socket.off("newCommunityMessage", handleNewMessage);
     };
   }, [community._id]);
 
@@ -82,7 +82,12 @@ const CommunityChat: React.FC<CommunityProps> = ({
     try {
       const response = await getCommunityMessages(community._id);
       if (response.status === 200 && response.data) {
-        setMessages(response.data);
+        setMessages(
+          response.data.sort(
+            (a: Message, b: Message) =>
+              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          )
+        );
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -90,6 +95,11 @@ const CommunityChat: React.FC<CommunityProps> = ({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleNewMessage = (message: Message) => {
+    setMessages((prevMessages) => [message, ...prevMessages]);
+    onNewMessage(message);
   };
 
   const handleSendMessage = async () => {
@@ -117,6 +127,7 @@ const CommunityChat: React.FC<CommunityProps> = ({
           message: sentMessage,
         });
 
+        handleNewMessage(sentMessage);
         setNewMessage("");
       } catch (error) {
         console.error("Error sending message:", error);
@@ -127,7 +138,10 @@ const CommunityChat: React.FC<CommunityProps> = ({
 
   const handleLeaveCommunity = async () => {
     try {
-      await leaveCommunity({ userId: userInfo.userId, communityId: community._id });
+      await leaveCommunity({
+        userId: userInfo.userId,
+        communityId: community._id,
+      });
       toast.success(`You have left ${community.name}`);
       onBackClick();
     } catch (error) {

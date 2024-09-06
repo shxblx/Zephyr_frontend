@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
-import { getFriends } from "../../../api/friends";
+import { useTransition, animated } from "react-spring";
+import { getFriends, fetchMessages } from "../../../api/friends";
 import FriendChat from "./FriendChat";
+import socket from "../../../components/common/socket";
 
 interface Friend {
   _id: string;
@@ -12,7 +14,21 @@ interface Friend {
   profilePicture: string;
   status: string;
   friendId: string;
+  lastMessage?: {
+    content: string;
+    timestamp: string;
+  };
+}
+
+interface Message {
+  _id: string;
+  conversationId: string;
+  sender: string;
+  content: string;
+  timestamp: string;
   createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 const MyFriends: React.FC = () => {
@@ -21,15 +37,55 @@ const MyFriends: React.FC = () => {
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const sortFriends = useCallback((friendsToSort: Friend[]) => {
+    return [...friendsToSort].sort((a: Friend, b: Friend) => {
+      const aTimestamp = a.lastMessage?.timestamp ? new Date(a.lastMessage.timestamp).getTime() : 0;
+      const bTimestamp = b.lastMessage?.timestamp ? new Date(b.lastMessage.timestamp).getTime() : 0;
+      return bTimestamp - aTimestamp;
+    });
+  }, []);
+
+  const transitions = useTransition(friends, {
+    from: { opacity: 0, transform: 'translate3d(0,-40px,0)' },
+    enter: { opacity: 1, transform: 'translate3d(0,0px,0)' },
+    leave: { opacity: 0, transform: 'translate3d(0,-40px,0)' },
+    keys: friend => friend._id,
+    config: { tension: 220, friction: 20 },
+  });
+
   useEffect(() => {
-    fetchFriends();
+    fetchFriendsAndMessages();
     const storedFriend = localStorage.getItem("selectedFriend");
     if (storedFriend) {
       setSelectedFriend(JSON.parse(storedFriend));
     }
+
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
   }, []);
 
-  const fetchFriends = async () => {
+  const handleNewMessage = useCallback((message: Message) => {
+    setFriends(prevFriends => {
+      const updatedFriends = prevFriends.map(friend => {
+        if (friend._id === message.sender || friend._id === message.conversationId.replace(userInfo.userId, '').replace('-', '')) {
+          return {
+            ...friend,
+            lastMessage: {
+              content: message.content,
+              timestamp: message.timestamp,
+            },
+          };
+        }
+        return friend;
+      });
+      return sortFriends(updatedFriends);
+    });
+  }, [userInfo.userId, sortFriends]);
+
+  const fetchFriendsAndMessages = async () => {
     setLoading(true);
     try {
       const response = await getFriends(userInfo.userId);
@@ -39,7 +95,23 @@ const MyFriends: React.FC = () => {
         response.data.data &&
         response.data.data.friends
       ) {
-        setFriends(response.data.data.friends);
+        const friendsWithMessages = await Promise.all(
+          response.data.data.friends.map(async (friend: Friend) => {
+            const messages = await fetchMessages(userInfo.userId, friend._id);
+            const lastMessage = messages.data[messages.data.length - 1];
+            return {
+              ...friend,
+              lastMessage: lastMessage
+                ? {
+                    content: lastMessage.content,
+                    timestamp: lastMessage.timestamp,
+                  }
+                : undefined,
+            };
+          })
+        );
+
+        setFriends(sortFriends(friendsWithMessages));
       }
     } catch (error) {
       console.error("Error fetching friends:", error);
@@ -60,9 +132,26 @@ const MyFriends: React.FC = () => {
   };
 
   const handleRemoveFriend = (friendId: string) => {
-    setFriends(friends.filter((friend) => friend._id !== friendId));
+    setFriends(prevFriends => sortFriends(prevFriends.filter((friend) => friend._id !== friendId)));
     setSelectedFriend(null);
     localStorage.removeItem("selectedFriend");
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (days === 0) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (days === 1) {
+      return 'Yesterday';
+    } else if (days < 7) {
+      return date.toLocaleDateString([], { weekday: 'short' });
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
   };
 
   return (
@@ -80,39 +169,46 @@ const MyFriends: React.FC = () => {
             </div>
           ) : friends.length > 0 ? (
             <div className="space-y-4 p-4">
-              {friends.map((friend) => (
-                <div
-                  key={friend._id}
-                  className={`rounded-lg p-4 cursor-pointer transition-colors ${
-                    selectedFriend?._id === friend._id
-                      ? "border-2 border-[#ff5f09]"
-                      : "border border-gray-700"
-                  }`}
-                  onClick={() => handleSelectFriend(friend)}
-                >
-                  <div className="flex items-center">
-                    <img
-                      src={friend.profilePicture}
-                      alt={friend.displayName}
-                      className="w-12 h-12 rounded-full object-cover mr-4"
-                    />
-                    <div>
-                      <h3 className="text-white text-lg font-semibold">
-                        {friend.displayName}
-                      </h3>
-                      <p className="text-gray-400 text-sm">@{friend.userName}</p>
-                      <p
-                        className={`text-sm ${
-                          friend.status === "Online"
-                            ? "text-green-500"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {friend.status}
-                      </p>
+              {transitions((style, friend) => (
+                <animated.div style={style} key={friend._id}>
+                  <div
+                    className={`rounded-lg p-4 cursor-pointer transition-colors ${
+                      selectedFriend?._id === friend._id
+                        ? "border-2 border-[#ff5f09]"
+                        : "border border-gray-700"
+                    }`}
+                    onClick={() => handleSelectFriend(friend)}
+                  >
+                    <div className="flex items-center">
+                      <img
+                        src={friend.profilePicture}
+                        alt={friend.displayName}
+                        className="w-12 h-12 rounded-full object-cover mr-4"
+                      />
+                      <div className="flex-grow">
+                        <div className="flex justify-between items-start">
+                          <h3 className="text-white text-lg font-semibold">
+                            {friend.displayName}
+                          </h3>
+                          {friend.lastMessage && (
+                            <span className="text-gray-400 text-xs">
+                              {formatTimestamp(friend.lastMessage.timestamp)}
+                            </span>
+                          )}
+                        </div>
+                        {friend.lastMessage ? (
+                          <p className="text-gray-500 text-sm truncate mt-1">
+                            {friend.lastMessage.content}
+                          </p>
+                        ) : (
+                          <p className="text-gray-500 text-sm mt-1">
+                            No messages yet
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </animated.div>
               ))}
             </div>
           ) : (
@@ -135,6 +231,7 @@ const MyFriends: React.FC = () => {
             userInfo={userInfo}
             onBackClick={handleBackClick}
             onRemoveFriend={handleRemoveFriend}
+            onNewMessage={handleNewMessage}
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">

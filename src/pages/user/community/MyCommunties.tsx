@@ -4,7 +4,8 @@ import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import CreateCommunity from "./CreateCommunity";
 import CommunityChat from "./CommunityChat";
-import { getMycommunities } from "../../../api/community";
+import { getMycommunities, getCommunityMessages } from "../../../api/community";
+import socket from "../../../components/common/socket";
 
 interface Community {
   _id: string;
@@ -16,6 +17,12 @@ interface Community {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  lastMessage?: {
+    content: string;
+    sender: string;
+    userName: string;
+    timestamp: string;
+  };
 }
 
 const MyCommunities: React.FC = () => {
@@ -31,6 +38,12 @@ const MyCommunities: React.FC = () => {
     if (storedCommunity) {
       setSelectedCommunity(JSON.parse(storedCommunity));
     }
+
+    socket.on("newCommunityMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newCommunityMessage", handleNewMessage);
+    };
   }, []);
 
   const fetchCommunities = async () => {
@@ -38,7 +51,22 @@ const MyCommunities: React.FC = () => {
     try {
       const response = await getMycommunities(userInfo.userId);
       if (response.status === 200 && response.data.myCommunities) {
-        setCommunities(response.data.myCommunities);
+        const communitiesWithLastMessage = await Promise.all(
+          response.data.myCommunities.map(async (community: Community) => {
+            const messages = await getCommunityMessages(community._id);
+            const lastMessage = messages.data[0];
+            return {
+              ...community,
+              lastMessage: lastMessage ? {
+                content: lastMessage.content,
+                sender: lastMessage.sender,
+                userName: lastMessage.userName,
+                timestamp: lastMessage.timestamp,
+              } : undefined,
+            };
+          })
+        );
+        setCommunities(sortCommunitiesByLastMessage(communitiesWithLastMessage));
       }
     } catch (error) {
       console.error("Error fetching communities:", error);
@@ -46,6 +74,35 @@ const MyCommunities: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const sortCommunitiesByLastMessage = (communities: Community[]) => {
+    return communities.sort((a, b) => {
+      if (!a.lastMessage && !b.lastMessage) return 0;
+      if (!a.lastMessage) return 1;
+      if (!b.lastMessage) return -1;
+      return new Date(b.lastMessage.timestamp).getTime() - new Date(a.lastMessage.timestamp).getTime();
+    });
+  };
+
+  const handleNewMessage = (message: any) => {
+    setCommunities((prevCommunities) => {
+      const updatedCommunities = prevCommunities.map((community) => {
+        if (community._id === message.communityId) {
+          return {
+            ...community,
+            lastMessage: {
+              content: message.content,
+              sender: message.sender,
+              userName: message.userName,
+              timestamp: message.timestamp,
+            },
+          };
+        }
+        return community;
+      });
+      return sortCommunitiesByLastMessage(updatedCommunities);
+    });
   };
 
   const handleSelectCommunity = (community: Community) => {
@@ -106,16 +163,22 @@ const MyCommunities: React.FC = () => {
                       alt={community.name}
                       className="w-12 h-12 rounded-full object-cover mr-4"
                     />
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-white text-lg font-semibold">
                         {community.name}
                       </h3>
-                      <p className="text-gray-400 text-sm">
-                        {community.description}
-                      </p>
-                      <p className="text-gray-500 text-sm">
-                        {community.hashtags.join(", ")}
-                      </p>
+                      {community.lastMessage ? (
+                        <div>
+                          <p className="text-gray-400 text-sm truncate">
+                            {community.lastMessage.userName}: {community.lastMessage.content}
+                          </p>
+                          <p className="text-gray-500 text-xs">
+                            {new Date(community.lastMessage.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-sm">No messages yet</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -140,6 +203,7 @@ const MyCommunities: React.FC = () => {
             community={selectedCommunity}
             userInfo={userInfo}
             onBackClick={handleBackClick}
+            onNewMessage={handleNewMessage}
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">

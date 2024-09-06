@@ -47,12 +47,13 @@ const userRoutes = {
   updateCommunity: "user/updateCommunity  ",
   sendCommunityMessage: "user/sendCommunityMessage",
   getCommunityMessages: "user/getCommunityMessages",
+  addMembertoTheCommunity: "user/addMembertoTheCommunity",
   reportUser: "user/reportUser ",
   communityReport: "user/communityReport",
   chatWithBot: "user/chatWithBot",
   initializeChat: "user/initializeChat",
-  raiseTicket:"user/raiseTicket",
-  fetchTickets:"user/fetchTickets"
+  raiseTicket: "user/raiseTicket",
+  fetchTickets: "user/fetchTickets",
 };
 
 export default userRoutes;

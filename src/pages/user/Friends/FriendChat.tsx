@@ -18,7 +18,6 @@ interface Friend {
   userName: string;
   displayName: string;
   profilePicture: string;
-  status: string;
   friendId: string;
 }
 
@@ -38,6 +37,7 @@ interface FriendChatProps {
   userInfo: any;
   onBackClick: () => void;
   onRemoveFriend: (friendId: string) => void;
+  onNewMessage: (message: Message) => void;
 }
 
 const FriendChat: React.FC<FriendChatProps> = ({
@@ -45,6 +45,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   userInfo,
   onBackClick,
   onRemoveFriend,
+  onNewMessage,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -84,6 +85,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
 
       socket.on("newMessage", (message: Message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
+        onNewMessage(message);
       });
 
       return () => {
@@ -91,7 +93,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
         socket.off("newMessage");
       };
     }
-  }, [selectedFriend, userInfo]);
+  }, [selectedFriend, userInfo, onNewMessage]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -120,6 +122,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
         };
 
         socket.emit("sendMessage", { room: roomId, message });
+        onNewMessage(message);
 
         setNewMessage("");
       } catch (error) {

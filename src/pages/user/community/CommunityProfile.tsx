@@ -5,6 +5,9 @@ import {
   UserMinusIcon,
   FlagIcon,
   UserPlusIcon,
+  UserIcon,
+  PlusIcon,
+  CheckIcon,
 } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import {
@@ -12,9 +15,11 @@ import {
   removeMember,
   updateCommunity,
   makeAdmin,
+  addMemberToCommunity,
 } from "../../../api/community";
 import { toast } from "react-hot-toast";
-import { reportUser } from "../../../api/friends";
+import { reportUser, fetchAllUsers } from "../../../api/friends";
+import Loader from "../../../components/common/user/Loader";
 
 interface User {
   _id: string;
@@ -59,7 +64,9 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
   const [community, setCommunity] = useState<Community>(initialCommunity);
   const [isEditing, setIsEditing] = useState(false);
   const [editedCommunity, setEditedCommunity] = useState<Community>(community);
-  const [communityData, setCommunityData] = useState<CommunityData | null>(null);
+  const [communityData, setCommunityData] = useState<CommunityData | null>(
+    null
+  );
   const [isAdmin, setIsAdmin] = useState(false);
   const [newTag, setNewTag] = useState("");
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -69,6 +76,10 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
   const [makeAdminModalOpen, setMakeAdminModalOpen] = useState(false);
   const [newAdminUser, setNewAdminUser] = useState<User | null>(null);
   const [memberCount, setMemberCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   useEffect(() => {
     fetchCommunityData();
@@ -239,6 +250,82 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
     }
   };
 
+  const fetchUsers = async (search: string = "") => {
+    setLoading(true);
+    try {
+      const response = await fetchAllUsers(search);
+      if (response.data && response.data.data && response.data.data.users) {
+        const filteredUsers = response.data.data.users.filter(
+          (user: User) =>
+            user._id !== userInfo.userId &&
+            !communityData?.members.some((member) => member._id === user._id)
+        );
+        setSearchResults(filteredUsers);
+      } else {
+        setSearchResults([]);
+        if (search) {
+          toast.error("No users found");
+        } else {
+          toast.error("Failed to fetch users data");
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Failed to fetch users. Please try again later.");
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (query) {
+      fetchUsers(query);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const addUser = (user: User) => {
+    if (!selectedUsers.find((u) => u._id === user._id)) {
+      setSelectedUsers([...selectedUsers, user]);
+    }
+  };
+
+  const removeUser = (userId: string) => {
+    setSelectedUsers(selectedUsers.filter((user) => user._id !== userId));
+  };
+
+  const handleAddMembers = async () => {
+    if (selectedUsers.length === 0) return;
+    try {
+      setLoading(true);
+      for (const user of selectedUsers) {
+        const response = await addMemberToCommunity({
+          userId: user._id,
+          communityId: community._id,
+        });
+        console.log(response);
+
+        if (response.status === 200) {
+          toast.success(`${user.displayName} added to the community`);
+        } else {
+          toast.error(`Failed to add ${user.displayName} to the community`);
+        }
+      }
+      fetchCommunityData();
+      setSelectedUsers([]);
+      setSearchQuery("");
+      setSearchResults([]);
+    } catch (error) {
+      console.error("Error adding members:", error);
+      toast.error("An error occurred while adding members to the community");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
@@ -283,7 +370,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
                 {community.isPrivate ? "Private Community" : "Public Community"}
               </p>
               <p className="text-gray-500 text-sm mb-4">
-                {memberCount}
+                Members: {memberCount}
               </p>
               {isAdmin && (
                 <button
@@ -298,6 +385,118 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
           )}
         </div>
 
+        {isAdmin && (
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-black mb-2">
+              Add Members
+            </h3>
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full bg-gray-100 text-black text-sm px-2 py-1 pl-8"
+                placeholder="Search users..."
+              />
+              <UserIcon className="absolute left-2 top-1.5 h-4 w-4 text-gray-400" />
+            </div>
+            {loading ? (
+              <Loader />
+            ) : (
+              searchResults.length > 0 && (
+                <div className="mt-1 bg-gray-100 max-h-32 overflow-y-auto">
+                  {searchResults.map((user) => (
+                    <div
+                      key={user._id}
+                      className="flex items-center justify-between p-1 hover:bg-gray-200"
+                    >
+                      <div className="flex items-center">
+                        {user.profilePicture ? (
+                          <img
+                            src={user.profilePicture}
+                            alt={user.displayName}
+                            className="w-6 h-6 rounded-full object-cover mr-1"
+                          />
+                        ) : (
+                          <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center mr-1">
+                            <UserIcon className="w-4 h-4 text-gray-500" />
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="text-black text-xs font-semibold">
+                            {user.displayName}
+                          </h3>
+                          <p className="text-gray-600 text-xs">
+                            @{user.userName}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => addUser(user)}
+                        className={`p-0.5 transition-colors ${
+                          selectedUsers.some((u) => u._id === user._id)
+                            ? "bg-green-500 hover:bg-green-600"
+                            : "bg-[#FF5F09] hover:bg-orange-600"
+                        }`}
+                      >
+                        {selectedUsers.some((u) => u._id === user._id) ? (
+                          <CheckIcon className="w-3 h-3 text-white" />
+                        ) : (
+                          <PlusIcon className="w-3 h-3 text-white" />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+            {selectedUsers.length > 0 && (
+              <div className="mt-2">
+                <h4 className="text-black text-sm font-semibold mb-1">
+                  Selected Users
+                </h4>
+                <div className="flex flex-wrap gap-1">
+                  {selectedUsers.map((user) => (
+                    <div
+                      key={user._id}
+                      className="bg-gray-200 px-2 py-0.5 flex items-center"
+                    >
+                      {user.profilePicture ? (
+                        <img
+                          src={user.profilePicture}
+                          alt={user.displayName}
+                          className="w-4 h-4 rounded-full mr-1"
+                        />
+                      ) : (
+                        <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center mr-1">
+                          <UserIcon className="w-3 h-3 text-gray-500" />
+                        </div>
+                      )}
+                      <span className="text-black text-xs">
+                        {user.displayName}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeUser(user._id)}
+                        className="ml-1 text-red-500 font-bold"
+                      >
+                        <XMarkIcon className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={handleAddMembers}
+                  className="mt-2 bg-[#ff5f09] text-white text-sm px-4 py-1 hover:bg-orange-700 transition-colors"
+                >
+                  Add Selected Users
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         <h3 className="text-xl font-semibold text-black mt-6 mb-4">Members</h3>
         <div className="max-h-64 overflow-y-auto bg-gray-100 p-4">
           {communityData?.admin && (
@@ -305,7 +504,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
               <div className="flex items-center">
                 <img
                   src={
-                    communityData.admin.profilePicture || "default-avatar.png"
+                    communityData.admin.profilePicture || "/default-avatar.png"
                   }
                   alt={communityData.admin.userName}
                   className="w-10 h-10 object-cover mr-3"
@@ -335,7 +534,7 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
             >
               <div className="flex items-center">
                 <img
-                  src={member.profilePicture || "default-avatar.png"}
+                  src={member.profilePicture || "/default-avatar.png"}
                   alt={member.userName}
                   className="w-10 h-10 object-cover mr-3"
                 />

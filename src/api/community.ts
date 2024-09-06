@@ -3,7 +3,6 @@ import userRoutes from "../endpoints/userEndPoints";
 
 export const createCommunity = async (data: FormData) => {
   try {
-
     let response = await Api.post(userRoutes.createCommuity, data, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -184,7 +183,6 @@ export const sendCommunityMessage = async (data: {
   try {
     const response = await Api.post(userRoutes.sendCommunityMessage, data);
 
-
     return response;
   } catch (error: any) {
     console.error("Error in sendCommunityMessage:", error);
@@ -238,6 +236,23 @@ export const makeAdmin = async (data: {
 }) => {
   try {
     const response = await Api.post(userRoutes.makeAdmin, data);
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};
+
+export const addMemberToCommunity = async (data: {
+  userId: string;
+  communityId: string;
+}) => {
+  try {
+    const response = await Api.post(userRoutes.addMembertoTheCommunity, data);
     return response;
   } catch (error: any) {
     if (error.response) {
