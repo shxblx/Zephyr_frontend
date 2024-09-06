@@ -49,6 +49,7 @@ const userRoutes = {
   sendCommunityMessage: "user/sendCommunityMessage",
   getCommunityMessages: "user/getCommunityMessages",
   addMembertoTheCommunity: "user/addMembertoTheCommunity",
+  sendFileToCommunity: "user/sendFileToCommunity",
   reportUser: "user/reportUser ",
   communityReport: "user/communityReport",
   chatWithBot: "user/chatWithBot",

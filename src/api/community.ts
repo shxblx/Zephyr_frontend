@@ -263,3 +263,21 @@ export const addMemberToCommunity = async (data: {
     throw error;
   }
 };
+
+export const sendFileToCommunity = async (data: FormData) => {
+  try {
+    const response = await Api.post(userRoutes.sendFileToCommunity, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response;
+  } catch (error: any) {
+    if (error.response) {
+      return error.response;
+    } else {
+      console.error("Error", error.message);
+    }
+    throw error;
+  }
+};

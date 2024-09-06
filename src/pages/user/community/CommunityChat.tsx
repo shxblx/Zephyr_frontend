@@ -3,6 +3,7 @@ import {
   ArrowLeftIcon,
   EllipsisVerticalIcon,
   XMarkIcon,
+  PaperClipIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import {
@@ -10,6 +11,7 @@ import {
   sendCommunityMessage,
   getCommunityMessages,
   reportCommunity,
+  sendFileToCommunity,
 } from "../../../api/community";
 import socket from "../../../components/common/socket";
 import CommunityProfile from "./CommunityProfile";
@@ -36,6 +38,8 @@ interface Message {
   timestamp: string;
   createdAt: string;
   updatedAt: string;
+  fileUrl?: string;
+  fileType?: "image" | "video";
 }
 
 interface CommunityProps {
@@ -59,7 +63,11 @@ const CommunityChat: React.FC<CommunityProps> = ({
   const [reportSubject, setReportSubject] = useState("");
   const [reportReason, setReportReason] = useState("");
   const [showCommunityProfile, setShowCommunityProfile] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSending, setIsSending] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchMessages();
@@ -85,7 +93,7 @@ const CommunityChat: React.FC<CommunityProps> = ({
         setMessages(
           response.data.sort(
             (a: Message, b: Message) =>
-              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
           )
         );
       }
@@ -98,12 +106,42 @@ const CommunityChat: React.FC<CommunityProps> = ({
   };
 
   const handleNewMessage = (message: Message) => {
-    setMessages((prevMessages) => [message, ...prevMessages]);
+    setMessages((prevMessages) => {
+      if (!prevMessages.some((m) => m._id === message._id)) {
+        return [...prevMessages, message];
+      }
+      return prevMessages;
+    });
     onNewMessage(message);
   };
 
   const handleSendMessage = async () => {
-    if (newMessage.trim()) {
+    if ((newMessage.trim() || selectedFile) && !isSending) {
+      setIsSending(true);
+      let fileUrl = "";
+      let fileType: "image" | "video" | undefined = undefined;
+
+      if (selectedFile) {
+        setIsUploading(true);
+        try {
+          const formData = new FormData();
+          formData.append("selectedFile", selectedFile);
+
+          const uploadResponse = await sendFileToCommunity(formData);
+          console.log(uploadResponse);
+
+          fileUrl = uploadResponse.data.fileUrl;
+          fileType = selectedFile.type.startsWith("image/") ? "image" : "video";
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          toast.error("Failed to upload file. Please try again.");
+          setIsUploading(false);
+          setIsSending(false);
+          return;
+        }
+        setIsUploading(false);
+      }
+
       const messageData = {
         communityId: community._id,
         sender: userInfo.userId,
@@ -111,6 +149,8 @@ const CommunityChat: React.FC<CommunityProps> = ({
         profilePicture: userInfo.profile,
         content: newMessage.trim(),
         timestamp: new Date().toISOString(),
+        fileUrl,
+        fileType,
       };
 
       try {
@@ -127,11 +167,13 @@ const CommunityChat: React.FC<CommunityProps> = ({
           message: sentMessage,
         });
 
-        handleNewMessage(sentMessage);
         setNewMessage("");
+        setSelectedFile(null);
       } catch (error) {
         console.error("Error sending message:", error);
         toast.error("Failed to send message. Please try again.");
+      } finally {
+        setIsSending(false);
       }
     }
   };
@@ -182,6 +224,17 @@ const CommunityChat: React.FC<CommunityProps> = ({
 
   const toggleCommunityProfile = () => {
     setShowCommunityProfile(!showCommunityProfile);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const openFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -273,15 +326,34 @@ const CommunityChat: React.FC<CommunityProps> = ({
                     {message.userName}
                   </span>
                 )}
-                <span
-                  className={`inline-block p-2 rounded-lg ${
-                    message.sender === userInfo.userId
-                      ? "bg-[#ff5f09] text-white"
-                      : "bg-gray-700 text-white"
-                  }`}
-                >
-                  {message.content}
-                </span>
+                {message.fileUrl && (
+                  <div className="mb-2">
+                    {message.fileType === "image" ? (
+                      <img
+                        src={message.fileUrl}
+                        alt="Shared image"
+                        className="max-w-xs rounded-lg"
+                      />
+                    ) : (
+                      <video
+                        src={message.fileUrl}
+                        controls
+                        className="max-w-xs rounded-lg"
+                      />
+                    )}
+                  </div>
+                )}
+                {message.content && (
+                  <span
+                    className={`inline-block p-2 rounded-lg ${
+                      message.sender === userInfo.userId
+                        ? "bg-[#ff5f09] text-white"
+                        : "bg-gray-700 text-white"
+                    }`}
+                  >
+                    {message.content}
+                  </span>
+                )}
                 <p className="text-xs text-gray-500 mt-1">
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </p>
@@ -299,22 +371,64 @@ const CommunityChat: React.FC<CommunityProps> = ({
         <div ref={messagesEndRef} />
       </div>
       <div className="absolute bottom-0 left-0 right-0 border-t border-gray-700 bg-black p-4 mb-12 md:mb-0">
-        <div className="flex">
+        <div className="flex items-center">
+          <button
+            onClick={openFileInput}
+            className="bg-gray-800 text-white p-2 rounded-l-lg hover:bg-gray-700 focus:outline-none transition-colors"
+          >
+            <PaperClipIcon className="w-6 h-6" />
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept="image/*,video/*"
+            className="hidden"
+          />
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-grow bg-gray-800 text-white rounded-l-lg px-4 py-2 focus:outline-none border border-gray-700"
+            className="flex-grow bg-gray-800 text-white px-4 py-2 focus:outline-none border border-gray-700"
             placeholder="Type a message..."
           />
           <button
             onClick={handleSendMessage}
-            className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors"
+            disabled={isSending || isUploading}
+            className="bg-[#ff5f09] text-white px-6 py-2 rounded-r-lg hover:bg-orange-700 focus:outline-none transition-colors disabled:bg-gray-500 flex items-center justify-center"
           >
-            Send
+            {isSending || isUploading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : (
+              "Send"
+            )}
           </button>
         </div>
+        {selectedFile && (
+          <div className="mt-2 text-sm text-gray-300">
+            Selected file: {selectedFile.name}
+          </div>
+        )}
       </div>
       {showReportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
