@@ -329,248 +329,203 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white p-4 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-black text-xl font-bold">Community Profile</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
-          >
-            <XMarkIcon className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="flex flex-col items-center">
-          <img
-            src={community.profilePicture || "/default-avatar.png"}
-            alt={community.name}
-            className="w-24 h-24 object-cover mb-4 border-4 border-orange-500"
-          />
-          {!isEditing && (
-            <>
-              <h2 className="text-2xl font-bold text-black mb-2">
-                {community.name}
-              </h2>
-              <p className="text-gray-600 text-center mb-4">
-                {community.description}
-              </p>
-              <div className="flex flex-wrap justify-center gap-2 mb-4">
-                {community.hashtags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="bg-gray-700 text-gray-300 px-3 py-1 text-sm"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-              <p className="text-gray-500 text-sm">
-                Created on: {new Date(community.createdAt).toLocaleDateString()}
-              </p>
-              <p className="text-gray-500 text-sm mb-4">
-                {community.isPrivate ? "Private Community" : "Public Community"}
-              </p>
-              <p className="text-gray-500 text-sm mb-4">
-                Members: {memberCount}
-              </p>
-              {isAdmin && (
-                <button
-                  onClick={handleEdit}
-                  className="mb-4 bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 transition-colors flex items-center"
-                >
-                  <PencilIcon className="w-4 h-4 mr-2" />
-                  Edit Community
-                </button>
-              )}
-            </>
-          )}
-        </div>
-
-        {isAdmin && (
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-black mb-2">
-              Add Members
-            </h3>
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="w-full bg-gray-100 text-black text-sm px-2 py-1 pl-8"
-                placeholder="Search users..."
-              />
-              <UserIcon className="absolute left-2 top-1.5 h-4 w-4 text-gray-400" />
-            </div>
-            {loading ? (
-              <Loader />
-            ) : (
-              searchResults.length > 0 && (
-                <div className="mt-1 bg-gray-100 max-h-32 overflow-y-auto">
-                  {searchResults.map((user) => (
-                    <div
-                      key={user._id}
-                      className="flex items-center justify-between p-1 hover:bg-gray-200"
+      <div className="bg-white p-4 w-full max-w-5xl flex">
+        <div className="w-2/3 pr-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-black text-xl font-bold">Community Profile</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-600 hover:text-gray-800 transition-colors duration-300"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="flex flex-col items-center max-h-[calc(100vh-200px)] overflow-y-auto">
+            <img
+              src={community.profilePicture || "/default-avatar.png"}
+              alt={community.name}
+              className="w-24 h-24 object-cover mb-4 border-4 border-orange-500"
+            />
+            {!isEditing && (
+              <>
+                <h2 className="text-2xl font-bold text-black mb-2">
+                  {community.name}
+                </h2>
+                <p className="text-gray-600 text-center mb-4">
+                  {community.description}
+                </p>
+                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                  {community.hashtags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-gray-700 text-gray-300 px-3 py-1 text-sm"
                     >
-                      <div className="flex items-center">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-gray-500 text-sm">
+                  Created on:{" "}
+                  {new Date(community.createdAt).toLocaleDateString()}
+                </p>
+                <p className="text-gray-500 text-sm mb-4">
+                  {community.isPrivate
+                    ? "Private Community"
+                    : "Public Community"}
+                </p>
+                <p className="text-gray-500 text-sm mb-4">
+                  Members: {memberCount}
+                </p>
+                {isAdmin && (
+                  <button
+                    onClick={handleEdit}
+                    className="mb-4 bg-orange-500 text-white px-4 py-2 hover:bg-orange-600 transition-colors flex items-center"
+                  >
+                    <PencilIcon className="w-4 h-4 mr-2" />
+                    Edit Community
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {isAdmin && (
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-black mb-2">
+                Add Members
+              </h3>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-full bg-gray-100 text-black text-sm px-2 py-1 pl-8"
+                  placeholder="Search users..."
+                />
+                <UserIcon className="absolute left-2 top-1.5 h-4 w-4 text-gray-400" />
+              </div>
+              {loading ? (
+                <Loader />
+              ) : (
+                searchResults.length > 0 && (
+                  <div className="mt-1 bg-gray-100 max-h-32 overflow-y-auto">
+                    {searchResults.map((user) => (
+                      <div
+                        key={user._id}
+                        className="flex items-center justify-between p-1 hover:bg-gray-200"
+                      >
+                        <div className="flex items-center">
+                          {user.profilePicture ? (
+                            <img
+                              src={user.profilePicture}
+                              alt={user.displayName}
+                              className="w-6 h-6 rounded-full object-cover mr-1"
+                            />
+                          ) : (
+                            <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center mr-1">
+                              <UserIcon className="w-4 h-4 text-gray-500" />
+                            </div>
+                          )}
+                          <div>
+                            <h3 className="text-black text-xs font-semibold">
+                              {user.displayName}
+                            </h3>
+                            <p className="text-gray-600 text-xs">
+                              @{user.userName}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => addUser(user)}
+                          className={`p-0.5 transition-colors ${
+                            selectedUsers.some((u) => u._id === user._id)
+                              ? "bg-green-500 hover:bg-green-600"
+                              : "bg-[#FF5F09] hover:bg-orange-600"
+                          }`}
+                        >
+                          {selectedUsers.some((u) => u._id === user._id) ? (
+                            <CheckIcon className="w-3 h-3 text-white" />
+                          ) : (
+                            <PlusIcon className="w-3 h-3 text-white" />
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )
+              )}
+              {selectedUsers.length > 0 && (
+                <div className="mt-2">
+                  <h4 className="text-black text-sm font-semibold mb-1">
+                    Selected Users
+                  </h4>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedUsers.map((user) => (
+                      <div
+                        key={user._id}
+                        className="bg-gray-200 px-2 py-0.5 flex items-center"
+                      >
                         {user.profilePicture ? (
                           <img
                             src={user.profilePicture}
                             alt={user.displayName}
-                            className="w-6 h-6 rounded-full object-cover mr-1"
+                            className="w-4 h-4 rounded-full mr-1"
                           />
                         ) : (
-                          <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center mr-1">
-                            <UserIcon className="w-4 h-4 text-gray-500" />
+                          <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center mr-1">
+                            <UserIcon className="w-3 h-3 text-gray-500" />
                           </div>
                         )}
-                        <div>
-                          <h3 className="text-black text-xs font-semibold">
-                            {user.displayName}
-                          </h3>
-                          <p className="text-gray-600 text-xs">
-                            @{user.userName}
-                          </p>
-                        </div>
+                        <span className="text-black text-xs">
+                          {user.displayName}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeUser(user._id)}
+                          className="ml-1 text-red-500 font-bold"
+                        >
+                          <XMarkIcon className="w-3 h-3" />
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => addUser(user)}
-                        className={`p-0.5 transition-colors ${
-                          selectedUsers.some((u) => u._id === user._id)
-                            ? "bg-green-500 hover:bg-green-600"
-                            : "bg-[#FF5F09] hover:bg-orange-600"
-                        }`}
-                      >
-                        {selectedUsers.some((u) => u._id === user._id) ? (
-                          <CheckIcon className="w-3 h-3 text-white" />
-                        ) : (
-                          <PlusIcon className="w-3 h-3 text-white" />
-                        )}
-                      </button>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleAddMembers}
+                    className="mt-2 bg-[#ff5f09] text-white text-sm px-4 py-1 hover:bg-orange-700 transition-colors"
+                  >
+                    Add Selected Users
+                  </button>
                 </div>
-              )
-            )}
-            {selectedUsers.length > 0 && (
-              <div className="mt-2">
-                <h4 className="text-black text-sm font-semibold mb-1">
-                  Selected Users
-                </h4>
-                <div className="flex flex-wrap gap-1">
-                  {selectedUsers.map((user) => (
-                    <div
-                      key={user._id}
-                      className="bg-gray-200 px-2 py-0.5 flex items-center"
-                    >
-                      {user.profilePicture ? (
-                        <img
-                          src={user.profilePicture}
-                          alt={user.displayName}
-                          className="w-4 h-4 rounded-full mr-1"
-                        />
-                      ) : (
-                        <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center mr-1">
-                          <UserIcon className="w-3 h-3 text-gray-500" />
-                        </div>
-                      )}
-                      <span className="text-black text-xs">
-                        {user.displayName}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => removeUser(user._id)}
-                        className="ml-1 text-red-500 font-bold"
-                      >
-                        <XMarkIcon className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <button
-                  onClick={handleAddMembers}
-                  className="mt-2 bg-[#ff5f09] text-white text-sm px-4 py-1 hover:bg-orange-700 transition-colors"
-                >
-                  Add Selected Users
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        <h3 className="text-xl font-semibold text-black mt-6 mb-4">Members</h3>
-        <div className="max-h-64 overflow-y-auto bg-gray-100 p-4">
-          {communityData?.admin && (
-            <div className="flex items-center justify-between py-3 border-b border-gray-700">
-              <div className="flex items-center">
-                <img
-                  src={
-                    communityData.admin.profilePicture || "/default-avatar.png"
-                  }
-                  alt={communityData.admin.userName}
-                  className="w-10 h-10 object-cover mr-3"
-                />
-                <div>
-                  <span className="text-gray-200 font-semibold">
-                    {communityData.admin.displayName}
-                  </span>
-                  <div className="text-sm text-orange-500">Admin</div>
-                </div>
-              </div>
-              {communityData.admin._id !== userInfo.userId && (
-                <button
-                  onClick={() => handleReportUser(communityData.admin)}
-                  className="text-yellow-500 hover:text-yellow-600"
-                  title="Report user"
-                >
-                  <FlagIcon className="w-5 h-5" />
-                </button>
               )}
             </div>
           )}
-          {communityData?.members.map((member) => (
-            <div
-              key={member._id}
-              className="flex items-center justify-between py-3 border-b border-gray-700"
-            >
-              <div className="flex items-center">
-                <img
-                  src={member.profilePicture || "/default-avatar.png"}
-                  alt={member.userName}
-                  className="w-10 h-10 object-cover mr-3"
-                />
-                <div>
-                  <span className="text-gray-200 font-semibold">
-                    {member.displayName}
-                  </span>
-                  <div className="text-sm text-gray-400">
-                    @{member.userName}
+        </div>
+
+        <div className="w-1/3 pl-4 border-l border-gray-300">
+          <h3 className="text-xl font-semibold text-black mb-4">Members</h3>
+          <div className="max-h-[calc(100vh-200px)] overflow-y-auto bg-gray-100 p-4">
+            {communityData?.admin && (
+              <div className="flex items-center justify-between py-3 border-b border-gray-700">
+                <div className="flex items-center">
+                  <img
+                    src={
+                      communityData.admin.profilePicture ||
+                      "/default-avatar.png"
+                    }
+                    alt={communityData.admin.userName}
+                    className="w-10 h-10 object-cover mr-3"
+                  />
+                  <div>
+                    <span className="text-gray-200 font-semibold">
+                      {communityData.admin.displayName}
+                    </span>
+                    <div className="text-sm text-orange-500">Admin</div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center">
-                {isAdmin &&
-                  member._id !== userInfo.userId &&
-                  !isUserAdmin(member._id) && (
-                    <>
-                      <button
-                        onClick={() => handleMakeAdmin(member._id)}
-                        className="text-green-500 hover:text-green-600 mr-2"
-                        title="Make admin"
-                      >
-                        <UserPlusIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleRemoveMember(member._id)}
-                        className="text-red-500 hover:text-red-600 mr-2"
-                        title="Remove member"
-                      >
-                        <UserMinusIcon className="w-5 h-5" />
-                      </button>
-                    </>
-                  )}
-                {member._id !== userInfo.userId && (
+                {communityData.admin._id !== userInfo.userId && (
                   <button
-                    onClick={() => handleReportUser(member)}
+                    onClick={() => handleReportUser(communityData.admin)}
                     className="text-yellow-500 hover:text-yellow-600"
                     title="Report user"
                   >
@@ -578,8 +533,61 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
                   </button>
                 )}
               </div>
-            </div>
-          ))}
+            )}
+            {communityData?.members.map((member) => (
+              <div
+                key={member._id}
+                className="flex items-center justify-between py-3 border-b border-gray-700"
+              >
+                <div className="flex items-center">
+                  <img
+                    src={member.profilePicture || "/default-avatar.png"}
+                    alt={member.userName}
+                    className="w-10 h-10 object-cover mr-3"
+                  />
+                  <div>
+                    <span className="text-gray-200 font-semibold">
+                      {member.displayName}
+                    </span>
+                    <div className="text-sm text-gray-400">
+                      @{member.userName}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {isAdmin &&
+                    member._id !== userInfo.userId &&
+                    !isUserAdmin(member._id) && (
+                      <>
+                        <button
+                          onClick={() => handleMakeAdmin(member._id)}
+                          className="text-green-500 hover:text-green-600 mr-2"
+                          title="Make admin"
+                        >
+                          <UserPlusIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleRemoveMember(member._id)}
+                          className="text-red-500 hover:text-red-600 mr-2"
+                          title="Remove member"
+                        >
+                          <UserMinusIcon className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+                  {member._id !== userInfo.userId && (
+                    <button
+                      onClick={() => handleReportUser(member)}
+                      className="text-yellow-500 hover:text-yellow-600"
+                      title="Report user"
+                    >
+                      <FlagIcon className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
