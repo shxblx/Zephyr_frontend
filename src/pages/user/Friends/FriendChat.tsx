@@ -109,7 +109,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const handleSendMessage = async () => {
     if ((newMessage.trim() || selectedFile) && selectedFriend) {
       let fileUrl = "";
-      let fileType = "";
+      let fileType: "image" | "video" | undefined = undefined;
 
       if (selectedFile) {
         setIsUploading(true);
@@ -135,7 +135,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
       const messageData = {
         senderId: userInfo.userId,
         receiverId: selectedFriend._id,
-        content: newMessage.trim() || " ", // Add a space if content is empty
+        content: newMessage.trim(),
         fileUrl,
         fileType,
       };
@@ -147,7 +147,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
           _id: response._id || Date.now().toString(),
           conversationId: response.conversationId || roomId,
           sender: userInfo.userId,
-          content: newMessage.trim() || " ",
+          content: newMessage.trim(),
           timestamp: response.timestamp || new Date().toISOString(),
           createdAt: response.createdAt || new Date().toISOString(),
           updatedAt: response.updatedAt || new Date().toISOString(),
@@ -228,6 +228,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
   const openFileInput = () => {
     fileInputRef.current?.click();
   };
+
   return (
     <div className="flex flex-col h-[calc(100vh-5rem)] relative">
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -319,15 +320,17 @@ const FriendChat: React.FC<FriendChatProps> = ({
                     )}
                   </div>
                 )}
-                <span
-                  className={`inline-block p-2 rounded-lg ${
-                    message.sender === userInfo.userId
-                      ? "bg-[#ff5f09] text-white"
-                      : "bg-gray-700 text-white"
-                  }`}
-                >
-                  {message.content}
-                </span>
+                {message.content && (
+                  <span
+                    className={`inline-block p-2 rounded-lg ${
+                      message.sender === userInfo.userId
+                        ? "bg-[#ff5f09] text-white"
+                        : "bg-gray-700 text-white"
+                    }`}
+                  >
+                    {message.content}
+                  </span>
+                )}
                 <p className="text-xs text-gray-500 mt-1">
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </p>

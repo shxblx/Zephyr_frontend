@@ -17,6 +17,8 @@ interface Friend {
   lastMessage?: {
     content: string;
     timestamp: string;
+    fileUrl?: string;
+    fileType?: string;
   };
 }
 
@@ -29,6 +31,8 @@ interface Message {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  fileUrl?: string;
+  fileType?: string;
 }
 
 const MyFriends: React.FC = () => {
@@ -39,17 +43,21 @@ const MyFriends: React.FC = () => {
 
   const sortFriends = useCallback((friendsToSort: Friend[]) => {
     return [...friendsToSort].sort((a: Friend, b: Friend) => {
-      const aTimestamp = a.lastMessage?.timestamp ? new Date(a.lastMessage.timestamp).getTime() : 0;
-      const bTimestamp = b.lastMessage?.timestamp ? new Date(b.lastMessage.timestamp).getTime() : 0;
+      const aTimestamp = a.lastMessage?.timestamp
+        ? new Date(a.lastMessage.timestamp).getTime()
+        : 0;
+      const bTimestamp = b.lastMessage?.timestamp
+        ? new Date(b.lastMessage.timestamp).getTime()
+        : 0;
       return bTimestamp - aTimestamp;
     });
   }, []);
 
   const transitions = useTransition(friends, {
-    from: { opacity: 0, transform: 'translate3d(0,-40px,0)' },
-    enter: { opacity: 1, transform: 'translate3d(0,0px,0)' },
-    leave: { opacity: 0, transform: 'translate3d(0,-40px,0)' },
-    keys: friend => friend._id,
+    from: { opacity: 0, transform: "translate3d(0,-40px,0)" },
+    enter: { opacity: 1, transform: "translate3d(0,0px,0)" },
+    leave: { opacity: 0, transform: "translate3d(0,-40px,0)" },
+    keys: (friend) => friend._id,
     config: { tension: 220, friction: 20 },
   });
 
@@ -67,23 +75,34 @@ const MyFriends: React.FC = () => {
     };
   }, []);
 
-  const handleNewMessage = useCallback((message: Message) => {
-    setFriends(prevFriends => {
-      const updatedFriends = prevFriends.map(friend => {
-        if (friend._id === message.sender || friend._id === message.conversationId.replace(userInfo.userId, '').replace('-', '')) {
-          return {
-            ...friend,
-            lastMessage: {
-              content: message.content,
-              timestamp: message.timestamp,
-            },
-          };
-        }
-        return friend;
+  const handleNewMessage = useCallback(
+    (message: Message) => {
+      setFriends((prevFriends) => {
+        const updatedFriends = prevFriends.map((friend) => {
+          if (
+            friend._id === message.sender ||
+            friend._id ===
+              message.conversationId
+                .replace(userInfo.userId, "")
+                .replace("-", "")
+          ) {
+            return {
+              ...friend,
+              lastMessage: {
+                content: message.content,
+                timestamp: message.timestamp,
+                fileUrl: message.fileUrl,
+                fileType: message.fileType,
+              },
+            };
+          }
+          return friend;
+        });
+        return sortFriends(updatedFriends);
       });
-      return sortFriends(updatedFriends);
-    });
-  }, [userInfo.userId, sortFriends]);
+    },
+    [userInfo.userId, sortFriends]
+  );
 
   const fetchFriendsAndMessages = async () => {
     setLoading(true);
@@ -105,6 +124,8 @@ const MyFriends: React.FC = () => {
                 ? {
                     content: lastMessage.content,
                     timestamp: lastMessage.timestamp,
+                    fileUrl: lastMessage.fileUrl,
+                    fileType: lastMessage.fileType,
                   }
                 : undefined,
             };
@@ -132,7 +153,9 @@ const MyFriends: React.FC = () => {
   };
 
   const handleRemoveFriend = (friendId: string) => {
-    setFriends(prevFriends => sortFriends(prevFriends.filter((friend) => friend._id !== friendId)));
+    setFriends((prevFriends) =>
+      sortFriends(prevFriends.filter((friend) => friend._id !== friendId))
+    );
     setSelectedFriend(null);
     localStorage.removeItem("selectedFriend");
   };
@@ -144,13 +167,16 @@ const MyFriends: React.FC = () => {
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
     if (days === 0) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     } else if (days === 1) {
-      return 'Yesterday';
+      return "Yesterday";
     } else if (days < 7) {
-      return date.toLocaleDateString([], { weekday: 'short' });
+      return date.toLocaleDateString([], { weekday: "short" });
     } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString([], { month: "short", day: "numeric" });
     }
   };
 
@@ -198,7 +224,9 @@ const MyFriends: React.FC = () => {
                         </div>
                         {friend.lastMessage ? (
                           <p className="text-gray-500 text-sm truncate mt-1">
-                            {friend.lastMessage.content}
+                            {friend.lastMessage.fileUrl
+                              ? `Sent a ${friend.lastMessage.fileType}`
+                              : friend.lastMessage.content}
                           </p>
                         ) : (
                           <p className="text-gray-500 text-sm mt-1">
@@ -213,7 +241,9 @@ const MyFriends: React.FC = () => {
             </div>
           ) : (
             <div className="flex justify-center items-center h-full text-gray-500">
-              <p className="text-xl text-center">Add friends to start chatting</p>
+              <p className="text-xl text-center">
+                Add friends to start chatting
+              </p>
             </div>
           )}
         </div>
