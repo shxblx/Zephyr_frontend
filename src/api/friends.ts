@@ -105,6 +105,8 @@ export const sendMessage = async (data: {
   senderId: string;
   receiverId: string;
   content: string;
+  fileUrl?: string;
+  fileType?: string;
 }) => {
   try {
     const response = await Api.post(userRoutes.sendMessage, data);

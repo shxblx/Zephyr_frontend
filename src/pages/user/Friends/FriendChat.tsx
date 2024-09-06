@@ -135,7 +135,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
       const messageData = {
         senderId: userInfo.userId,
         receiverId: selectedFriend._id,
-        content: newMessage.trim(),
+        content: newMessage.trim() || " ", // Add a space if content is empty
         fileUrl,
         fileType,
       };
@@ -147,7 +147,7 @@ const FriendChat: React.FC<FriendChatProps> = ({
           _id: response._id || Date.now().toString(),
           conversationId: response.conversationId || roomId,
           sender: userInfo.userId,
-          content: newMessage.trim(),
+          content: newMessage.trim() || " ",
           timestamp: response.timestamp || new Date().toISOString(),
           createdAt: response.createdAt || new Date().toISOString(),
           updatedAt: response.updatedAt || new Date().toISOString(),
