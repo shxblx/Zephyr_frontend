@@ -14,12 +14,12 @@ const Form: React.FC = () => {
     email: "",
     password: "",
   });
- 
+
   const [errors, setErrors] = useState({
     email: "",
     password: "",
   });
-  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -159,8 +159,7 @@ const Form: React.FC = () => {
                   type="button"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
                   onClick={togglePasswordVisibility}
-                >
-                </button>
+                ></button>
               </div>
               {errors.password && (
                 <p className="text-red-500">{errors.password}</p>
